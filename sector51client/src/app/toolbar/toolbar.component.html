@@ -1,0 +1,32 @@
+<nav class="navbar navbar-light bg-faded">
+  <div class="navbar-brand">
+    <i class="fa fa-fw fa-bars fa-lg" (click)="common.sidenavVisible = !common.sidenavVisible"></i>
+    <a href="#">Sector</a>
+  </div>
+  <div class="d-inline-block" ngbDropdown *ngIf="common.currentUser">
+    <a href="javascript: void(0);" ngbDropdownToggle>
+      <i class="fa fa-fw fa-user"></i>
+      <span>{{common.currentUser.login}}</span>
+    </a>
+    <div class="dropdown-menu">
+      <a [routerLink]="['/profile', common.currentUser.login]" class="dropdown-item pl-2 pr-2">
+        <i class="fa fa-fw fa-user"></i>
+        <span>Profile</span>
+      </a>
+      <a href="#" class="dropdown-item pl-2 pr-2" (click)="auth.logout()">
+        <i class="fa fa-fw fa-sign-out"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+  <app-lang [storageName]="'sector'"
+            [apiLocales]="'./assets/lang/locales.json'"
+            [apiLang]="'./assets/lang/%s_lang.json'">
+  </app-lang>
+</nav>
+
+<div class="sidenav bg-faded"
+  [style.left]="common.sidenavVisible ? '0' : '-75%'"
+  *ngIf="common.currentUser">
+  <sector51-menu [user]="common.currentUser"></sector51-menu>
+</div>

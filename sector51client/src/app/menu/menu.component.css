@@ -1,0 +1,3 @@
+div[ngbdropdown] > i { font-style: normal; }
+div[ngbdropdown] > i:hover,
+div[ngbdropdown] .dropdown-item:hover { cursor: pointer; }

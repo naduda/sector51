@@ -1,0 +1,16 @@
+<div class="col-12">
+  <div class="card" *ngIf="user">
+    <div class="card-block">
+      <h4 class="card-title">{{user.login}}</h4>
+      <hr>
+      <div class="card-text">
+        <span>Roles: </span>{{user.roles}}
+      </div>
+      <hr>
+      <a routerLink="/main" class="card-link">
+        <i class="fa fa-home"></i>
+        <span>Home</span>
+      </a>
+    </div>
+  </div>
+</div>

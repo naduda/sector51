@@ -1,0 +1,10 @@
+html,body,
+div.container-fluid,
+div.row,
+sector51-login {
+  height: 100%;
+}
+
+html {
+  font-size: 14px;
+}

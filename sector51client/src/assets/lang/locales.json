@@ -1,0 +1,17 @@
+[
+  {
+    "name": "uk",
+    "text": "Українська",
+    "ico": "./assets/images/ukFlag.png"
+  },
+  {
+    "name": "ru",
+    "text": "Русский",
+    "ico": "./assets/images/ruFlag.png"
+  },
+  {
+    "name": "en",
+    "text": "English",
+    "ico": "./assets/images/enFlag.png"
+  }
+]

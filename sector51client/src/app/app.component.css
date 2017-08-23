@@ -1,0 +1,18 @@
+.outlet {
+  height: calc(100% - 7rem);
+  max-height: calc(100% - 7rem);
+  min-height: calc(100% - 7rem);
+  overflow-y: auto;
+}
+
+div.row {
+  flex-direction: column;
+}
+
+@media (max-width: 576px) {
+  .outlet {
+    height: calc(100% - 4rem);
+    max-height: calc(100% - 4rem);
+    min-height: calc(100% - 4rem);
+  }
+}

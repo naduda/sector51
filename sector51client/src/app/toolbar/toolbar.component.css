@@ -1,0 +1,37 @@
+nav {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidenav {
+  position: static;
+  top: 3.5rem;
+  height: 3rem;
+  left: 0;
+  z-index: 1;
+  font-size: 1rem;
+  color: #292b2c;
+  text-align: left;
+  list-style: none;
+  border-top: 1px solid #292b2c;
+  transition: 0.5s;
+  width: 100%;
+}
+
+.navbar-brand > a { color: #292b2c; }
+.navbar-brand > i {
+  cursor: pointer;
+  display: none;
+}
+
+@media (max-width: 576px) {
+  .navbar-brand > i { display: inline-block; }
+  .sidenav {
+    height: calc(100% - 4rem);
+    position: absolute;
+    width: 75%;
+    padding: 0 0.5rem;
+  }
+  .menu-large { display: none; }
+}
