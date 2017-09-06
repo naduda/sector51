@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { AuthenticationService } from '../services/authentication.service';
+import { LangService } from "prNgCommon/lang/lang.service";
 import { CommonService } from '../services/common.service';
 import { WebsocketService } from '../services/websocket.service';
 import { Profile } from '../entities/profile';
@@ -15,7 +16,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   public user: Profile;
   private subscription: Subscription;
 
-  constructor(private auth: AuthenticationService,
+  constructor(public auth: AuthenticationService,
+              public lang: LangService,
               public common: CommonService,
               private http: HttpClient,
               private websocket: WebsocketService) {

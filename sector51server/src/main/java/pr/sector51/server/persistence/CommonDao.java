@@ -6,6 +6,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pr.sector51.server.persistence.mappers.ICommonMapper;
+import pr.sector51.server.persistence.model.Event;
+
+import java.util.List;
 
 public class CommonDao implements ICommonMapper {
   @Autowired
@@ -35,12 +38,7 @@ public class CommonDao implements ICommonMapper {
   }
 
   @Override
-  public void createTableHistory() {
-    commonMapper.createTableHistory();
-  }
-
-  @Override
-  public void createTableEvents() {
-    commonMapper.createTableEvents();
+  public void insertEvent(Event event) {
+    commonMapper.insertEvent(event);
   }
 }

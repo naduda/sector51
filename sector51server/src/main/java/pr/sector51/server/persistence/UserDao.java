@@ -1,17 +1,20 @@
 package pr.sector51.server.persistence;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pr.sector51.server.persistence.mappers.ISqlMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
-import pr.sector51.server.persistence.model.UserInfo;
-import pr.sector51.server.persistence.model.UserInfoBuilder;
-import pr.sector51.server.persistence.model.UserSecurity;
-import pr.sector51.server.persistence.model.UserSecurityBuilder;
+import pr.sector51.server.persistence.model.*;
 import pr.sector51.server.security.ERole;
 
 @Service
@@ -20,30 +23,38 @@ public class UserDao extends CommonDao implements IUserMapper {
   public final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
   @Autowired
+  private ISqlMapper sqlMapper;
+
+  @Autowired
   private IUserMapper userMapper;
 
   @PostConstruct
   public void init() {
-    if (!isTableExist(TABLE_NAME)) {
-      boolean res = runTransaction(() -> {
-        createTableUserSecurity();
-        createTableUserInfo();
-        insertUser(ERole.OWNER);
-        createTableHistory();
-        createTableEvents();
-      });
-      System.out.println("Table users was " + (res ? "" : "not ") + "created");
+    if (isTableExist(TABLE_NAME)) {
+      return;
     }
-  }
+    Resource resource = new ClassPathResource("createDataBase.sql");
+    StringBuilder sqlBuilder = new StringBuilder("");
+    try(BufferedInputStream inputStream = new BufferedInputStream(resource.getInputStream())) {
+      byte[] contents = new byte[1024];
 
-  @Override
-  public void createTableUserSecurity() {
-    userMapper.createTableUserSecurity();
-  }
+      int bytesRead;
 
-  @Override
-  public void createTableUserInfo() {
-    userMapper.createTableUserInfo();
+      while((bytesRead = inputStream.read(contents)) != -1) {
+        sqlBuilder.append(new String(contents, 0, bytesRead));
+      }
+    } catch (IOException ex) {
+      System.out.println(ex);
+    }
+
+    boolean res = runTransaction(() -> {
+      if (sqlBuilder.toString().length() > 0) {
+        sqlMapper.execute(sqlBuilder.toString());
+      }
+      insertUser(ERole.OWNER);
+      insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
+    });
+    System.out.println("Table users was " + (res ? "" : "not ") + "created");
   }
 
   @Override
@@ -73,6 +84,24 @@ public class UserDao extends CommonDao implements IUserMapper {
         .setPhone("+380501234567").build();
     insertUserInfo(userInfo);
     System.out.println("User " + role.name() + " was inserted.");
+  }
+
+  public int insertUser(UserInfo userInfo){
+    UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
+    if (userExist != null) {
+      return 1;
+    }
+    runTransaction(() -> {
+      UserSecurity user = new UserSecurityBuilder()
+              .setUsername(userInfo.getLogin())
+              .setPassword(userInfo.getPassword())
+              .setRoles(userInfo.getRoles())
+              .build();
+      insertUserSecurity(user);
+      userInfo.setCreated(user.getCreated());
+      insertUserInfo(userInfo);
+    });
+    return 0;
   }
 
   @Override
@@ -108,6 +137,8 @@ public class UserDao extends CommonDao implements IUserMapper {
 
   @Override
   public UserInfo getUserInfoByCard(String value) {
-    return userMapper.getUserInfoByCard(value);
+    UserInfo user = userMapper.getUserInfoByCard(value);
+    user.setPassword(null);
+    return user;
   }
 }

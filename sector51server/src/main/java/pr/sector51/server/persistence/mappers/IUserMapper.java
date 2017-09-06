@@ -10,33 +10,6 @@ import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
 public interface IUserMapper {
-  @Select("CREATE TABLE usersecurity ("
-      + "username character varying(100) NOT NULL,"
-      + "password character varying(100) NOT NULL,"
-      + "roles character varying(100) NOT NULL,"
-      + "accountNonExpired boolean,"
-      + "accountNonLocked boolean,"
-      + "credentialsNonExpired boolean,"
-      + "enabled boolean,"
-      + "attempts integer NOT NULL DEFAULT 0,"
-      + "lastmodified timestamp without time zone NOT NULL DEFAULT now(),"
-      + "created timestamp without time zone NOT NULL DEFAULT now(),"
-      + "CONSTRAINT pk_user_security PRIMARY KEY (created),"
-      + "CONSTRAINT pk_login UNIQUE (username)"
-      + ");")
-  void createTableUserSecurity();
-
-  @Select("CREATE TABLE userinfo ("
-      + "created timestamp without time zone NOT NULL DEFAULT now(),"
-      + "name character varying(100) NOT NULL,"
-      + "surname character varying(100) NOT NULL,"
-      + "phone character varying(100) NOT NULL,"
-      + "email character varying(100) NOT NULL,"
-      + "card character varying(15),"
-      + "CONSTRAINT pk_user_info PRIMARY KEY (created)"
-      + ");")
-  void createTableUserInfo();
-
   @Insert("INSERT INTO usersecurity(username, password, roles, accountNonExpired, accountNonLocked,"
       + "credentialsNonExpired, enabled, created) "
       + "VALUES (#{username}, #{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "

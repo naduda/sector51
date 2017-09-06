@@ -22,7 +22,9 @@ export class MainComponent implements OnInit {
   ngOnInit() {
     this.common.user.subscribe(u => this.user = u);
     for(let i = 0; i < 50; i++) {
-      const u = new Profile().setup('User ' + i);
+      const u = new Profile();
+      u.name = 'User ' + i;
+      u.surname = 'Surname ' + i;
       u['active'] = i % 5 === 0;
       this.users.push(u);
     }

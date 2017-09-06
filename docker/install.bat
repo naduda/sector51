@@ -1,28 +1,47 @@
 @echo off
 cls
+SETLOCAL ENABLEDELAYEDEXPANSION
+
 call :read_settings %~dp0settings.properties || exit /b 1
-set param=%param:--=%
 
-for %%A in (civ cvi icv ivc vic vci) do if %param%==clean-%%A (
+IF NOT EXIST %~dp0services (
+  mkdir %~dp0services
+  set url="https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe"
+  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%url%','%~dp0services\winsw.exe')"
+)
+IF NOT EXIST %~dp0services\scanner (
+  mkdir %~dp0services\scanner
+  call build.bat
+  for %%i in ("%~dp0..") do set "scannerFolder=%%~fi\Scanner\Scanner\bin\Debug"
+  xcopy /s /y %scannerFolder% %~dp0services\scanner
+  call createService.bat scanner
+)
+
+docker stop %container_name%
+
+set param=%1
+for %%A in (civ cvi icv ivc vic vci) do if /i "%param%"=="--clean-%%A" (
+  echo qwe2
   call :delete-containers
   call :delete-images
   call :delete-volumes
+  echo qwe
 )
 
-for %%A in (cv vc) do if %param%==clean-%%A (
+for %%A in (cv vc) do if /i "%param%"=="--clean-%%A" (
   call :delete-containers
   call :delete-volumes
 )
 
-if %param%==clean-c (
+if /i "%param%"=="--clean-c" (
   call :delete-containers
 )
 
-if %param%==clean-i (
+if /i "%param%"=="--clean-i" (
   call :delete-images
 )
 
-if %param%==clean-v (
+if /i "%param%"=="--clean-v" (
   call :delete-volumes
 )
 
@@ -47,11 +66,11 @@ if %isexist%==0 (
 
 REM Create container if not exist
 set /a isexist=0
-for /f "tokens=7 skip=1 usebackq" %%i in (`docker ps -a`) do (
-  if %%i==%volume_name% set isexist=1
+for /f "tokens=1,2 skip=1 usebackq" %%i in (`docker ps -a`) do (
+  if /i %%j==%image_name% set isexist=1
 )
+
 if %isexist%==0 (
-  rem (docker run --name %container_name% -v %~dp0pr:/pr -v %volume_name%:/var/lib/postgresql/data -p 5432:5432 -d %image_name% postgres) || (exit /b %errorlevel%)
   (docker create --name %container_name% ^
     -p 5432:5432 ^
     -v %~dp0pr:/pr ^
@@ -63,11 +82,12 @@ if %isexist%==0 (
 )
 
 docker start %container_name%
-docker exec -it %container_name% /bin/sh
-docker logs %container_name%
-docker ps
-pause
-exit /b 0
+rem docker exec -it %container_name% /bin/sh
+rem docker logs %container_name%
+rem docker ps
+set url=https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe
+IF NOT EXIST %~dp0service mkdir %~dp0service
+powershell -Command (New-Object Net.WebClient).DownloadFile('%url%','%~dp0service\winsv.exe')
 
 rem ****************************** Functions ******************************
 :delete-volumes
@@ -88,7 +108,6 @@ pause
 exit /b 0
 
 :delete-containers
-docker stop %container_name%
 for /f "tokens=1 skip=1 usebackq" %%i in (`docker ps -a`) do (
   docker rm -f %%i
 )

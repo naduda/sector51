@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 public class UserInfoBuilder {
   private String login;
+  private String password;
   private Timestamp created;
   private String name;
   private String surname;
@@ -14,6 +15,11 @@ public class UserInfoBuilder {
 
   public UserInfoBuilder setLogin(String login) {
     this.login = login;
+    return this;
+  }
+
+  public UserInfoBuilder setPassword(String password) {
+    this.password = password;
     return this;
   }
 
@@ -53,6 +59,6 @@ public class UserInfoBuilder {
   }
 
   public UserInfo build() {
-    return new UserInfo(login, created, name, surname, phone, email, roles, card);
+    return new UserInfo(login, password, created, name, surname, phone, email, roles, card);
   }
 }

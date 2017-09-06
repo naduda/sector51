@@ -11,7 +11,7 @@
     <div class="dropdown-menu">
       <a [routerLink]="['/profile', common.currentUser.login]" class="dropdown-item pl-2 pr-2">
         <i class="fa fa-fw fa-user"></i>
-        <span>Profile</span>
+        <span>{{lang['profile'] | titlecase}}</span>
       </a>
       <a href="#" class="dropdown-item pl-2 pr-2" (click)="auth.logout()">
         <i class="fa fa-fw fa-sign-out"></i>

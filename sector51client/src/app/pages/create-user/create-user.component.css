@@ -1,0 +1,20 @@
+.nav-item.nav-link:hover, .dropdown-item:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+
+button.btn { width: 6rem; }
+button.btn:hover { cursor: pointer; }
+
+.buttons {
+    justify-content: flex-end;
+}
+
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+}
+
+.ng-touched.ng-invalid:not(form),
+.ng-dirty.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+}

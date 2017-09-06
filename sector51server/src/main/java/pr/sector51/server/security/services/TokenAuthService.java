@@ -17,7 +17,6 @@ public class TokenAuthService {
   private TokenHandler tokenHandler;
 
   public Optional<Authentication> getAuthentification(HttpServletRequest request) {
-    System.out.println(request.getRequestURI() + " / " + request.getHeader(AUTH_HEADER_NAME));
     Optional<Authentication> authentication = Optional
         .ofNullable(request.getHeader(AUTH_HEADER_NAME))
         .flatMap(tokenHandler::extractUserId)
