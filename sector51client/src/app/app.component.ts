@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { AuthenticationService } from './services/authentication.service';
+import { Component, OnInit } from '@angular/core';
 import { CommonService } from './services/common.service';
 
 @Component({
@@ -8,7 +7,7 @@ import { CommonService } from './services/common.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(
-    public auth: AuthenticationService,
-    public common: CommonService){}
+  constructor(public common: CommonService) {
+
+  }
 }

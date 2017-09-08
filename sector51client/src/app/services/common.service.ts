@@ -3,6 +3,7 @@ import { Router, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Profile } from '../entities/profile';
+import { AuthenticationService } from "../services/authentication.service";
 
 @Injectable()
 export class CommonService {
@@ -10,7 +11,8 @@ export class CommonService {
   public user: BehaviorSubject<Profile>;
   public sidenavVisible: boolean;
 
-  constructor(public router: Router) {
+  constructor(public router: Router, 
+              private auth: AuthenticationService) {
     this.user = new BehaviorSubject(null);
     router.events.subscribe(val => {
       if(val instanceof NavigationStart) {
@@ -22,4 +24,19 @@ export class CommonService {
   get isLogin(): boolean {
     return this.router.url === '/login';
   }
+
+  // get currentUser(): Profile {
+  //   if (this._currentUser) {
+  //     return this._currentUser;
+  //   } else {
+  //     this.http.get<Profile>('/api/profile/' + this.auth.username)
+  //     .flatMap(profile => this.http.get<any>('/api/getUserPermition?idUser=' + profile['created']))
+  //     .subscribe(profile => {
+  //       console.log(profile)
+  //       this._currentUser = profile;
+  //       this.websocket.initWebSocket(this.auth.token);
+  //       return profile;
+  //     });
+  //   }
+  // }
 }

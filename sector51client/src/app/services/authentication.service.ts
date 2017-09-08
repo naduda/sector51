@@ -6,31 +6,31 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { WebsocketService } from './websocket.service';
+import { Profile } from "../entities/profile";
 
 @Injectable()
 export class AuthenticationService {
 
   constructor(private injector: Injector,
               private router: Router,
-              private websoket: WebsocketService) {}
+              private websoket: WebsocketService,
+  ) {}
 
   login(username: string, password: string): Observable<boolean> {
     const http = this.injector.get(HttpClient);
-    return http.post('/api/login', {
-        username: username,
-        password: password
+    return http.post('/api/login', { username: username, password: password })
+      .map((response: any) => {
+        const token = response && response.token;
+        if (token) {
+          localStorage.setItem('currentUser', JSON.stringify({
+            username: username,
+            token: token
+          }));
+          return true;
+        }
+        return false;
       })
-    .map((response: any) => {
-      const token = response && response.token;
-      if (token) {
-        localStorage.setItem('currentUser', JSON.stringify({
-          username: username,
-          token: token
-        }));
-        return true;
-      }
-      return false;
-    }).catch((error:any) => Observable.throw(error || 'Server error'));
+      .catch((error:any) => Observable.throw(error || 'Server error'));
   }
 
   get token(): string {

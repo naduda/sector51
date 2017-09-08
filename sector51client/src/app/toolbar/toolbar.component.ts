@@ -16,11 +16,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   public user: Profile;
   private subscription: Subscription;
 
-  constructor(public auth: AuthenticationService,
+  constructor(private auth: AuthenticationService,
               public lang: LangService,
               public common: CommonService,
               private http: HttpClient,
-              private websocket: WebsocketService) {
+              ) {
     this.subscription = common.user.subscribe(u => this.user = u);
   }
 
@@ -28,17 +28,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     if (this.auth.username.length == 0) {
       return;
     }
-    this.http.get<Profile>('api/profile/' + this.auth.username)
-      .subscribe(
-        profile => {
-          this.common.currentUser = profile;
-          this.common.user.next(profile); 
-          this.websocket.initWebSocket(this.auth.token);
-        }
-      );
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  logout() {
+    //this.common.currentUser = null;
+    this.auth.logout();
   }
 }

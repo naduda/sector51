@@ -2,7 +2,6 @@ import { Injectable, Injector } from '@angular/core';
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { environment } from '../../environments/environment';
-import { CommonService } from "app/services/common.service";
 import { Profile } from "app/entities/profile";
 
 @Injectable()
@@ -10,8 +9,7 @@ export class WebsocketService {
   private ws: WebSocket;
   private http: HttpClient;
 
-  constructor(private common: CommonService,
-              private injector: Injector,
+  constructor(private injector: Injector,
               private router: Router) {
   }
 
@@ -29,7 +27,7 @@ export class WebsocketService {
     let div = document.getElementById('keys');
     this.ws.onopen = () => {
         console.log("FileServer Connected.");
-        this.ws.send(this.common.currentUser.email);
+        this.ws.send('this.common.currentUser.email');
 		};
     this.ws.onmessage = (evt) => {
       const value: string = JSON.parse(evt.data).value;

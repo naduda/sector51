@@ -24,8 +24,15 @@ CREATE TABLE userinfo (
 );
 
 CREATE TABLE permition (
-	id integer NOT NULL,
+	id SERIAL,
 	name character varying(25) NOT NULL
+);
+INSERT INTO permition(name) VALUES('permition_access');
+INSERT INTO permition(name) VALUES('user_operations');
+
+CREATE TABLE user_permition (
+	iduser timestamp without time zone NOT NULL,
+	idpermition integer NOT NULL
 );
 
 CREATE TABLE userpermition (

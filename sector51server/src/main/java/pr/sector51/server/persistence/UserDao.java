@@ -2,7 +2,6 @@ package pr.sector51.server.persistence;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +67,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     userMapper.insertUserInfo(user);
   }
 
-  public void insertUser(ERole role) {
+  private void insertUser(ERole role) {
     UserSecurity user = new UserSecurityBuilder()
         .setUsername(role.name().toLowerCase())
         .setPassword(role.name().toLowerCase())
@@ -81,9 +80,18 @@ public class UserDao extends CommonDao implements IUserMapper {
         .setName("Name" + role.name())
         .setSurname("Surname" + role.name())
         .setEmail(role.name() + "@gmail.com")
-        .setPhone("+380501234567").build();
+        .setPhone("+380501234567")
+        .setRoles(user.getRoles()).build();
     insertUserInfo(userInfo);
+    insertDefaultPermitions(userInfo);
     System.out.println("User " + role.name() + " was inserted.");
+  }
+
+  private void insertDefaultPermitions(UserInfo user) {
+    if (user.getRoles().toUpperCase().contains(ERole.OWNER.name())) {
+      List<Permition> allPermitions = allPermitions();
+      allPermitions.forEach(p -> insertUserPermitions(user.getCreated(), p.getId()));
+    }
   }
 
   public int insertUser(UserInfo userInfo){
@@ -100,6 +108,7 @@ public class UserDao extends CommonDao implements IUserMapper {
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
+      insertDefaultPermitions(userInfo);
     });
     return 0;
   }
@@ -140,5 +149,20 @@ public class UserDao extends CommonDao implements IUserMapper {
     UserInfo user = userMapper.getUserInfoByCard(value);
     user.setPassword(null);
     return user;
+  }
+
+  @Override
+  public List<Permition> allPermitions() {
+    return userMapper.allPermitions();
+  }
+
+  @Override
+  public int insertUserPermitions(Timestamp idUser, int idPermition) {
+    return userMapper.insertUserPermitions(idUser, idPermition);
+  }
+
+  @Override
+  public List<Integer> getUserPermitions(Timestamp idUser) {
+    return userMapper.getUserPermitions(idUser);
   }
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +40,9 @@ public class RestUserController extends ARestController {
   @RequestMapping(value = "/createUser", method = RequestMethod.POST)
   public String createUser(@RequestBody UserInfo user) {
     SecurityContext context = SecurityContextHolder.getContext();
-    boolean canDoIt = context.getAuthentication().getAuthorities().contains(ERole.OWNER);
-    int result = canDoIt ? userDao.insertUser(user) : 2;
+    UserSecurity userSecurity = (UserSecurity) context.getAuthentication().getPrincipal();
+    List<Integer> permitions = userDao.getUserPermitions(userSecurity.getCreated());
+    int result = permitions.contains(2) ? userDao.insertUser(user) : 2;
     return String.format("{\"result\": \"%s\"}", result);
   }
 
@@ -52,5 +54,10 @@ public class RestUserController extends ARestController {
   @RequestMapping(value = "/getRoles", method = RequestMethod.GET)
   public List<ERole> getRoles() {
     return Arrays.asList(ERole.values());
+  }
+
+  @RequestMapping(value = "/getUserPermition", method = RequestMethod.GET)
+  public List<Integer> getUserPermition(@RequestParam(value="idUser") long idUser) {
+    return userDao.getUserPermitions(new Timestamp(idUser));
   }
 }

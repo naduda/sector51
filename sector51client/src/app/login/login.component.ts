@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LangService } from 'prNgCommon/lang/lang.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { CommonService } from "../services/common.service";
 
 @Component({
   selector: 'sector51-login',
@@ -13,12 +14,13 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(
-    public lang: LangService,
+  constructor(public lang: LangService,
     private router: Router,
+    private common: CommonService,
     private auth: AuthenticationService) { }
 
   ngOnInit() {
+    this.common.currentUser = null;
     this.auth.logout();
   }
 

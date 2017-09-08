@@ -1,11 +1,13 @@
 package pr.sector51.server.persistence.mappers;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Component;
+import pr.sector51.server.persistence.model.Permition;
 import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
@@ -36,4 +38,13 @@ public interface IUserMapper {
   @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui "
       + "WHERE ui.card = #{value} AND us.created = ui.created")
   UserInfo getUserInfoByCard(String value);
+
+  @Select("SELECT * FROM permition;")
+  List<Permition> allPermitions();
+
+  @Insert("INSERT INTO user_permition(iduser, idpermition) VALUES (#{idUser}, #{idPermition})")
+  int insertUserPermitions(@Param("idUser") Timestamp idUser, @Param("idPermition")int idPermition);
+
+  @Select("SELECT idpermition FROM user_permition WHERE iduser = #{idUser}")
+  List<Integer> getUserPermitions(@Param("idUser") Timestamp idUser);
 }
