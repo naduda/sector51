@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { LangService } from 'prNgCommon/lang/lang.service';
 import { AuthenticationService } from '../services/authentication.service';
-import { CommonService } from "../services/common.service";
+import { Profile } from '../entities/profile';
 
 @Component({
   selector: 'sector51-login',
@@ -15,13 +15,12 @@ export class LoginComponent implements OnInit {
   error = '';
 
   constructor(public lang: LangService,
-    private router: Router,
-    private common: CommonService,
     private auth: AuthenticationService) { }
 
   ngOnInit() {
-    this.common.currentUser = null;
     this.auth.logout();
+    this.model.username = 'owner';
+    this.model.password = 'owner';
   }
 
   login() {
@@ -29,15 +28,17 @@ export class LoginComponent implements OnInit {
     this.auth.login(this.model.username, this.model.password)
     .subscribe(result => {
       if (result === true) {
-        this.router.navigate(['main']);
+        this.auth.navigate('main');
       } else {
         this.error = 'Username or password is incorrect';
         this.loading = false;
       }
     }, error => {
       console.log(error);
-      this.loading = false;
-      this.error = error;
+      if (error.ok) {
+        this.loading = false;
+        this.error = error;
+      }
     });
   }
 }

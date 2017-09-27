@@ -1,12 +1,14 @@
+import { ERole } from '../entities/common';
+
 export class Profile {
   login: string;
   name: string;
   surname: string;
   phone: string;
   email: string;
-  authorities: string
+  authorities: string;
   card: string;
-  password: string;
+  role: ERole;
 
   constructor() {
     this.authorities = '';

@@ -1,0 +1,13 @@
+<div class="modal-header {{headerClass}} rounded-top">
+  <h4 class="modal-title">{{header | titlecase}}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body {{bodyClass}}">
+  <p>{{body | titlecase}}</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)">{{btOK | titlecase}}</button>
+  <button type="button" [hidden]="btCancel === undefined" class="btn btn-secondary" (click)="activeModal.close(false)">{{btCancel | titlecase}}</button>
+</div>

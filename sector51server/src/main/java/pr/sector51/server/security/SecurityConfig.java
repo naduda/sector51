@@ -21,11 +21,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers("/", "/api/login", "/api/test", "/*.html", "/*.css", "/*.js", "/*.ico",
-            "/*.woff", "/*.woff2", "/*.ttf", "/assets/**", "/**/counter").permitAll()
+            "/*.woff", "/*.woff2", "/*.ttf", "/assets/**", "/**/wsapi").permitAll()
         .anyRequest().authenticated()
         .and()
-//        .formLogin().loginPage("/").permitAll()
-//        .and()
         .logout().permitAll();
   }
 }

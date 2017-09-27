@@ -1,16 +1,18 @@
-import { Injectable, Injector } from '@angular/core';
-import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { Injectable, Injector, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Profile } from "app/entities/profile";
+import { Profile } from '../entities/profile';
 
 @Injectable()
-export class WebsocketService {
+export class WebsocketService implements OnInit {
   private ws: WebSocket;
   private http: HttpClient;
 
-  constructor(private injector: Injector,
-              private router: Router) {
+  constructor(private injector: Injector, private router: Router) {}
+
+  ngOnInit(): void {
+    this.http = this.injector.get(HttpClient);
   }
 
   public disconnect() {
@@ -19,16 +21,14 @@ export class WebsocketService {
     }
   }
 
-  public initWebSocket(token: string): void {
-    this.http = this.injector.get(HttpClient);
+  public initWebSocket(token: string, user: Profile): void {
+    this.ws = new WebSocket('ws://localhost:8089/wsapi?token=' + token);
 
-    const wsURL = console.log(document.location.origin)
-    this.ws = new WebSocket("ws://localhost:8089/counter?token=" + token);
-    let div = document.getElementById('keys');
     this.ws.onopen = () => {
-        console.log("FileServer Connected.");
-        this.ws.send('this.common.currentUser.email');
-		};
+        console.log('FileServer Connected.');
+        this.ws.send(user.email);
+    };
+
     this.ws.onmessage = (evt) => {
       const value: string = JSON.parse(evt.data).value;
       if (value.startsWith('user_')) {
@@ -36,7 +36,7 @@ export class WebsocketService {
         this.http.get<Profile>('/api/getUserByCard?card=' + key)
           .subscribe(data => {
             console.log(data);
-            if(data) {
+            if (data) {
               this.router.navigate(['profile', data.login]);
             } else {
               this.router.navigate(['registration']);
@@ -44,12 +44,13 @@ export class WebsocketService {
           });
       }
     };
-    
-    this.ws.onclose = function() {
-				console.log("Connection is closed...");
-		};
-		this.ws.onerror = function(e) {
-				console.log(e);
-		}
+
+    this.ws.onclose = () => {
+      setTimeout(() => this.initWebSocket(token, user), 5000);
+    };
+
+    this.ws.onerror = (e) => {
+      console.error(e);
+    };
   }
 }

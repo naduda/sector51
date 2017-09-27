@@ -3,17 +3,17 @@
     <i class="fa fa-fw fa-bars fa-lg" (click)="common.sidenavVisible = !common.sidenavVisible"></i>
     <a href="#">Sector</a>
   </div>
-  <div class="d-inline-block" ngbDropdown *ngIf="common.currentUser">
+  <div class="d-inline-block" ngbDropdown *ngIf="common.profile">
     <a href="javascript: void(0);" ngbDropdownToggle>
       <i class="fa fa-fw fa-user"></i>
-      <span>{{common.currentUser.login}}</span>
+      <span>{{common.profile.login}}</span>
     </a>
     <div class="dropdown-menu">
-      <a [routerLink]="['/profile', common.currentUser.login]" class="dropdown-item pl-2 pr-2">
+      <a [routerLink]="['/profile', common.profile.login]" class="dropdown-item pl-2 pr-2">
         <i class="fa fa-fw fa-user"></i>
         <span>{{lang['profile'] | titlecase}}</span>
       </a>
-      <a href="#" class="dropdown-item pl-2 pr-2" (click)="logout()">
+      <a href="#" class="dropdown-item pl-2 pr-2" (click)="auth.logout()">
         <i class="fa fa-fw fa-sign-out"></i>
         <span>Logout</span>
       </a>
@@ -27,6 +27,6 @@
 
 <div class="sidenav bg-faded"
   [style.left]="common.sidenavVisible ? '0' : '-75%'"
-  *ngIf="common.currentUser">
-  <sector51-menu [user]="common.currentUser"></sector51-menu>
+  *ngIf="common.profile">
+  <sector51-menu [currentUser]="common.profile"></sector51-menu>
 </div>

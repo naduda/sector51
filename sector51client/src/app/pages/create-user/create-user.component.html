@@ -40,14 +40,14 @@
     <label for="password" class="col-3 col-form-label">Password</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="password" name="password" [(ngModel)]="user.password" #psw="ngModel" required>
+        type="password" name="password" [(ngModel)]="user['password']" #psw="ngModel"  [required]="!user['created']">
     </div>
   </div>
   <div class="form-group row">
     <label for="password2" class="col-3 col-form-label">Password2</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" 
-        type="password" name="password2" [(ngModel)]="user['password2']" #psw2="ngModel" required>
+        type="password" name="password2" [(ngModel)]="user['password2']" #psw2="ngModel" [required]="!user['created']">
     </div>
     <div class="col-9" [hidden]="psw.untouched || psw2.untouched || (psw.value === psw2.value)">
       <small class="text-danger">Passwords aren't equal</small>
@@ -65,16 +65,18 @@
     <div ngbDropdown class="d-inline-block" #dropAutorities="ngbDropdown">
       <i class="nav-item nav-link text-right" ngbDropdownToggle>{{this.user.authorities}}</i>
       <div class="dropdown-menu">
-        <label class="dropdown-item form-check-label" *ngFor="let r of roles" (click)="changeRole(r); $event.stopPropagation(); dropAutorities.open();">
-          <input class="form-check-input" type="checkbox" value="" [checked]="this.user.authorities.indexOf(r) != -1">
-          <span>{{r}}</span>
-        </label>
+        <div class="form-check" *ngFor="let r of roles">
+          <label class="form-check-label ml-2">
+            <input class="form-check-input" type="checkbox" [checked]="this.user.authorities.indexOf(r.name) != -1"
+              (change)="changeRole(r.name); dropAutorities.open();">
+            <span class="mt-2">{{r.name | uppercase}}</span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="form-group row buttons">
+  <div class="form-group row buttons" [hidden]="!common.profile['permited']">
     <button class="btn btn-primary m-4" type="submit">OK</button>
-    <button class="btn btn-primary m-4" (click)="cancel($event)">Cancel</button>
   </div>
 </form>

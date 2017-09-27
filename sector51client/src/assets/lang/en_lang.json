@@ -7,5 +7,12 @@
   "account": "account",
   "addUser": "add user",
   "deleteUser": "delete user",
-  "profile": "profile"
+  "profile": "profile",
+  "permissions": "permissions",
+  "promptRemoveUserQuestion": "are you sure you want delete selected user?",
+  "apply": "apply",
+  "cancel": "cancel",
+  "attention": "attention",
+  "properties": "properties",
+  "delete": "delete"
 }

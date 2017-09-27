@@ -77,8 +77,7 @@ public class SocketHandler extends TextWebSocketHandler {
   }
 
   @Override
-  protected void handleTextMessage(WebSocketSession session, TextMessage message)
-      throws Exception {
+  protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
     if ("CLOSE".equalsIgnoreCase(message.getPayload())) {
       session.close();
     } else {

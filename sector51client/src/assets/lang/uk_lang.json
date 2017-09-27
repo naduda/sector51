@@ -1,11 +1,18 @@
 {
-  "authentication": "Автентифікація",
-  "enterLogin": "Вхід",
-  "login": "Логін",
-  "password": "Пароль",
-  "showAll": "Показати всіх",
+  "authentication": "автентифікація",
+  "enterLogin": "вхід",
+  "login": "логін",
+  "password": "пароль",
+  "showAll": "показати всіх",
   "account": "користувач",
   "addUser": "добавити користувача",
   "deleteUser": "видалити користувача",
-  "profile": "профіль"
+  "profile": "профіль",
+  "permissions": "права доступу",
+  "promptRemoveUserQuestion": "ви дійсно бажаєте видалити вибраного користувача?",
+  "apply": "застосувати",
+  "cancel": "відхилити",
+  "attention": "увага",
+  "properties": "властивості",
+  "delete": "видалити"
 }

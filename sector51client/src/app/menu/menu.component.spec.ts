@@ -1,6 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { FormsModule } from '@angular/forms';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { LangService } from 'prNgCommon/lang/lang.service';
 
 import { MenuComponent } from './menu.component';
+import { CreateUserComponent } from '../pages/create-user/create-user.component';
+import { PermissionsComponent } from '../pages/permissions/permissions.component';
+import { Profile } from '../entities/profile';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -8,7 +16,22 @@ describe('MenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MenuComponent ]
+      declarations: [
+        MenuComponent,
+        CreateUserComponent,
+        PermissionsComponent
+      ],
+      imports: [
+        FormsModule,
+        RouterTestingModule.withRoutes([
+          { path: 'registration', component: CreateUserComponent },
+          { path: 'permissions', component: PermissionsComponent }
+        ]),
+        NgbModule.forRoot()
+      ],
+      providers: [
+        { provide: LangService, useValue: {} }
+      ]
     })
     .compileComponents();
   }));
@@ -16,6 +39,7 @@ describe('MenuComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MenuComponent);
     component = fixture.componentInstance;
+    component.currentUser = new Profile();
     fixture.detectChanges();
   });
 

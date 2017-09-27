@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Profile } from "../entities/profile";
+import { Profile } from '../entities/profile';
 import { LangService } from 'prNgCommon/lang/lang.service';
 
 @Component({
@@ -8,17 +8,9 @@ import { LangService } from 'prNgCommon/lang/lang.service';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
-  @Input('user') currentUser: Profile;
-  public permitions: number[];
+  @Input() currentUser: Profile;
 
-  constructor(public lang: LangService) {
-    //console.log(common.currentUser['roles'].toLowerCase().includes('owner'))
-  }
+  constructor(public lang: LangService) {}
 
-  ngOnInit() {
-    this.permitions = this.currentUser['permitions'];
-    if (!this.permitions) {
-      this.permitions = [];
-    }
-  }
+  ngOnInit() {}
 }

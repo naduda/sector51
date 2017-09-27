@@ -23,23 +23,6 @@ CREATE TABLE userinfo (
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
 
-CREATE TABLE permition (
-	id SERIAL,
-	name character varying(25) NOT NULL
-);
-INSERT INTO permition(name) VALUES('permition_access');
-INSERT INTO permition(name) VALUES('user_operations');
-
-CREATE TABLE user_permition (
-	iduser timestamp without time zone NOT NULL,
-	idpermition integer NOT NULL
-);
-
-CREATE TABLE userpermition (
-	iduser integer NOT NULL,
-	idpermition integer NOT NULL
-);
-
 CREATE TABLE barcode (
 	id integer NOT NULL,
 	code character varying(13) NOT NULL,

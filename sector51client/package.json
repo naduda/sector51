@@ -8,7 +8,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
+    "pree2e": "start \"json-server\" node ./e2e/scripts/server.js",
+    "e2e": "ng e2e --proxy-config proxy.conf.e2e.json",
+    "poste2e": "taskkill /fi \"WindowTitle eq json-server\"",
     "predeploy": "(del /F /S /Q ..\\sector51server\\src\\main\\resources\\static\\*) && (ng build)",
     "deploy": "(xcopy /s .\\dist ..\\sector51server\\src\\main\\resources\\static) && (ng serve --proxy-config proxy.conf.json)",
     "postdeploy": ""
@@ -40,6 +42,7 @@
     "codelyzer": "~2.0.0",
     "jasmine-core": "~2.5.2",
     "jasmine-spec-reporter": "~3.2.0",
+    "json-server": "^0.12.0",
     "karma": "~1.4.1",
     "karma-chrome-launcher": "~2.0.0",
     "karma-cli": "~1.0.1",

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { ActivatedRoute } from "@angular/router";
-import { Profile } from "app/entities/profile";
+import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Profile } from '../../entities/profile';
 
 @Component({
   selector: 'sector51-profile',
@@ -11,8 +12,7 @@ import { Profile } from "app/entities/profile";
 export class ProfileComponent implements OnInit {
   public user: Profile;
 
-  constructor(private http: HttpClient,
-              private route: ActivatedRoute) { }
+  constructor(public location: Location, private http: HttpClient, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {

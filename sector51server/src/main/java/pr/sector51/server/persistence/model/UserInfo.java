@@ -3,7 +3,6 @@ package pr.sector51.server.persistence.model;
 import java.sql.Timestamp;
 
 public class UserInfo {
-
   private String login;
   private Timestamp created;
   private String name;

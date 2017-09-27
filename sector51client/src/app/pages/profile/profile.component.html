@@ -1,15 +1,15 @@
 <div class="col-12">
-  <div class="card" *ngIf="user">
+  <div class="card mt-4" *ngIf="user">
     <div class="card-block">
       <h4 class="card-title">{{user.login}}</h4>
       <hr>
       <div class="card-text">
-        <span>Roles: </span>{{user.roles}}
+        <span>Roles: </span>{{user['roles']}}
       </div>
       <hr>
-      <a routerLink="/main" class="card-link">
+      <a href="javascript:void(0)" class="card-link" (click)="location.back()">
         <i class="fa fa-home"></i>
-        <span>Home</span>
+        <span>Back</span>
       </a>
     </div>
   </div>

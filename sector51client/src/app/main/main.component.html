@@ -1,5 +1,8 @@
 <div class="mt-3">
-  <input type="checkbox" (change)="showAll = !showAll"> {{lang['showAll']}}<br>
+  <label class="form-check-label">
+    <input class="form-check-input" type="checkbox" [checked]="showAll" (change)="changeQueryParam('all', !showAll)">
+    <span class="mt-2">{{lang['showAll'] | titlecase}}</span>
+  </label>
   <hr>
   <div class="user-flex">
     <div class="card" *ngIf="user">
@@ -22,18 +25,28 @@
           </tbody>
         </table>
         <hr>
-        <a href="#" class="card-link">
-          Link
-        </a>
+        <div class="bg-faded p-2">
+          <a [routerLink]="['/permissions', user['created']]" class="card-link text-warning">
+            {{lang['permissions'] | titlecase}}
+          </a>
+          <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
+            {{lang['properties'] | titlecase}}
+          </a>
+          <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
+            {{lang['delete'] | uppercase}}
+          </button>
+        </div>
       </div>
     </div>
     <div class="users mt-2 p-1">
       <ul class="list-group">
-        <li class="list-group-item p-2" 
-          *ngFor="let u of users"
+        <li class="list-group-item p-2" *ngFor="let u of users"
+          [ngClass]="{'bg-info': u['created'] === selectedUserId}"
           [ngStyle]="{'display': showAll ? 'flex' : u.active ? 'flex' : 'none'}"
-          (click)="user = u">
-          <a href="#" [ngClass]="{'text-danger': u.active}">{{u.surname}} {{u.name}}</a>
+          (click)="changeQueryParam('user', u['created'])">
+          <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active, 'text-white': u['created'] === selectedUserId}">
+            {{u.surname + ' ' + u.name}}
+          </a>
         </li>
       </ul>
     </div>
