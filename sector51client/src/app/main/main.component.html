@@ -1,7 +1,7 @@
 <div class="mt-3">
   <label class="form-check-label">
     <input class="form-check-input" type="checkbox" [checked]="showAll" (change)="changeQueryParam('all', !showAll)">
-    <span class="mt-2">{{lang['showAll'] | titlecase}}</span>
+    <span class="mt-2">{{'showAll' | translate | titlecase}}</span>
   </label>
   <hr>
   <div class="user-flex">
@@ -27,13 +27,13 @@
         <hr>
         <div class="bg-faded p-2">
           <a [routerLink]="['/permissions', user['created']]" class="card-link text-warning">
-            {{lang['permissions'] | titlecase}}
+            {{'permissions' | translate | titlecase}}
           </a>
           <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
-            {{lang['properties'] | titlecase}}
+            {{'properties' | translate | titlecase}}
           </a>
           <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
-            {{lang['delete'] | uppercase}}
+            {{'delete' | translate | uppercase}}
           </button>
         </div>
       </div>

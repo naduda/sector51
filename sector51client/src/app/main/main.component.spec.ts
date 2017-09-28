@@ -5,10 +5,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ModalService } from 'app/services/modal.service';
 import { CommonService } from 'app/services/common.service';
-import { LangService } from 'prNgCommon/lang/lang.service';
 
 import { MainComponent } from './main.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { TranslatePipeStub } from 'app/testing/TranslatePipeStub';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -17,7 +17,8 @@ describe('MainComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        MainComponent
+        MainComponent,
+        TranslatePipeStub
       ],
       imports: [
         RouterTestingModule.withRoutes([
@@ -28,8 +29,7 @@ describe('MainComponent', () => {
       ],
       providers: [
         ModalService,
-        CommonService,
-        { provide: LangService, useValue: {} }
+        CommonService
       ]
     })
     .compileComponents();

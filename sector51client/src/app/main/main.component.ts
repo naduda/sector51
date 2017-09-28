@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { CommonService } from '../services/common.service';
-import { LangService } from 'prNgCommon/lang/lang.service';
 import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
@@ -21,8 +20,8 @@ export class MainComponent implements OnInit, OnDestroy {
   public showAll: boolean;
   private subscription: Subscription;
 
-  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute, private modalService: ModalService,
-              public common: CommonService, public lang: LangService) {
+  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
+              private modalService: ModalService, common: CommonService) {
     this.subscription = common.user.subscribe(u => this.user = u);
   }
 
@@ -52,11 +51,11 @@ export class MainComponent implements OnInit, OnDestroy {
 
   removeUser(idUser) {
     const props = {
-      header: this.lang['attention'] + '!',
+      header: 'attention' + '!',
       headerClass: 'alert alert-danger',
-      body: this.lang['promptRemoveUserQuestion'],
-      btOK: this.lang['apply'],
-      btCancel: this.lang['cancel']
+      body: 'promptRemoveUserQuestion',
+      btOK: 'apply',
+      btCancel: 'cancel'
     };
     this.modalService.open(props, (result) =>
       this.http.delete('/api/removeUser/' + idUser)

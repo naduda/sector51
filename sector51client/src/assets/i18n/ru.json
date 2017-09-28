@@ -16,11 +16,17 @@
       "ico": "./assets/images/enFlag.png"
     }
   ],
-  "authentication": "Аутентификация",
-  "enterLogin": "Вход",
-  "login": "Логин",
-  "password": "Пароль",
-  "showAll": "Показать всех",
+  "login": {
+    "authentication": "аутентификация",
+    "button": "вход",
+    "login": "логин",
+    "logout": "выйти",
+    "error": {
+      "incorrectLogin": "Неверный пароль или логин"
+    }
+  },
+  "password": "пароль",
+  "showAll": "показать всех",
   "account": "пользователь",
   "addUser": "добавить пользователя",
   "deleteUser": "удалить пользователя",

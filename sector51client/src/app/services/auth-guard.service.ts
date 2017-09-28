@@ -9,7 +9,7 @@ import { IRole, ERole } from '../entities/common';
 
 @Injectable()
 export class CanActivateAuthGuard implements CanActivate {
-  private roles: IRole[];
+  private iroles: IRole[];
 
   constructor(private router: Router,
               private auth: AuthenticationService,
@@ -30,11 +30,12 @@ export class CanActivateAuthGuard implements CanActivate {
       }
       return this.common.currentUser
         .flatMap(user => this.http.get<any[]>('/api/getRoles'))
-        .do(pairs => this.roles = pairs.map(pair => { return {id: +pair['key'], name: pair['value']}; }))
+        .do(pairs => this.iroles = pairs.map(pair => { return {id: +pair['key'], name: pair['value']}; }))
         .flatMap(user => this.http.get<Profile>('/api/profile/' + this.auth.username))
         .do(user => Observable.of(this.setPermissions(route, state, user)))
         .map(user => {
           this.common.profile = user;
+          this.common.profile['iroles'] = this.iroles;
           if (!user['permited']) {
             this.router.navigate(['/']);
           }
@@ -53,7 +54,7 @@ export class CanActivateAuthGuard implements CanActivate {
   private setPermissions(route: ActivatedRouteSnapshot, state: RouterStateSnapshot, user: Profile) {
     let authorities = user ? user['roles'] : false;
     authorities = authorities ? authorities.toLowerCase() : '';
-    const mPermission = this.roles.filter(r => authorities.includes(r.name.toLowerCase())).sort((a, b) => a.id - b.id)[0];
+    const mPermission = this.iroles.filter(r => authorities.includes(r.name.toLowerCase())).sort((a, b) => a.id - b.id)[0];
     user.role = +Object.keys(ERole).find(r => mPermission.id === +r);
     if (state.url.endsWith('registration')) {
       user['permited'] = mPermission.id <= ERole.ADMIN;

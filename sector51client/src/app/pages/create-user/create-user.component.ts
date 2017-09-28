@@ -14,7 +14,7 @@ import { IRole, ERole } from '../../entities/common';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
-  public roles: IRole[];
+  public allRoles: IRole[];
   public user: Profile;
   private idUser: number;
 
@@ -36,7 +36,7 @@ export class CreateUserComponent implements OnInit {
       }
       this.user = user;
     })
-    .do(user => this.roles = this.common.profile['iroles'])
+    .do(user => this.allRoles = this.common.profile['iroles'])
     .subscribe(user => this.user['password'] = this.user['password2'] = '');
   }
 

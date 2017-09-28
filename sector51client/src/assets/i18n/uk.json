@@ -16,9 +16,15 @@
       "ico": "./assets/images/enFlag.png"
     }
   ],
-  "authentication": "автентифікація",
-  "enterLogin": "вхід",
-  "login": "логін",
+  "login": {
+    "authentication": "автентифікація",
+    "button": "вхід",
+    "login": "логін",
+    "logout": "вийти",
+    "error": {
+      "incorrectLogin": "Невірний пароль або логін"
+    }
+  },
   "password": "пароль",
   "showAll": "показати всіх",
   "account": "користувач",

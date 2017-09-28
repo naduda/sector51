@@ -1,7 +1,8 @@
 <div class="container-fluid">
-  <div class="row" *ngIf="locales">
+  <div class="row" *ngIf="locales && currentLang">
     <div *ngIf="!common.isLogin">
-      <sector51-toolbar [locales]="locales"></sector51-toolbar>
+      <sector51-toolbar [locales]="locales" [currentLang]="currentLang" (onLangChange)="onLangChange($event)">
+      </sector51-toolbar>
     </div>
     <div class="outlet col-12">
       <router-outlet></router-outlet>

@@ -1,20 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { LoginComponent } from './login.component';
-import { LangService } from 'prNgCommon/lang/lang.service';
 import { AuthenticationService } from '../services/authentication.service';
-import { TranslateServiceStub } from '../testing/TranslateServiceStub';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
+import { By } from '@angular/platform-browser';
 
 describe('LoginComponent', () => {
-  const LangServiceStub = {
-    authentication: 'authentication'
-  };
-  const AuthenticationServiceStub = {
-    logout: () => {}
-  };
+  const ne = (css: string) => fixture.debugElement.query(By.css(css)).nativeElement;
+  const LangServiceStub = { authentication: 'authentication' };
+  const AuthenticationServiceStub = { logout: () => {} };
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
@@ -23,9 +18,7 @@ describe('LoginComponent', () => {
       declarations: [ LoginComponent, TranslatePipeStub ],
       imports: [ FormsModule ],
       providers: [
-        { provide: LangService, useValue: LangServiceStub },
-        { provide: AuthenticationService, useValue: AuthenticationServiceStub },
-        { provide: TranslateService, useClass: TranslateServiceStub }
+        { provide: AuthenticationService, useValue: AuthenticationServiceStub }
       ]
     })
     .compileComponents();

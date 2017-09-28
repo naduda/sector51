@@ -9,8 +9,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { CommonModule } from 'prNgCommon/common.module';
-import { LangService } from 'prNgCommon/lang/lang.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
@@ -56,14 +54,12 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     NgbModule.forRoot(),
-    CommonModule,
     Sector51RoutingModule
   ],
   entryComponents: [ModalComponent],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    LangService,
     ModalService,
     CanActivateAuthGuard,
     AuthenticationService,

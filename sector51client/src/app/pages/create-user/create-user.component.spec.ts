@@ -36,7 +36,7 @@ describe('CreateUserComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateUserComponent);
     component = fixture.componentInstance;
-    component.roles = [];
+    component.allRoles = [];
     fixture.detectChanges();
   });
 

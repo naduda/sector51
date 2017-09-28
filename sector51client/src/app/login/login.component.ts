@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
-import { LangService } from 'prNgCommon/lang/lang.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { Profile } from '../entities/profile';
 
@@ -15,8 +13,7 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(public lang: LangService, translate: TranslateService,
-    private auth: AuthenticationService) {}
+  constructor(private auth: AuthenticationService) {}
 
   ngOnInit() {
     this.auth.logout();
@@ -31,7 +28,7 @@ export class LoginComponent implements OnInit {
       if (result === true) {
         this.auth.navigate('main');
       } else {
-        this.error = 'Username or password is incorrect';
+        this.error = 'login.error.incorrectLogin';
         this.loading = false;
       }
     }, error => {

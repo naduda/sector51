@@ -10,13 +10,14 @@ import { ILocale, STORAGE_NAME } from 'app/entities/common';
 })
 export class AppComponent implements OnInit {
   locales: ILocale[];
+  currentLang: string;
 
-  constructor(public common: CommonService, public translate: TranslateService) {
+  constructor(public common: CommonService, private translate: TranslateService) {
     const sector = localStorage.getItem('sector');
     const locale = sector ? JSON.parse(sector).locale : undefined;
-    const localeName = locale ? locale.name : 'en';
-    translate.setDefaultLang(localeName);
-    translate.use(localeName);
+    this.currentLang = locale ? locale.name : 'en';
+    translate.setDefaultLang(this.currentLang);
+    translate.use(this.currentLang);
     translate.onLangChange.subscribe((e: LangChangeEvent) => {
       const key: any = localStorage.getItem(STORAGE_NAME);
       const value = key ? JSON.parse(key) : new Object();
@@ -28,5 +29,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translate.get('locale')
       .subscribe(locales => this.locales = locales);
+  }
+
+  onLangChange(lang: string) {
+    this.translate.use(lang);
   }
 }

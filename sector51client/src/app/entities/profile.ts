@@ -11,6 +11,6 @@ export class Profile {
   role: ERole;
 
   constructor() {
-    this.authorities = '';
+    this.authorities = ERole[ERole.USER];
   }
 }

@@ -11,18 +11,14 @@
     <div class="dropdown-menu">
       <a [routerLink]="['/profile', common.profile.login]" class="dropdown-item pl-2 pr-2">
         <i class="fa fa-fw fa-user"></i>
-        <span>{{lang['profile'] | titlecase}}</span>
+        <span>{{'profile' | translate | titlecase}}</span>
       </a>
       <a href="#" class="dropdown-item pl-2 pr-2" (click)="auth.logout()">
         <i class="fa fa-fw fa-sign-out"></i>
-        <span>Logout</span>
+        <span>{{'login.logout' | translate | titlecase}}</span>
       </a>
     </div>
   </div>
-  <!-- <app-lang [storageName]="'sector'"
-            [apiLocales]="'./assets/lang/locales.json'"
-            [apiLang]="'./assets/lang/%s_lang.json'">
-  </app-lang> -->
   <div ngbDropdown class="d-inline-block nav-link">
     <span class="btn btn-sm" ngbDropdownToggle [hidden]="!locale.ico">
       <img src="{{locale.ico}}" alt="{{locale.name}}">

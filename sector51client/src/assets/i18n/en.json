@@ -16,9 +16,15 @@
       "ico": "./assets/images/enFlag.png"
     }
   ],
-  "authentication": "Authentication",
-  "enterLogin": "Login",
-  "login": "login",
+  "login": {
+    "authentication": "Authentication",
+    "button": "Login",
+    "login": "login",
+    "logout": "logout",
+    "error": {
+      "incorrectLogin": "Username or password is incorrect"
+    }
+  },
   "password": "password",
   "showAll": "show All",
   "account": "account",
