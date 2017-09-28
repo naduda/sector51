@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ScannerService
 {
@@ -13,7 +14,11 @@ namespace ScannerService
   {
     private const string ScannerName = "UserScanner";
     private static Logger logger = LogManager.GetCurrentClassLogger();
-
+    private string _loggedUser = String.Empty;
+    
+    private CancellationTokenSource _cts;
+    private Task serviceTask;
+    
     public MyService()
     {
       InitializeComponent();
@@ -22,46 +27,55 @@ namespace ScannerService
     
     protected override void OnStart(string[] args)
     {
-      OnConsoleStart();
+      _cts = new CancellationTokenSource();
+      serviceTask = Task.Factory.StartNew(() => Idle());
     }
 
     protected override void OnStop()
     {
-      OnConsoleStop();
+      _cts.Cancel();
     }
 
-    protected override void OnSessionChange(SessionChangeDescription changeDescription)
-    {
-      logger.Info("Session changed");
-
-      if (changeDescription.Reason == SessionChangeReason.SessionLogon)
-      {
-        base.OnSessionChange(changeDescription);
-        KillAllScanners();
-        Thread.Sleep(1000);
-        var user = Session.Get(changeDescription.SessionId);
-        if (user != null)
-        {
-          Debugger.Launch();
-          logger.Info("User {0} logged in.", user.Name);
-          LaunchScannerForLoggedUser();
-        }
-      }
-
-      base.OnSessionChange(changeDescription);
-    }
-    
-    public void OnConsoleStart()
+    private void Idle()
     {
       logger.Info("Scanner service started");
       KillAllScanners();
-      LaunchScannerForLoggedUser();
-    }
 
-    public void OnConsoleStop()
-    {
+      for (;;)
+      {
+        string loggedInUserName = ProcessAsCurrentUser.GetLoggedInUserName();
+        if(_loggedUser != loggedInUserName)
+        {
+          KillAllScanners();
+          _loggedUser = loggedInUserName;
+        }
+        
+        var runUserService = Process.GetProcesses()
+                 .Where(p => p.ProcessName.StartsWith(ScannerName))
+                 .FirstOrDefault();
+
+        if (runUserService == null && !String.IsNullOrEmpty(_loggedUser))
+          LaunchScannerForLoggedUser();
+        
+        if (_cts.IsCancellationRequested)
+          break;
+
+        _cts.Token.WaitHandle.WaitOne(1000);
+      }
+
       KillAllScanners();
       logger.Info("Scanner service stopped");
+    }
+    
+    public Task StartInConsole()
+    {
+      OnStart(new string[] { });
+      return serviceTask;
+    }
+    
+    public void StopInConsole()
+    {
+      OnStop();
     }
     
     private string GetScannerAppPath()
@@ -86,17 +100,24 @@ namespace ScannerService
 
     private void KillAllScanners()
     {
-      foreach (var service in Process.GetProcesses().Where(p => p.ProcessName.StartsWith(ScannerName)))
+      try
       {
-        try
+        foreach (var service in Process.GetProcesses().Where(p => p.ProcessName.StartsWith(ScannerName)))
         {
-          service.Kill();
-          logger.Info("Kill {0}, id={1}", service.ProcessName, service.Id);
+          try
+          {
+            service.Kill();
+            logger.Info("Kill {0}, id={1}", service.ProcessName, service.Id);
+          }
+          catch (Exception ex)
+          {
+            logger.Error(ex, "Kill failed {0}, id={1}", service.ProcessName, service.Id);
+          }
         }
-        catch(Exception ex)
-        {
-          logger.Error(ex, "Kill failed {0}, id={1}", service.ProcessName, service.Id);
-        }
+      }
+      catch(Exception ex)
+      {
+
       }
     }
   }
