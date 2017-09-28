@@ -2,10 +2,12 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { Sector51RoutingModule } from './app-routing.module';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { CommonModule } from 'prNgCommon/common.module';
 import { LangService } from 'prNgCommon/lang/lang.service';
@@ -26,6 +28,10 @@ import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { PermissionsComponent } from './pages/permissions/permissions.component';
 import { ModalComponent } from './pages/modal/modal.component';
 
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +48,13 @@ import { ModalComponent } from './pages/modal/modal.component';
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+      }
+    }),
     NgbModule.forRoot(),
     CommonModule,
     Sector51RoutingModule

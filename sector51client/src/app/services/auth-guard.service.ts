@@ -32,7 +32,6 @@ export class CanActivateAuthGuard implements CanActivate {
         .flatMap(user => this.http.get<any[]>('/api/getRoles'))
         .do(pairs => this.roles = pairs.map(pair => { return {id: +pair['key'], name: pair['value']}; }))
         .flatMap(user => this.http.get<Profile>('/api/profile/' + this.auth.username))
-        .do(data => console.log(data))
         .do(user => Observable.of(this.setPermissions(route, state, user)))
         .map(user => {
           this.common.profile = user;

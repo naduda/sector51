@@ -26,13 +26,15 @@
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
     "@ng-bootstrap/ng-bootstrap": "^1.0.0-alpha.27",
+    "@ngx-translate/core": "^8.0.0",
+    "@ngx-translate/http-loader": "^2.0.0",
     "angular2-websocket": "^0.9.3",
     "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
+    "prNgCommon": "git+https://github.com/naduda/angular.git",
     "rxjs": "^5.1.0",
-    "zone.js": "^0.8.4",
-    "prNgCommon": "git+https://github.com/naduda/angular.git"
+    "zone.js": "^0.8.4"
   },
   "devDependencies": {
     "@angular/cli": "^1.2.0",

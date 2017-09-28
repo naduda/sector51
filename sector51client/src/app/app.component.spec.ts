@@ -1,28 +1,35 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed, async } from '@angular/core/testing';
 import { ComponentFixture } from '@angular/core/testing';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { CommonService } from './services/common.service';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateServiceStub } from 'app/testing/TranslateServiceStub';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let app: any;
+  let component: AppComponent;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ AppComponent ],
       providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-        { provide: CommonService, useValue: {} }
+        { provide: CommonService, useValue: {} },
+        { provide: TranslateService, useClass: TranslateServiceStub }
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    }).compileComponents();
+      schemas: [ NO_ERRORS_SCHEMA ]
+    })
+    .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     app = fixture.debugElement.componentInstance;
   });
 
@@ -31,7 +38,6 @@ describe('AppComponent', () => {
   }));
 
   it('should have 2 div in row', async(() => {
-    fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelectorAll('.row > div').length).toEqual(2);
   }));

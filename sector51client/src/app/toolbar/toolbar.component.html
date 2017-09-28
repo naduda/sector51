@@ -19,10 +19,24 @@
       </a>
     </div>
   </div>
-  <app-lang [storageName]="'sector'"
+  <!-- <app-lang [storageName]="'sector'"
             [apiLocales]="'./assets/lang/locales.json'"
             [apiLang]="'./assets/lang/%s_lang.json'">
-  </app-lang>
+  </app-lang> -->
+  <div ngbDropdown class="d-inline-block nav-link">
+    <span class="btn btn-sm" ngbDropdownToggle [hidden]="!locale.ico">
+      <img src="{{locale.ico}}" alt="{{locale.name}}">
+      <span>{{locale.text}}</span>
+    </span>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+      <button *ngFor="let l of locales"
+        class="dropdown-item" (click)="changeLang(l)">
+        <img src="{{l.ico}}" alt="{{l.name | uppercase}}"
+          style="height: auto; width: 1rem;">
+        <span>{{l.text}}</span>
+      </button>
+    </div>
+  </div>
 </nav>
 
 <div class="sidenav bg-faded"

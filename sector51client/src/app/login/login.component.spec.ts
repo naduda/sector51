@@ -1,9 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { LoginComponent } from './login.component';
-import { FormsModule } from '@angular/forms';
 import { LangService } from 'prNgCommon/lang/lang.service';
-import { AuthenticationService } from 'app/services/authentication.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { TranslateServiceStub } from '../testing/TranslateServiceStub';
+import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 
 describe('LoginComponent', () => {
   const LangServiceStub = {
@@ -17,15 +20,12 @@ describe('LoginComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        LoginComponent,
-      ],
-      imports: [
-        FormsModule,
-      ],
+      declarations: [ LoginComponent, TranslatePipeStub ],
+      imports: [ FormsModule ],
       providers: [
-        {provide: LangService, useValue: LangServiceStub},
-        {provide: AuthenticationService, useValue: AuthenticationServiceStub}
+        { provide: LangService, useValue: LangServiceStub },
+        { provide: AuthenticationService, useValue: AuthenticationServiceStub },
+        { provide: TranslateService, useClass: TranslateServiceStub }
       ]
     })
     .compileComponents();

@@ -1,6 +1,6 @@
-<div class="col-12 whole-window" *ngIf="lang">
+<div class="col-12 whole-window">
   <div class="col-md-6 col-sm-8">
-    <h2 class="text-center mt-2 mb-4">{{lang['authentication'] | titlecase}}</h2>
+    <h2 class="text-center mt-2 mb-4">{{'authentication' | translate | titlecase}}</h2>
 
     <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
       <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">

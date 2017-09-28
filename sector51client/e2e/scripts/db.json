@@ -1,10 +1,10 @@
 {
   "login": {
-    "token": "1506519630587_1506520258139"
+    "token": "1506592556372_1506593184397"
   },
   "usersecurity": [
     {
-      "created": 1506519630587,
+      "created": 1506592556372,
       "username": "owner",
       "password": "owner",
       "roles": "OWNER"
@@ -12,7 +12,7 @@
   ],
   "userinfo": [
     {
-      "created": 1506519630587,
+      "created": 1506592556372,
       "name": "NameOwner",
       "surname": "SurnameOwner",
       "phone": "+380501111112",

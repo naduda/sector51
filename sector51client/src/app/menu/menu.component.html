@@ -2,9 +2,9 @@
   <div class="collapse navbar-collapse show">
     <div class="navbar-nav">
       <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link" ngbDropdownToggle>{{lang['account'] | uppercase}}</i>
+        <i class="nav-item nav-link" ngbDropdownToggle>{{'account' | translate | uppercase}}</i>
         <div class="dropdown-menu">
-          <a routerLink="/registration" class="dropdown-item">{{lang['addUser'] | titlecase}}</a>
+          <a routerLink="/registration" class="dropdown-item">{{'addUser' | translate | titlecase}}</a>
           <a [routerLink]="['/permissions', currentUser['created']]" class="dropdown-item">
             {{lang['permissions'] | titlecase}}
           </a>

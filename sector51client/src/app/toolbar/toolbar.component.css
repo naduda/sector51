@@ -25,6 +25,11 @@ nav {
   display: none;
 }
 
+*[ngbDropdownToggle]:hover, button:hover, i:hover { cursor: pointer; }
+.dropdown-menu { min-width: 0; }
+button { font-size: 0.8rem; padding-left: 0.5rem; }
+img { width: 1.25rem; margin-right: 0.25rem; }
+
 @media (max-width: 576px) {
   .navbar-brand > i { display: inline-block; }
   .sidenav {
