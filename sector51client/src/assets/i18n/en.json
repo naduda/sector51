@@ -17,7 +17,7 @@
     }
   ],
   "login": {
-    "authentication": "Authentication",
+    "title": "Authentication",
     "button": "Login",
     "login": "login",
     "logout": "logout",

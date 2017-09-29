@@ -39,16 +39,13 @@
   },
   "lint": [
     {
-      "project": "src/tsconfig.app.json",
-      "exclude": "**/prNgCommon/**/*"
+      "project": "src/tsconfig.app.json"
     },
     {
-      "project": "src/tsconfig.spec.json",
-      "exclude": "**/prNgCommon/**/*"
+      "project": "src/tsconfig.spec.json"
     },
     {
-      "project": "e2e/tsconfig.e2e.json",
-      "exclude": "**/prNgCommon/**/*"
+      "project": "e2e/tsconfig.e2e.json"
     }
   ],
   "test": {

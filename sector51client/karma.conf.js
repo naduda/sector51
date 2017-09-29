@@ -16,7 +16,17 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     files: [
-      { pattern: './src/test.ts', watched: false }
+      { pattern: './src/test.ts', watched: false },
+      "./src/styles.css",
+      "./node_modules/font-awesome/css/font-awesome.css",
+      {
+        pattern: './node_modules/font-awesome/fonts/*',
+        watched: false,
+        included: false,
+        served: true,
+        nocache: false
+      },
+      "./node_modules/bootstrap/dist/css/bootstrap.min.css"
     ],
     preprocessors: {
       './src/test.ts': ['@angular/cli']
