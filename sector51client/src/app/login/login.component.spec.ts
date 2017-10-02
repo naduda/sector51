@@ -3,34 +3,23 @@ import { FormsModule } from '@angular/forms';
 
 import { LoginComponent } from './login.component';
 import { AuthenticationService } from '../services/authentication.service';
-import { TranslatePipeStub } from '../testing/TranslatePipeStub';
+import { TranslatePipeStub, Translation } from '../testing/TranslatePipeStub';
 import { By } from '@angular/platform-browser';
-import { element } from 'protractor';
+import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-export const ButtonClickEvents = {
-  left:  { button: 0 },
-  right: { button: 2 }
-};
-
-export function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClickEvents.left): void {
-  if (el instanceof HTMLElement) {
-    el.click();
-  } else {
-    el.triggerEventHandler('click', eventObj);
-  }
-}
-
 describe('LoginComponent', () => {
-  const LangServiceStub = { authentication: 'authentication' };
-  const AuthenticationServiceStub = {
-    login: (name: string, psw: string): Observable<boolean> => Observable.of(name === psw),
-    logout: () => {},
-    navigate: () => {}
-  };
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let ne: any = {};
+
+  const form: any = {};
+  const AuthenticationServiceStub = {
+    login: (name: string, psw: string): Observable<boolean> => Observable.of(name === psw),
+    logout: () => component.loading = false,
+    navigate: () => component.error = undefined
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -46,24 +35,84 @@ describe('LoginComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+    Translation.value = {
+      password: 'password',
+      login: {
+        title: 'authentification',
+        login: 'login',
+        button: 'login',
+        error: {
+          incorrectLogin: 'Login or password is incorrect.'
+        }
+      }
+    };
+    ne = (css: string) => {
+      const res = fixture.debugElement.query(By.css(css));
+      return res ? res.nativeElement : undefined;
+    };
+
+    form.title = ne('h2.text-center');
+    form.lbLogin = ne('label[for="username"]');
+    form.tbLogin = ne('input[name="username"]');
+    form.lbPassword = ne('label[for="password"]');
+    form.tbPassword = ne('input[name="password"]');
+    form.button = ne('button');
   });
 
   it('validate form', fakeAsync(() => {
-    const ne = (css: string) => fixture.debugElement.query(By.css(css)).nativeElement;
     expect(component).toBeTruthy();
-    const username  = ne('input[name="username"]');
-    const password  = ne('input[name="password"]');
-    const button = ne('button');
-    const form = ne('form');
-    setInputValue('input[name="username"]', '');
-    click(button);
+    setInputValue(form.tbLogin, '');
+    setInputValue(form.tbPassword, '');
+    form.button.click();
     fixture.detectChanges();
+    expect(ne('span.help-block.un')).toBeDefined();
+    expect(ne('span.help-block.psw')).toBeDefined();
+    expect(ne('div.alert.alert-danger')).toBeFalsy();
+
+    setInputValue(form.tbLogin, 'name');
+    form.button.click();
+    fixture.detectChanges();
+    expect(ne('span.help-block.un')).toBeFalsy();
+    expect(ne('span.help-block.psw')).toBeDefined();
+    expect(ne('div.alert.alert-danger')).toBeFalsy();
+
+    setInputValue(form.tbPassword, 'password');
+    form.button.click();
+    fixture.detectChanges();
+    expect(ne('span.help-block.un')).toBeFalsy();
+    expect(ne('span.help-block.psw')).toBeFalsy();
+    expect(ne('div.alert.alert-danger')).toBeDefined();
+
+    setInputValue(form.tbPassword, 'name');
+    form.button.click();
+    fixture.detectChanges();
+    expect(ne('span.help-block.un')).toBeFalsy();
+    expect(ne('span.help-block.psw')).toBeFalsy();
+    expect(ne('div.alert.alert-danger')).toBeFalsy();
+
+    expect(ne('button > i.fa.fa-spinner')).toBeDefined();
+    AuthenticationServiceStub.logout();
+    fixture.detectChanges();
+    expect(ne('button > i.fa.fa-spinner')).toBeFalsy();
   }));
 
-  function setInputValue(selector: string, value: string) {
+  it('responsive design', () => {
+    fixture.detectChanges();
+    form.element = ne('form[name="loginForm"]');
+    let expectWidth = 250;
+    switch (window.outerWidth) {
+      case 578: expectWidth = 270; break;
+      case 770: expectWidth = 325; break;
+      case 994: expectWidth = 360; break;
+      case 1202: expectWidth = 345; break;
+    }
+    expect(form.element.offsetWidth).toBeGreaterThan(expectWidth);
+    expect(form.element.offsetWidth).toBeLessThan(expectWidth + 10);
+  });
+
+  function setInputValue(input: any, value: string) {
     fixture.detectChanges();
     tick();
-    const input = fixture.debugElement.query(By.css(selector)).nativeElement;
     input.value = value;
     input.dispatchEvent(new Event('input'));
     tick();
