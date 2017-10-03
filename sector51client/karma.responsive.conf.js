@@ -51,7 +51,29 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: [ 'Chrome' ],
-    singleRun: false
+    browsers: [ 'chrome540', 'chrome576', 'chrome768', 'chrome992', 'chrome1200' ],
+    singleRun: false,
+    customLaunchers: {
+      chrome540: {
+        base: 'Chrome',
+        flags: [ '--window-size=540,960' ]
+      },
+      chrome576: {
+        base: 'Chrome',
+        flags: [ '--window-size=576,750' ]
+      },
+      chrome768: {
+        base: 'Chrome',
+        flags: [ '--window-size=768,750' ]
+      },
+      chrome992: {
+        base: 'Chrome',
+        flags: [ '--window-size=992,750' ]
+      },
+      chrome1200: {
+        base: 'Chrome',
+        flags: [ '--window-size=1200,750' ]
+      }
+    }
   });
 };

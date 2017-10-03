@@ -1,18 +1,24 @@
 {
   "login": {
-    "token": "1506943628684_1506944255974"
+    "token": "1507038618134_1507039245302"
   },
   "usersecurity": [
     {
-      "created": 1506943628684,
+      "created": 1507038618134,
       "username": "owner",
       "password": "owner",
       "roles": "OWNER"
+    },
+    {
+      "created": 1507038658683,
+      "username": "login",
+      "password": "psw",
+      "roles": "ADMIN"
     }
   ],
   "userinfo": [
     {
-      "created": 1506943628684,
+      "created": 1507038618134,
       "name": "NameOwner",
       "surname": "SurnameOwner",
       "phone": "+380501111112",
@@ -20,6 +26,14 @@
       "card": "0123456789876",
       "roles": "OWNER",
       "login": "owner"
+    },
+    {
+      "created": 1507038658683,
+      "name": "name",
+      "surname": "surname",
+      "phone": "+380502222225",
+      "email": "ng@qa.test",
+      "card": 2
     }
   ],
   "roles": [

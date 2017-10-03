@@ -3,7 +3,7 @@
     <label for="login" class="col-3 col-form-label">Login</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="text" value="" name="login" [(ngModel)]="user.login" pattern="[A-Za-z0-9]{1,10}" required>
+        type="text" name="login" [(ngModel)]="user.login" pattern="[A-Za-z0-9]{1,10}" required>
     </div>
   </div>
   <div class="form-group row">
@@ -33,7 +33,7 @@
     <div class="col-9">
       <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
         type="email" name="email" [(ngModel)]="user.email"
-        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
     </div>
   </div>
   <div class="form-group row">
@@ -57,7 +57,7 @@
     <label for="card" class="col-3 col-form-label">Card</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="number" value="42" name="card" [(ngModel)]="user.card" required>
+        type="number" name="card" [(ngModel)]="user.card" required>
     </div>
   </div>
   <div class="form-group row">
@@ -68,7 +68,7 @@
         <div class="form-check" *ngFor="let r of allRoles">
           <label class="form-check-label ml-2">
             <input class="form-check-input" type="checkbox" [checked]="this.user.authorities.indexOf(r.name) != -1"
-              (change)="changeRole(r.name); dropAutorities.open();">
+              (change)="changeRole(r.name); dropAutorities.open();" [value]="r.name">
             <span class="mt-2">{{r.name | uppercase}}</span>
           </label>
         </div>

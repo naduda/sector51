@@ -2,6 +2,8 @@ const jsonServer = require('json-server');
 const server = jsonServer.create();
 const router = jsonServer.router('./e2e/scripts/db.json');
 const middlewares = jsonServer.defaults();
+const userScript = require('./user.js');
+const roleScript = require('./role.js');
 
 const isAuthorized = (req) => {
   if (req.url === '/api/login') {
@@ -29,15 +31,7 @@ server.use((req, res, next) => {
 
 server.use(jsonServer.bodyParser);
 server.use((req, res, next) => {
-  if (req.method === 'POST') {
-    if (req.url === '/api/login') {
-      const data = req.body;
-      const user = router.db.get('usersecurity')
-        .filter({ username: data.username, password: data.password }).value()[0];
-      req.body = {token: user ? (user.created + '_' + (new Date().valueOf() + 600000)) : ''};
-      router.db.set('login', req.body).write();
-    }
-  } else if (req.method === 'GET') {
+  if (req.method === 'GET') {
     if (req.url.includes('/api/profile/')) {
       const name = req.url.substring(req.url.lastIndexOf('/') + 1);
       const user = router.db.get('usersecurity')
@@ -49,48 +43,48 @@ server.use((req, res, next) => {
       res.jsonp(userInfo);
       return;
     }
+    if (req.url.includes('/api/getUserById/')) {
+      const id = req.url.substring(req.url.lastIndexOf('/') + 1);
+      const userInfo = router.db.get('userinfo')
+        .filter({ created: id }).value();
+      if (userInfo.length < 1) {
+        res.jsonp(null);
+        return;
+      }
+      const user = router.db.get('usersecurity')
+        .filter({ created: id }).value()[0];
+      userInfo[0].roles = user.roles;
+      userInfo[0].login = user.username;
+      res.jsonp(userInfo);
+      return;
+    }
   }
   next()
 });
 
-server.get('/api/getRoles', (req, res) => {
-  res.jsonp(router.db.get('roles'));
+server.get('/api/getRoles', (req, res) => res.jsonp(roleScript.roles()));
+server.get('/api/getUsers', (req, res) => res.jsonp(userScript.users()));
+
+server.post('/api/login', (req, res) => {
+  const data = req.body;
+  const user = router.db.get('usersecurity')
+    .filter({ username: data.username, password: data.password }).value()[0];
+  req.body = {token: user ? (user.created + '_' + (new Date().valueOf() + 600000)) : ''};
+  router.db.set('login', req.body).write();
+  res.jsonp(req.body);
 });
 
-server.get('/api/getUsers', (req, res) => {
-  const users = router.db.get('userinfo').value();
-  const usersSec = router.db.get('usersecurity').value();
-  for(let u of users) {
-    const us = usersSec.find(e => e.created === u.created);
-    u.login = us.username;
-    u.roles = us.roles;
-  }
-  res.jsonp(users);
+server.post('/api/createUser', (req, res) => {
+  userScript.createUser(req.body);
+  res.jsonp({ message: 'User ' + req.body.login + ' created.', result: 'OK' });
 });
 
 server.use('/api', router);
 server.listen(3000, () => {
   console.log('JSON Server is running');
-  const createdTime = new Date().valueOf();
-  router.db.set('login', {}).write();
-  router.db.set('usersecurity', [{
-    'created': createdTime,
-    'username': 'owner',
-    'password': 'owner',
-    'roles': 'OWNER'
-  }]).write();
-  router.db.set('userinfo', [{
-    'created': createdTime,
-    'name': 'NameOwner',
-    'surname': 'SurnameOwner',
-    'phone': '+380501111112',
-    'email': 'owner@e2e.com',
-    'card': '0123456789876'
-  }]).write();
-  router.db.set('roles', [
-    {"key": 0,"value": "OWNER"},
-    {"key": 10,"value": "ADMIN"},
-    {"key": 100,"value": "USER"}
-  ]).write();
+
+  userScript.init(router.db);
+  roleScript.init(router.db);
+  
   console.log('Database created.')
 });

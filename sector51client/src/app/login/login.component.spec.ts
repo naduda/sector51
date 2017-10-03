@@ -96,20 +96,6 @@ describe('LoginComponent', () => {
     expect(ne('button > i.fa.fa-spinner')).toBeFalsy();
   }));
 
-  it('responsive design', () => {
-    fixture.detectChanges();
-    form.element = ne('form[name="loginForm"]');
-    let expectWidth = 250;
-    switch (window.outerWidth) {
-      case 578: expectWidth = 270; break;
-      case 770: expectWidth = 325; break;
-      case 994: expectWidth = 360; break;
-      case 1202: expectWidth = 345; break;
-    }
-    expect(form.element.offsetWidth).toBeGreaterThan(expectWidth);
-    expect(form.element.offsetWidth).toBeLessThan(expectWidth + 10);
-  });
-
   function setInputValue(input: any, value: string) {
     fixture.detectChanges();
     tick();
