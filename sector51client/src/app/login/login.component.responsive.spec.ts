@@ -14,9 +14,7 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   const AuthenticationServiceStub = {
-    login: (name: string, psw: string): Observable<boolean> => Observable.of(name === psw),
     logout: () => component.loading = false,
-    navigate: () => component.error = undefined
   };
 
   beforeEach(async(() => {
