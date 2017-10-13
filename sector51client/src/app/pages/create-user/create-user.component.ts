@@ -15,6 +15,7 @@ import { IRole, ERole } from '../../entities/common';
 })
 export class CreateUserComponent implements OnInit {
   public allRoles: IRole[];
+  public created: boolean;
   public user: Profile;
   private idUser: number;
 
@@ -31,6 +32,7 @@ export class CreateUserComponent implements OnInit {
     .do(user => {
       if (!user) {
         user = new Profile();
+        this.created = true;
       } else {
         user.authorities = user['roles'];
       }
@@ -62,9 +64,9 @@ export class CreateUserComponent implements OnInit {
 
   validate(psw2: NgModel) {
     if (this.user['password'] !== this.user['password2']) {
-      psw2.control.setValue('');
+      psw2.control.setValue(this.created ? '' : this.user['password']);
     }
-    return this.user['password'] === this.user['password2'] && this.user.authorities.length > 0;
+    return (this.user['password'] === this.user['password2'] || !this.created) && this.user.authorities.length > 0;
   }
 
   onSubmit() {
@@ -77,7 +79,7 @@ export class CreateUserComponent implements OnInit {
         .subscribe(data => this.location.back());
     } else {
       this.http.put('/api/updateUser', this.user)
-      .subscribe(data => this.location.back());
+        .subscribe(data => this.location.back());
     }
   }
 }

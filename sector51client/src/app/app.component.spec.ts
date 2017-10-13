@@ -8,6 +8,12 @@ import { CommonService } from './services/common.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateServiceStub } from 'app/testing/TranslateServiceStub';
 
+export class CommonServiceStub {
+  static isLoginValue = true;
+  get isLogin() {
+    return CommonServiceStub.isLoginValue;
+  }
+}
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let app: any;
@@ -18,7 +24,7 @@ describe('AppComponent', () => {
       declarations: [ AppComponent ],
       providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-        { provide: CommonService, useValue: {} },
+        { provide: CommonService, useClass: CommonServiceStub },
         { provide: TranslateService, useClass: TranslateServiceStub }
       ],
       schemas: [ NO_ERRORS_SCHEMA ]
@@ -39,6 +45,9 @@ describe('AppComponent', () => {
 
   it('should have 2 div in row', async(() => {
     const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelectorAll('.row > div').length).toEqual(1);
+    CommonServiceStub.isLoginValue = false;
+    fixture.detectChanges();
     expect(compiled.querySelectorAll('.row > div').length).toEqual(2);
   }));
 });

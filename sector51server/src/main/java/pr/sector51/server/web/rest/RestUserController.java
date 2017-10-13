@@ -24,6 +24,11 @@ public class RestUserController extends ARestController {
     return (List<ERole>) userSecurity.getAuthorities();
   }
 
+  private ERole GetCurrentUserRole() {
+    List<ERole> permissions = getPermissionsByContext();
+    return permissions.stream().sorted(Comparator.comparingInt(a -> a.value)).findFirst().get();
+  }
+
   @RequestMapping("/profile/{name}")
   @ResponseBody
   public UserInfo profile(@PathVariable("name") String name) {
@@ -53,15 +58,14 @@ public class RestUserController extends ARestController {
 
   @RequestMapping(value = "/createUser", method = RequestMethod.POST)
   public Sector51Result createUser(@RequestBody UserInfo user) {
-    Collection<? extends GrantedAuthority> permissions = getPermissionsByContext();
-    ESector51Result result = permissions.contains(2) ? userDao.insertUser(user) : ESector51Result.NOT_DENIED;
+    ERole mRole = GetCurrentUserRole();
+    ESector51Result result = mRole.value <= ERole.ADMIN.value ?  userDao.insertUser(user) : ESector51Result.NOT_DENIED;
     return new Sector51Result(result);
   }
 
   @RequestMapping(value = "/updateUser", method = RequestMethod.PUT)
   public Sector51Result updateUser(@RequestBody UserInfo user) {
-    List<ERole> permissions = getPermissionsByContext();
-    ERole mRole = permissions.stream().sorted(Comparator.comparingInt(a -> a.value)).findFirst().get();
+    ERole mRole = GetCurrentUserRole();
     ESector51Result result =  mRole.value <= ERole.ADMIN.value ? userDao.updateUser(user) : ESector51Result.NOT_DENIED;
     return new Sector51Result(result);
   }

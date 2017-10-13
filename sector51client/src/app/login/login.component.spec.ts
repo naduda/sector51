@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
 import { LoginComponent } from './login.component';
@@ -8,6 +8,7 @@ import { By } from '@angular/platform-browser';
 import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { setInputValue } from '../testing/commonTest';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -53,37 +54,37 @@ describe('LoginComponent', () => {
 
     form.title = ne('h2.text-center');
     form.lbLogin = ne('label[for="username"]');
-    form.tbLogin = ne('input[name="username"]');
+    form.tbLogin = 'input[name="username"]';
     form.lbPassword = ne('label[for="password"]');
-    form.tbPassword = ne('input[name="password"]');
+    form.tbPassword = 'input[name="password"]';
     form.button = ne('button');
   });
 
   it('validate form', fakeAsync(() => {
     expect(component).toBeTruthy();
-    setInputValue(form.tbLogin, '');
-    setInputValue(form.tbPassword, '');
+    setInputValue(form.tbLogin, '', fixture);
+    setInputValue(form.tbPassword, '', fixture);
     form.button.click();
     fixture.detectChanges();
     expect(ne('span.help-block.un')).toBeDefined();
     expect(ne('span.help-block.psw')).toBeDefined();
     expect(ne('div.alert.alert-danger')).toBeFalsy();
 
-    setInputValue(form.tbLogin, 'name');
+    setInputValue(form.tbLogin, 'name', fixture);
     form.button.click();
     fixture.detectChanges();
     expect(ne('span.help-block.un')).toBeFalsy();
     expect(ne('span.help-block.psw')).toBeDefined();
     expect(ne('div.alert.alert-danger')).toBeFalsy();
 
-    setInputValue(form.tbPassword, 'password');
+    setInputValue(form.tbPassword, 'password', fixture);
     form.button.click();
     fixture.detectChanges();
     expect(ne('span.help-block.un')).toBeFalsy();
     expect(ne('span.help-block.psw')).toBeFalsy();
     expect(ne('div.alert.alert-danger')).toBeDefined();
 
-    setInputValue(form.tbPassword, 'name');
+    setInputValue(form.tbPassword, 'name', fixture);
     form.button.click();
     fixture.detectChanges();
     expect(ne('span.help-block.un')).toBeFalsy();
@@ -95,12 +96,4 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
     expect(ne('button > i.fa.fa-spinner')).toBeFalsy();
   }));
-
-  function setInputValue(input: any, value: string) {
-    fixture.detectChanges();
-    tick();
-    input.value = value;
-    input.dispatchEvent(new Event('input'));
-    tick();
-  }
 });

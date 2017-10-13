@@ -1,23 +1,23 @@
-<form class="mt-3" *ngIf="allRoles" #userForm="ngForm" (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)" novalidate>
+<form class="mt-3" *ngIf="allRoles" #userForm="ngForm" (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
   <div class="form-group row">
     <label for="login" class="col-3 col-form-label">Login</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" [readOnly]="!created"
         type="text" name="login" [(ngModel)]="user.login" pattern="[A-Za-z0-9]{1,10}" required>
     </div>
   </div>
   <div class="form-group row">
     <label for="name" class="col-3 col-form-label">Name</label>
     <div class="col-9">
-      <input class="form-control"  [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="text" name="name" [(ngModel)]="user.name" pattern="[A-Za-z]{1,25}" required>
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
+        type="text" name="name" [(ngModel)]="user.name" pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
     </div>
   </div>
   <div class="form-group row">
     <label for="surname" class="col-3 col-form-label">SurName</label>
     <div class="col-9">
       <input class="form-control"  [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="search" name="surname" [(ngModel)]="user.surname" pattern="[A-Za-z]{1,25}" required>
+        type="search" name="surname" [(ngModel)]="user.surname" pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
     </div>
   </div>
   <div class="form-group row">
@@ -40,14 +40,14 @@
     <label for="password" class="col-3 col-form-label">Password</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="password" name="password" [(ngModel)]="user['password']" #psw="ngModel"  [required]="!user['created']">
+        type="password" name="password" [(ngModel)]="user['password']" #psw="ngModel" [required]="created">
     </div>
   </div>
-  <div class="form-group row">
+  <div class="form-group row" [hidden]="!created">
     <label for="password2" class="col-3 col-form-label">Password2</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" 
-        type="password" name="password2" [(ngModel)]="user['password2']" #psw2="ngModel" [required]="!user['created']">
+        type="password" name="password2" [(ngModel)]="user['password2']" #psw2="ngModel" [required]="created">
     </div>
     <div class="col-9" [hidden]="psw.untouched || psw2.untouched || (psw.value === psw2.value)">
       <small class="text-danger">Passwords aren't equal</small>
@@ -57,7 +57,7 @@
     <label for="card" class="col-3 col-form-label">Card</label>
     <div class="col-9">
       <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="number" name="card" [(ngModel)]="user.card" required>
+        type="text" name="card" [(ngModel)]="user.card" pattern="[0-9]{1,15}" required>
     </div>
   </div>
   <div class="form-group row">
