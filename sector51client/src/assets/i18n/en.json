@@ -25,6 +25,9 @@
       "incorrectLogin": "Username or password is incorrect"
     }
   },
+  "frmProfile": {
+    "difPasswords": "Passwords aren't equal"
+  },
   "password": "password",
   "showAll": "show All",
   "account": "account",

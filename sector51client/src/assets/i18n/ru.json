@@ -25,6 +25,9 @@
       "incorrectLogin": "Неверный пароль или логин"
     }
   },
+  "frmProfile": {
+    "difPasswords": "Разные пароли"
+  },
   "password": "пароль",
   "showAll": "показать всех",
   "account": "пользователь",

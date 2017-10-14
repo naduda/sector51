@@ -1,3 +1,8 @@
+form {
+    max-width: 540px;
+    border: 1px solid #292b2c;
+}
+
 .nav-item.nav-link:hover {
     cursor: pointer;
     background-color: #eee;

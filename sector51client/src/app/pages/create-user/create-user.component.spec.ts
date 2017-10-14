@@ -12,7 +12,8 @@ import { Profile } from '../../entities/profile';
 import { Observable } from 'rxjs/Observable';
 import { ERole } from '../../entities/common';
 import { By } from '@angular/platform-browser';
-import { setInputValue } from 'app/testing/commonTest';
+import { setInputValue } from '../../testing/commonTest';
+import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 
 describe('CreateUserComponent', () => {
   let component: CreateUserComponent;
@@ -24,7 +25,7 @@ describe('CreateUserComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateUserComponent ],
+      declarations: [ CreateUserComponent, TranslatePipeStub ],
       imports: [
         FormsModule,
         NgbModule.forRoot(),
