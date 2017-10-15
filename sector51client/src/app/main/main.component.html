@@ -25,7 +25,7 @@
           </tbody>
         </table>
         <hr>
-        <div class="bg-faded p-2">
+        <div class="bg-faded p-2" *ngIf="permissions">
           <a [routerLink]="['/permissions', user['created']]" class="card-link text-warning">
             {{'permissions' | translate | titlecase}}
           </a>
@@ -42,7 +42,7 @@
       <ul class="list-group">
         <li class="list-group-item p-2" *ngFor="let u of users"
           [ngClass]="{'bg-info': u['created'] === selectedUserId}"
-          [ngStyle]="{'display': showAll ? 'flex' : u.active ? 'flex' : 'none'}"
+          [hidden]="!showAll && !u.active"
           (click)="changeQueryParam('user', u['created'])" [title]="u.login">
           <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active, 'text-white': u['created'] === selectedUserId}">
             {{u.surname + ' ' + u.name}}

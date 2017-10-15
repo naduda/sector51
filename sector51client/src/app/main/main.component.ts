@@ -1,11 +1,11 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
 import { CommonService } from '../services/common.service';
 import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
+import { ERole } from '../entities/common';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
@@ -13,19 +13,19 @@ import { Observable } from 'rxjs/Observable';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit {
   public selectedUserId: number;
   public user: Profile;
   public users: Profile[];
   public showAll: boolean;
-  private subscription: Subscription;
+  public permissions: boolean;
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
-              private modalService: ModalService, common: CommonService) {
-    this.subscription = common.user.subscribe(u => this.user = u);
+              private modalService: ModalService, public common: CommonService) {
   }
 
   ngOnInit() {
+    this.permissions = this.common.profile.role < ERole.USER;
     this.route.queryParams
     .do(params => {
       this.showAll = params['all'] === 'true';
@@ -34,10 +34,6 @@ export class MainComponent implements OnInit, OnDestroy {
     .flatMap(params => this.users ? Observable.of(this.users) : this.http.get<Profile[]>('/api/getUsers'))
     .do(users => this.users = users)
     .subscribe(users => this.user = users.find(u => u['created'] === this.selectedUserId));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   changeQueryParam(name: string, value: any) {

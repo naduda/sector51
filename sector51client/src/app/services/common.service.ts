@@ -8,12 +8,10 @@ import { Profile } from '../entities/profile';
 export class CommonService {
   public profile: Profile;
   public currentUser: BehaviorSubject<Profile>;
-  public user: BehaviorSubject<Profile>;
   public sidenavVisible: boolean;
 
   constructor(public router: Router) {
     this.currentUser = new BehaviorSubject(null);
-    this.user = new BehaviorSubject(null);
     router.events.subscribe(val => {
       if (val instanceof NavigationStart) {
         this.sidenavVisible = false;

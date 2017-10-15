@@ -3,17 +3,17 @@ import { FormsModule } from '@angular/forms';
 
 import { LoginComponent } from './login.component';
 import { AuthenticationService } from '../services/authentication.service';
-import { TranslatePipeStub, Translation } from '../testing/TranslatePipeStub';
+import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { By } from '@angular/platform-browser';
 import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { setInputValue } from '../testing/commonTest';
+import { ElementTools } from '../testing/commonTest';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let ne: any = {};
+  let et: ElementTools<LoginComponent>;
 
   const form: any = {};
   const AuthenticationServiceStub = {
@@ -36,64 +36,53 @@ describe('LoginComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    Translation.value = {
-      password: 'password',
-      login: {
-        title: 'authentification',
-        login: 'login',
-        button: 'login',
-        error: {
-          incorrectLogin: 'Login or password is incorrect.'
-        }
-      }
-    };
-    ne = (css: string) => {
-      const res = fixture.debugElement.query(By.css(css));
-      return res ? res.nativeElement : undefined;
-    };
+    et = new ElementTools(fixture);
 
-    form.title = ne('h2.text-center');
-    form.lbLogin = ne('label[for="username"]');
+    form.title = et.ne('h2.text-center');
+    form.lbLogin = et.ne('label[for="username"]');
     form.tbLogin = 'input[name="username"]';
-    form.lbPassword = ne('label[for="password"]');
+    form.lbPassword = et.ne('label[for="password"]');
     form.tbPassword = 'input[name="password"]';
-    form.button = ne('button');
+    form.button = et.ne('button');
+  });
+
+  it('should be created', () => {
+    expect(component).toBeTruthy();
   });
 
   it('validate form', fakeAsync(() => {
-    expect(component).toBeTruthy();
-    setInputValue(form.tbLogin, '', fixture);
-    setInputValue(form.tbPassword, '', fixture);
+    et.setInputValue(form.tbLogin, '');
+    et.setInputValue(form.tbPassword, '');
     form.button.click();
     fixture.detectChanges();
-    expect(ne('span.help-block.un')).toBeDefined();
-    expect(ne('span.help-block.psw')).toBeDefined();
-    expect(ne('div.alert.alert-danger')).toBeFalsy();
+    expect(et.ne('span.help-block.un')).toBeDefined();
+    expect(et.ne('span.help-block.psw')).toBeDefined();
+    expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
-    setInputValue(form.tbLogin, 'name', fixture);
+    et.setInputValue(form.tbLogin, 'name');
     form.button.click();
     fixture.detectChanges();
-    expect(ne('span.help-block.un')).toBeFalsy();
-    expect(ne('span.help-block.psw')).toBeDefined();
-    expect(ne('div.alert.alert-danger')).toBeFalsy();
+    expect(et.ne('span.help-block.un')).toBeFalsy();
+    expect(et.ne('span.help-block.psw')).toBeDefined();
+    expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
-    setInputValue(form.tbPassword, 'password', fixture);
+    et.setInputValue(form.tbPassword, 'password');
     form.button.click();
     fixture.detectChanges();
-    expect(ne('span.help-block.un')).toBeFalsy();
-    expect(ne('span.help-block.psw')).toBeFalsy();
-    expect(ne('div.alert.alert-danger')).toBeDefined();
+    expect(et.ne('span.help-block.un')).toBeFalsy();
+    expect(et.ne('span.help-block.psw')).toBeFalsy();
+    expect(et.ne('div.alert.alert-danger')).toBeDefined();
 
-    setInputValue(form.tbPassword, 'name', fixture);
+    et.setInputValue(form.tbPassword, 'name');
     form.button.click();
     fixture.detectChanges();
-    expect(ne('span.help-block.un')).toBeFalsy();
-    expect(ne('span.help-block.psw')).toBeFalsy();
-    expect(ne('div.alert.alert-danger')).toBeFalsy();
+    expect(et.ne('span.help-block.un')).toBeFalsy();
+    expect(et.ne('span.help-block.psw')).toBeFalsy();
+    expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
-    expect(ne('button > i.fa.fa-spinner')).toBeDefined();
+    expect(et.ne('button > i.fa.fa-spinner')).toBeDefined();
     AuthenticationServiceStub.logout();
     fixture.detectChanges();
-    expect(ne('button > i.fa.fa-spinner')).toBeFalsy();
+    expect(et.ne('button > i.fa.fa-spinner')).toBeFalsy();
   }));
 });

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { LoginComponent } from './login.component';
 import { AuthenticationService } from '../services/authentication.service';
-import { TranslatePipeStub, Translation } from '../testing/TranslatePipeStub';
+import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { By } from '@angular/platform-browser';
 import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
@@ -31,17 +31,6 @@ describe('LoginComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    Translation.value = {
-      password: 'password',
-      login: {
-        title: 'authentification',
-        login: 'login',
-        button: 'login',
-        error: {
-          incorrectLogin: 'Login or password is incorrect.'
-        }
-      }
-    };
   });
 
   it('responsive design', () => {

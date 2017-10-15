@@ -74,7 +74,7 @@ if %isexist%==0 (
   (docker create --name %container_name% ^
     --restart=always ^
     -p 5432:5432 ^
-    -v %~dp0pr:/pr ^
+    -v %~dp0pr:/pr/data ^
     -v %volume_name%:/var/lib/postgresql/data ^
     %image_name% ^
     --POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^

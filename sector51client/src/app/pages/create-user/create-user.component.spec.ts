@@ -12,7 +12,7 @@ import { Profile } from '../../entities/profile';
 import { Observable } from 'rxjs/Observable';
 import { ERole } from '../../entities/common';
 import { By } from '@angular/platform-browser';
-import { setInputValue } from '../../testing/commonTest';
+import { ElementTools } from '../../testing/commonTest';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 
 describe('CreateUserComponent', () => {
@@ -21,7 +21,7 @@ describe('CreateUserComponent', () => {
   const profileMock = new Profile();
   const form: any = {};
   let locationState;
-  let ne;
+  let et: ElementTools<CreateUserComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -57,10 +57,7 @@ describe('CreateUserComponent', () => {
     profileMock['permited'] = true;
     locationState = undefined;
 
-    ne = (css: string) => {
-      const res = fixture.debugElement.query(By.css(css));
-      return res ? res.nativeElement : undefined;
-    };
+    et = new ElementTools(fixture);
   });
 
   it('should be created', () => {
@@ -69,7 +66,7 @@ describe('CreateUserComponent', () => {
 
   it('validate form', fakeAsync(() => {
     validateField('input[name="login"]', '', 'ng-dirty ng-invalid');
-    expect(ne('form').getAttribute('class')).toContain('ng-invalid');
+    expect(et.ne('form').getAttribute('class')).toContain('ng-invalid');
     validateField('input[name="login"]', 'Login12ю', 'ng-invalid');
     validateField('input[name="login"]', 'Login12', 'ng-valid');
     validateField('input[name="name"]', 'TestТест ', 'ng-invalid');
@@ -88,40 +85,40 @@ describe('CreateUserComponent', () => {
     validateField('input[name="password"]', 'pref.test@qa.team', 'ng-valid');
     validateField('input[name="password2"]', '', 'ng-invalid');
     validateField('input[name="password2"]', 'qwe', 'ng-valid');
-    expect(ne('div[hidden]')).toBeUndefined();
+    expect(et.ne('div[hidden]')).toBeUndefined();
     validateField('input[name="password2"]', 'pref.test@qa.team', 'ng-valid');
-    expect(ne('div[hidden]')).toBeDefined();
+    expect(et.ne('div[hidden]')).toBeDefined();
     validateField('input[name="card"]', '', 'ng-invalid');
     validateField('input[name="card"]', 'qqq', 'ng-invalid');
     validateField('input[name="card"]', '0123456789', 'ng-valid');
 
-    expect(ne('form').getAttribute('class')).toContain('ng-valid');
+    expect(et.ne('form').getAttribute('class')).toContain('ng-valid');
     expect(locationState).toBeUndefined();
-    ne('button.btn-primary').click();
+    et.ne('button.btn-primary').click();
     expect(locationState).toEqual('back');
   }));
 
   it('check button click', fakeAsync(() => {
     fixture.detectChanges();
     expect(locationState).toBeUndefined();
-    setInputValue('input[name="login"]', '', fixture);
-    ne('button.btn-primary').click();
+    et.setInputValue('input[name="login"]', '');
+    et.ne('button.btn-primary').click();
     expect(locationState).toBeUndefined();
 
-    setInputValue('input[name="login"]', 'login', fixture);
-    setInputValue('input[name="name"]', 'name', fixture);
-    setInputValue('input[name="surname"]', 'surname', fixture);
-    setInputValue('input[name="phone"]', '+380501234567', fixture);
-    setInputValue('input[name="email"]', 'q@qa.team', fixture);
-    setInputValue('input[name="password"]', 'loginqwe', fixture);
-    setInputValue('input[name="password2"]', 'loginqwe', fixture);
-    setInputValue('input[name="card"]', '0123456789876', fixture);
-    ne('button.btn-primary').click();
+    et.setInputValue('input[name="login"]', 'login');
+    et.setInputValue('input[name="name"]', 'name');
+    et.setInputValue('input[name="surname"]', 'surname');
+    et.setInputValue('input[name="phone"]', '+380501234567');
+    et.setInputValue('input[name="email"]', 'q@qa.team');
+    et.setInputValue('input[name="password"]', 'loginqwe');
+    et.setInputValue('input[name="password2"]', 'loginqwe');
+    et.setInputValue('input[name="card"]', '0123456789876');
+    et.ne('button.btn-primary').click();
     expect(locationState).toBeDefined();
   }));
 
   function validateField(selector: string, value: string, expectValue: string) {
-    setInputValue(selector, value, fixture);
-    expect(ne(selector).getAttribute('class')).toContain(expectValue);
+    et.setInputValue(selector, value);
+    expect(et.ne(selector).getAttribute('class')).toContain(expectValue);
   }
 });
