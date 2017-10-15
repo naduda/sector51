@@ -36,7 +36,7 @@ export class Sector51MenuPage extends ABase {
   checkProfileNavigate() {
     return this.username.click()
       .then(this.profile.click)
-      .then(() => this.checkUrl('/profile/' + USER.name))
+      .then(() => this.checkUrl('/registration/'))
       .then(() => this.printText('Navigate to profile page'))
       .then(() => this.openMainPage())
       .then(result => this.checkProfileIsLoaded(false));

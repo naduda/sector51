@@ -1,18 +1,18 @@
 import { ERole } from '../entities/common';
 
 export class Profile {
-  login: string;
-  name: string;
-  surname: string;
-  phone: string;
-  email: string;
+  readonly login: string;
+  readonly name: string;
+  readonly surname: string;
+  readonly phone: string;
+  readonly email: string;
   authorities: string;
-  card: string;
+  readonly card: string;
   role: ERole;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,
     email?: string, card?: string, role?: ERole, randomId?: boolean) {
-    this.role = role || ERole.USER;
+    this.role = role === undefined ? ERole.USER : role;
     this.authorities = ERole[this.role];
     this.login = login;
     this.name = name;

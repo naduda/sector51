@@ -6,7 +6,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { MenuComponent } from './menu.component';
 import { CreateUserComponent } from '../pages/create-user/create-user.component';
-import { PermissionsComponent } from '../pages/permissions/permissions.component';
 import { Profile } from '../entities/profile';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 
@@ -19,14 +18,12 @@ describe('MenuComponent', () => {
       declarations: [
         MenuComponent,
         CreateUserComponent,
-        PermissionsComponent,
         TranslatePipeStub
       ],
       imports: [
         FormsModule,
         RouterTestingModule.withRoutes([
           { path: 'registration', component: CreateUserComponent },
-          { path: 'permissions', component: PermissionsComponent }
         ]),
         NgbModule.forRoot()
       ]

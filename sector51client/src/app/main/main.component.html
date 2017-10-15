@@ -26,9 +26,6 @@
         </table>
         <hr>
         <div class="bg-faded p-2" *ngIf="permissions">
-          <a [routerLink]="['/permissions', user['created']]" class="card-link text-warning">
-            {{'permissions' | translate | titlecase}}
-          </a>
           <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
             {{'properties' | translate | titlecase}}
           </a>

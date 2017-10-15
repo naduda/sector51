@@ -5,9 +5,6 @@
         <i class="nav-item nav-link" ngbDropdownToggle>{{'account' | translate | uppercase}}</i>
         <div class="dropdown-menu">
           <a routerLink="/registration" class="dropdown-item">{{'addUser' | translate | titlecase}}</a>
-          <a [routerLink]="['/permissions', currentUser['created']]" class="dropdown-item">
-            {{'permissions' | translate | titlecase}}
-          </a>
         </div>
       </div>
 

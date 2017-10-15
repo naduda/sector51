@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { ModalService } from '../services/modal.service';
+import { ModalService, IModalProperties } from '../services/modal.service';
 import { CommonService } from '../services/common.service';
 
 import { MainComponent } from './main.component';
@@ -12,12 +12,15 @@ import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { Profile } from '../entities/profile';
 import { ERole } from '../entities/common';
 import { USERS_MOCK, ElementTools } from '../testing/commonTest';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
 
 describe('MainComponent', () => {
   let component: MainComponent;
   let fixture: ComponentFixture<MainComponent>;
   let et: ElementTools<MainComponent>;
   let currentProfile = 0;
+  let location: string;
 
   class CommonServiceStub {
     get profile() {
@@ -30,13 +33,19 @@ describe('MainComponent', () => {
       declarations: [ MainComponent, TranslatePipeStub ],
       imports: [
         RouterTestingModule.withRoutes([
-          { path: 'main', component: MainComponent }
+          { path: 'main', component: MainComponent },
+          { path: 'registration/:idUser', component: MainComponent }
         ]),
         NgbModule.forRoot()
       ],
       providers: [
-        ModalService,
+        { provide: ModalService, useValue: {
+          open: (props: IModalProperties, callbackOK: any, callbackDismiss?: any) => {
+            location = 'modal';
+          }}
+        },
         { provide: HttpClient, useValue: {} },
+        { provide: TranslateService, useValue: { get: (key) => Observable.of(key) } },
         { provide: CommonService, useClass: CommonServiceStub }
       ]
     })
@@ -69,7 +78,7 @@ describe('MainComponent', () => {
   }));
 
   it('check card functionality', fakeAsync(() => {
-    currentProfile = 0;
+    currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.OWNER);
     fixture.detectChanges();
     const card = et.de('div.user-flex > div.card');
     expect(card).toBe(null, 'card is empty while user isn\'t selected');
@@ -87,5 +96,16 @@ describe('MainComponent', () => {
     expect(card).toBeDefined('card should be visible');
     const buttons = et.de('div.bg-faded');
     expect(buttons).toBe(null, 'buttons should not be visible for USER');
+  }));
+
+  it('check permissions for USER', fakeAsync(() => {
+    currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.ADMIN);
+    fixture.detectChanges();
+    et.click('div.users > ul > li:first-child');
+    const buttons = et.de('div.bg-faded');
+    expect(buttons).toBeDefined('buttons should be visible for OWNER');
+    expect(location).toBeUndefined();
+    et.click('button.btn-danger');
+    expect(location).toEqual('modal');
   }));
 });

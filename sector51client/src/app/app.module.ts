@@ -20,10 +20,8 @@ import { ModalService } from './services/modal.service';
 import { CommonService } from './services/common.service';
 import { WebsocketService } from './services/websocket.service';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { ProfileComponent } from './pages/profile/profile.component';
 import { MenuComponent } from './menu/menu.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
-import { PermissionsComponent } from './pages/permissions/permissions.component';
 import { ModalComponent } from './pages/modal/modal.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -36,10 +34,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     MainComponent,
     ToolbarComponent,
-    ProfileComponent,
     MenuComponent,
     CreateUserComponent,
-    PermissionsComponent,
     ModalComponent
   ],
   imports: [

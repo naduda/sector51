@@ -7,6 +7,7 @@ import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
 import { ERole } from '../entities/common';
 import { Observable } from 'rxjs/Observable';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sector51-main',
@@ -21,7 +22,8 @@ export class MainComponent implements OnInit {
   public permissions: boolean;
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
-              private modalService: ModalService, public common: CommonService) {
+              private modalService: ModalService, public common: CommonService,
+              private translate: TranslateService) {
   }
 
   ngOnInit() {
@@ -47,12 +49,13 @@ export class MainComponent implements OnInit {
 
   removeUser(idUser) {
     const props = {
-      header: 'attention' + '!',
+      header: '',
       headerClass: 'alert alert-danger',
       body: 'promptRemoveUserQuestion',
       btOK: 'apply',
       btCancel: 'cancel'
     };
+    this.translate.get('attention').subscribe(value => props.header = value + '!');
     this.modalService.open(props, (result) =>
       this.http.delete('/api/removeUser/' + idUser)
         .subscribe((response: any) => {
