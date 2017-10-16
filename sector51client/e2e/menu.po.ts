@@ -20,7 +20,8 @@ export class Sector51MenuPage extends ABase {
     this.openMainPage()
       .then(() => this.checkProfileIsLoaded())
       .then(() => this.checkProfileNavigate())
-      .then(() => this.addUser('login', 'name', 'surname', '+380502222225', 'ng@qa.test', 'psw', '2', ERole.ADMIN, ERole.USER))
+      .then(() => this.addUser('login', 'name', 'surname', '+380502222225', 
+                               'ng@qa.test', 'psw', '2', ERole.ADMIN, ERole.USER))
       .then(() => this.updateUser('login', 'NewName', 'NewSurname', '+380502222226',
                                   'new.ng@qa.test', 'newpsw', '3', ERole.USER, ERole.ADMIN))
       .then(() => this.deleteUser('login'));
@@ -59,8 +60,9 @@ export class Sector51MenuPage extends ABase {
       .then(() => element(by.css('form input[name="password"]')).sendKeys(psw))
       .then(() => element(by.css('form input[name="password2"]')).sendKeys(psw))
       .then(() => element(by.css('form input[name="card"]')).sendKeys(card))
-      .then(() => this.setRole(role, oldRole))
-      .then(() => expect(element(by.css('i.text-right')).getText()).toEqual(ERole[role]))
+      .then(element(by.css('i.text-right')).click)
+      .then(element(by.css('input[value="' + ERole[role] + '"]')).click)
+      .then(() => expect(element(by.css('i.text-right')).getText()).toEqual(ERole[role], 'should be new role'))
       .then(element(by.css('button[type="submit"]')).click)
       .then(() => this.checkUrl('/main'))
       .then(() => expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBe(2))
@@ -76,7 +78,8 @@ export class Sector51MenuPage extends ABase {
       .then(() => this.setInput('form input[name="phone"]', phone))
       .then(() => this.setInput('form input[name="email"]', email))
       .then(() => this.setInput('form input[name="card"]', card))
-      .then(() => this.setRole(role, oldRole))
+      .then(element(by.css('i.text-right')).click)
+      .then(element(by.css('input[value="' + ERole[role] + '"]')).click)
       .then(element(by.css('button[type="submit"]')).click)
       .then(() => this.openCreateUserForm(login))
       .then(() => this.expectInput('form input[name="name"]', name))
@@ -119,12 +122,5 @@ export class Sector51MenuPage extends ABase {
   expectInput(selector: string, value) {
     const el = element(by.css(selector));
     expect(el.getAttribute('value')).toEqual(value);
-  }
-
-  setRole(role: ERole, oldRole: ERole) {
-    return element(by.css('i.text-right')).click()
-      .then(element(by.css('input[value="' + ERole[oldRole] + '"]')).click)
-      .then(element(by.css('input[value="' + ERole[role] + '"]')).click)
-      .then(element(by.css('i.text-right')).click);
   }
 }

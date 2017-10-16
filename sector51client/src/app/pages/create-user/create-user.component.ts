@@ -46,22 +46,6 @@ export class CreateUserComponent implements OnInit {
     this.user[isRepeat ? 'password2' : 'password'] = value;
   }
 
-  changeRole(role: string) {
-    const pos = this.user.authorities.indexOf(role);
-    if (pos < 0) {
-      this.user.authorities += ',' + role;
-    } else {
-      this.user.authorities = this.user.authorities.substring(0, pos) + this.user.authorities.substring(pos + role.length);
-    }
-    this.user.authorities = this.user.authorities.replace(',,', ',');
-    if (this.user.authorities.startsWith(',')) {
-      this.user.authorities = this.user.authorities.substring(1);
-    }
-    if (this.user.authorities.endsWith(',')) {
-      this.user.authorities = this.user.authorities.substring(0, this.user.authorities.length - 1);
-    }
-  }
-
   validate(psw2: NgModel) {
     if (this.user['password'] !== this.user['password2']) {
       psw2.control.setValue(this.created ? '' : this.user['password']);
