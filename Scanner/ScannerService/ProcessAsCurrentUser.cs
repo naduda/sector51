@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Management;
 using System.Runtime.InteropServices;
+using System.Linq;
+using NLog;
 
 namespace ScannerService
 {
@@ -62,6 +65,8 @@ namespace ScannerService
 
   public class ProcessAsCurrentUser
   {
+    private static Logger logger = LogManager.GetCurrentClassLogger();
+
     #region WinAPI
     [DllImport("advapi32.dll", SetLastError = true)]
     private static extern bool CreateProcessAsUser(
@@ -151,7 +156,7 @@ namespace ScannerService
       {
         int error = Marshal.GetLastWin32Error();
         string message = String.Format("CreateProcessAsUser Error: {0}", error);
-        Debug.WriteLine(message);
+        logger.Debug(message);
       }
 
       return result;
@@ -171,7 +176,7 @@ namespace ScannerService
       catch (ArgumentException)
       {
         string details = String.Format("ProcessID {0} Not Available", processId);
-        Debug.WriteLine(details);
+        logger.Debug(details);
         throw;
       }
 
@@ -196,13 +201,13 @@ namespace ScannerService
         if (retVal == false)
         {
           string message = String.Format("DuplicateTokenEx Error: {0}", Marshal.GetLastWin32Error());
-          Debug.WriteLine(message);
+          logger.Debug(message);
         }
       }
       else
       {
         string message = String.Format("OpenProcessToken Error: {0}", Marshal.GetLastWin32Error());
-        Debug.WriteLine(message);
+        logger.Debug(message);
       }
 
       //We'll Close this token after it is used. 
@@ -220,10 +225,21 @@ namespace ScannerService
         //It should not adversley affect CreateProcessAsUser. 
 
         string message = String.Format("CreateEnvironmentBlock Error: {0}", Marshal.GetLastWin32Error());
-        Debug.WriteLine(message);
+        logger.Debug(message);
       }
       return envBlock;
     }
+
+
+    public static string GetLoggedInUserName()
+    {
+      ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+      ManagementObjectCollection collection = searcher.Get();
+      return (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+    }
+
+
+
 
     public static bool Launch(string appCmdLine /*,int processId*/)
     {

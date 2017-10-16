@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ScannerService
 {
@@ -14,6 +15,7 @@ namespace ScannerService
   {
     private static Logger logger = LogManager.GetCurrentClassLogger();
     private static bool _mainThreadFinished = false;
+    private static MyService _service;
 
     #region WinAPI
     private static HandlerRoutine _handlerRoutine;
@@ -36,8 +38,7 @@ namespace ScannerService
       CTRL_SHUTDOWN_EVENT
     }
     #endregion
-
-    private static CancellationTokenSource _cts;
+       
 
     static InstallContext GetInstallContext(string[] args)
     {
@@ -50,7 +51,7 @@ namespace ScannerService
 
     private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
     {
-      _cts.Cancel();
+      _service.StopInConsole();
       while (!_mainThreadFinished) Thread.Sleep(100);
       return true;
     }
@@ -58,19 +59,9 @@ namespace ScannerService
     static void RunAsConsole()
     {
       _handlerRoutine = new HandlerRoutine(ConsoleCtrlCheck);
-      _cts = new CancellationTokenSource();
       SetConsoleCtrlHandler(_handlerRoutine, true);
-
-      var service = new MyService();
-      service.OnConsoleStart();
-
-      for (;;)
-      {
-        _cts.Token.WaitHandle.WaitOne(1000);
-        if (_cts.IsCancellationRequested) break;
-      }
-
-      service.OnConsoleStop();
+      _service = new MyService();
+      Task.WaitAll(_service.StartInConsole());
       _mainThreadFinished = true;
     }
 
