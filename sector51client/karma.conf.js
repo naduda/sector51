@@ -16,7 +16,20 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     files: [
-      { pattern: './src/test.ts', watched: false }
+      { pattern: './src/test.ts', watched: false },
+      "./src/styles.css",
+      "./node_modules/font-awesome/css/font-awesome.css",
+      {
+        pattern: './node_modules/font-awesome/fonts/*',
+        watched: false,
+        included: false,
+        served: true,
+        nocache: false
+      },
+      "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ],
+    exclude: [
+      '**/*.responsive.spec.ts'
     ],
     preprocessors: {
       './src/test.ts': ['@angular/cli']
@@ -38,7 +51,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: [ 'Chrome' ],
     singleRun: false
   });
 };

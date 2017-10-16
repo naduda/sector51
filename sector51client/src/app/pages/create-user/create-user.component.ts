@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { NgModel } from "@angular/forms/src/forms";
-import { HttpClient } from "@angular/common/http";
-import { CommonService } from "../../services/common.service";
-import { Profile } from "app/entities/profile";
+import { Location } from '@angular/common';
+import { NgModel } from '@angular/forms/src/forms';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { CommonService } from '../../services/common.service';
+import { Profile } from '../../entities/profile';
+import { IRole, ERole } from '../../entities/common';
 
 @Component({
   selector: 'sector51-create-user',
@@ -11,77 +14,56 @@ import { Observable } from 'rxjs/Observable';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
-  public roles: string[];
+  public allRoles: IRole[];
+  public created: boolean;
   public user: Profile;
+  private idUser: number;
 
-  constructor(private http: HttpClient, private common: CommonService) { 
-    this.http.get<string[]>('/api/getRoles').subscribe(data => {
-      this.roles = data;
-      this.user = new Profile();
-      if (this.roles && this.roles.length > 0) {
-        this.user.authorities = this.roles[0];
-      }
-    });
+  constructor(private http: HttpClient, private location: Location,
+              private route: ActivatedRoute, public common: CommonService) {
   }
 
   ngOnInit() {
     this.common.sidenavVisible = false;
+
+    this.route.params
+    .do(params => this.idUser = params['idUser'] === undefined ? -1 : +params['idUser'])
+    .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser))
+    .do(user => {
+      if (!user) {
+        user = new Profile();
+        this.created = true;
+      } else {
+        user.authorities = user['roles'];
+      }
+      this.user = user;
+    })
+    .do(user => this.allRoles = this.common.profile['iroles'])
+    .subscribe(user => this.user['password'] = this.user['password2'] = '');
   }
 
   changePassword(value: string, isRepeat: boolean) {
     this.user[isRepeat ? 'password2' : 'password'] = value;
-    console.log(this.user);
-  }
-
-  changeRole(role: string) {
-    const pos = this.user.authorities.indexOf(role);
-    if (pos < 0) {
-      this.user.authorities += ',' + role;
-    } else {
-      this.user.authorities = this.user.authorities.substring(0, pos) + this.user.authorities.substring(pos + role.length);
-    }
-    this.user.authorities = this.user.authorities.replace(',,', ',');
-    if (this.user.authorities.startsWith(',')) {
-      this.user.authorities = this.user.authorities.substring(1);
-    }
-    if (this.user.authorities.endsWith(',')) {
-      this.user.authorities = this.user.authorities.substring(0, this.user.authorities.length - 1);
-    }
   }
 
   validate(psw2: NgModel) {
-    if (this.user.password !== this.user['password2']) {
-      psw2.control.setValue('');
+    if (this.user['password'] !== this.user['password2']) {
+      psw2.control.setValue(this.created ? '' : this.user['password']);
     }
-    
-    return this.user.password === this.user['password2'] && this.user.authorities.length > 0;
+    return (this.user['password'] === this.user['password2'] || !this.created) && this.user.authorities.length > 0;
   }
 
   onSubmit() {
     this.user['roles'] = this.user.authorities;
-    console.log(this.user);
-    this.http.post('/api/createUser', this.user)
-      .subscribe(data => console.log(data), err => console.error(err));
+    if (this.user['password'].length === 0) {
+      delete this.user['password'];
+    }
+    if (this.idUser < 0) {
+      this.http.post('/api/createUser', this.user)
+        .subscribe(data => this.location.back());
+    } else {
+      this.http.put('/api/updateUser', this.user)
+        .subscribe(data => this.location.back());
+    }
   }
-
-  cancel(event) {
-    console.log(event);
-    let beers = [
-      {name: "Stella", country: "Belgium", price: 9.50},
-      {name: "Sam Adams", country: "USA", price: 8.50},
-      {name: "Bud Light", country: "USA", price: 6.50},
-      {name: "Brooklyn Lager", country: "USA", price: 8.00},
-      {name: "Sapporo", country: "Japan", price: 7.50}
-    ];
-     
-    Observable.from(beers)   // <1>
-      .filter(beer => beer.price < 8)   // <2>
-      .map(beer => beer.name + ": $" + beer.price) // <3>
-      .subscribe(    // <4>
-          beer => console.log(beer),
-          err => console.error(err),
-          () => console.log("Streaming is over")
-    );
-  }
-
 }

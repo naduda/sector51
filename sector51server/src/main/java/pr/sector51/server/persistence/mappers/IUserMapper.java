@@ -2,10 +2,8 @@ package pr.sector51.server.persistence.mappers;
 
 import java.sql.Timestamp;
 import java.util.List;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Component;
+
+import org.apache.ibatis.annotations.*;
 import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
@@ -16,9 +14,21 @@ public interface IUserMapper {
       + "#{credentialsNonExpired}, #{enabled}, #{created})")
   void insertUserSecurity(UserSecurity user);
 
+  @Update("UPDATE usersecurity SET password = #{password}, roles = #{roles}," +
+          "attempts = 0, lastmodified = now() WHERE created = #{created};")
+  void updateUserSecurity(UserInfo user);
+
+  @Delete("DELETE FROM usersecurity WHERE created = #{created};" +
+          "DELETE FROM userinfo WHERE created = #{created};")
+  void deleteUser(@Param("created") Timestamp created);
+
   @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card) "
       + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card})")
   void insertUserInfo(UserInfo user);
+
+  @Update("UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
+          "email = #{email}, card = #{card} WHERE created = #{created};")
+  void updateUserInfo(UserInfo user);
 
   @Select("SELECT * FROM usersecurity")
   List<UserSecurity> getUsersSecurity();
@@ -28,6 +38,10 @@ public interface IUserMapper {
 
   @Select("SELECT * FROM usersecurity WHERE created = #{value}")
   UserSecurity getUserSecurityById(Timestamp value);
+
+  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui " +
+          "WHERE us.created = ui.created")
+  List<UserInfo> getUsersInfo();
 
   @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui "
       + "WHERE ui.created = #{value} AND us.created = ui.created")

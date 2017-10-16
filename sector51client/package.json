@@ -7,8 +7,11 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
+    "testResponsive": "ng test --environment responsive -c=karma.responsive.conf.js",
     "lint": "ng lint",
-    "e2e": "ng e2e",
+    "pree2e": "start \"json-server\" node ./e2e/scripts/server.js",
+    "e2e": "ng e2e --proxy-config proxy.conf.e2e.json",
+    "poste2e": "taskkill /fi \"WindowTitle eq json-server\"",
     "predeploy": "(del /F /S /Q ..\\sector51server\\src\\main\\resources\\static\\*) && (ng build)",
     "deploy": "(xcopy /s .\\dist ..\\sector51server\\src\\main\\resources\\static) && (ng serve --proxy-config proxy.conf.json)",
     "postdeploy": ""
@@ -24,13 +27,14 @@
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
     "@ng-bootstrap/ng-bootstrap": "^1.0.0-alpha.27",
+    "@ngx-translate/core": "^8.0.0",
+    "@ngx-translate/http-loader": "^2.0.0",
     "angular2-websocket": "^0.9.3",
     "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "rxjs": "^5.1.0",
-    "zone.js": "^0.8.4",
-    "prNgCommon": "git+https://github.com/naduda/angular.git"
+    "zone.js": "^0.8.4"
   },
   "devDependencies": {
     "@angular/cli": "^1.2.0",
@@ -40,6 +44,7 @@
     "codelyzer": "~2.0.0",
     "jasmine-core": "~2.5.2",
     "jasmine-spec-reporter": "~3.2.0",
+    "json-server": "^0.12.0",
     "karma": "~1.4.1",
     "karma-chrome-launcher": "~2.0.0",
     "karma-cli": "~1.0.1",

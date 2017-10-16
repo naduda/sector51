@@ -1,14 +1,16 @@
 import { Sector51clientPage } from './app.po';
+import { browser } from 'protractor';
 
 describe('sector51client App', () => {
-  let page: Sector51clientPage;
+  const page = new Sector51clientPage();
 
   beforeEach(() => {
-    page = new Sector51clientPage();
+    page.init();
   });
 
-  it('should display message saying app works', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
-  });
+  it(page.textChar('Sector51', '*'), () => expect(browser.getTitle()).toEqual('Sector51'));
+  it(page.textChar('Login page', '·'), () => page.login.test());
+  it(page.textChar('Navigation', '·'), () => page.menu.test());
+
+  afterAll(() => {});
 });

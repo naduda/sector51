@@ -72,13 +72,15 @@ for /f "tokens=1,2 skip=1 usebackq" %%i in (`docker ps -a`) do (
 
 if %isexist%==0 (
   (docker create --name %container_name% ^
+    --restart=always ^
     -p 5432:5432 ^
-    -v %~dp0pr:/pr ^
+    -v %~dp0pr:/pr/data ^
     -v %volume_name%:/var/lib/postgresql/data ^
     %image_name% ^
     --POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^
     --DB_NAME=%DB_NAME%) || (exit /b %errorlevel%)
   echo container "%container_name%" was created
+  pause
 )
 
 docker start %container_name%
@@ -88,6 +90,7 @@ rem docker ps
 set url=https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe
 IF NOT EXIST %~dp0service mkdir %~dp0service
 powershell -Command (New-Object Net.WebClient).DownloadFile('%url%','%~dp0service\winsv.exe')
+exit /b 0
 
 rem ****************************** Functions ******************************
 :delete-volumes
@@ -104,7 +107,6 @@ for /f "tokens=1,3 skip=1 usebackq" %%i in (`docker image ls -a`) do (
   )
 )
 docker images ls
-pause
 exit /b 0
 
 :delete-containers

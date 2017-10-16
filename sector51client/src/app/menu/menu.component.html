@@ -1,12 +1,10 @@
-<nav id="menu" class="navbar navbar-toggleable navbar-light p-1 pl-2 pr-2" *ngIf="lang">
+<nav class="navbar navbar-toggleable navbar-light p-1 pl-2 pr-2">
   <div class="collapse navbar-collapse show">
     <div class="navbar-nav">
-      <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link" ngbDropdownToggle
-          [hidden]="!common.currentUser['roles'].toLowerCase().includes('owner')">{{lang['account'] | uppercase}}</i>
+      <div ngbDropdown class="d-inline-block user">
+        <i class="nav-item nav-link" ngbDropdownToggle>{{'account' | translate | uppercase}}</i>
         <div class="dropdown-menu">
-          <a routerLink="/registration" class="dropdown-item">{{lang['addUser'] | titlecase}}</a>
-          <a [routerLink]="['/profile', common.currentUser.login]" class="dropdown-item">{{lang['deleteUser'] | titlecase}}</a>
+          <a routerLink="/registration" class="dropdown-item">{{'addUser' | translate | titlecase}}</a>
         </div>
       </div>
 

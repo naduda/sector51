@@ -1,0 +1,37 @@
+{
+  "login": {
+    "token": "1507095836875_1508233059248"
+  },
+  "usersecurity": [
+    {
+      "created": 1507095836875,
+      "username": "owner",
+      "password": "owner",
+      "roles": "OWNER"
+    }
+  ],
+  "userinfo": [
+    {
+      "created": 1507095836875,
+      "name": "NameOwnerqqqq",
+      "surname": "SurnameOwner",
+      "phone": "+380501111112",
+      "email": "owner@e2e.com",
+      "card": "0123456789876"
+    }
+  ],
+  "roles": [
+    {
+      "key": 0,
+      "value": "OWNER"
+    },
+    {
+      "key": 10,
+      "value": "ADMIN"
+    },
+    {
+      "key": 100,
+      "value": "USER"
+    }
+  ]
+}

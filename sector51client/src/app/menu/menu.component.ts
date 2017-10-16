@@ -1,8 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { Profile } from "../entities/profile";
-import { LangService } from 'prNgCommon/lang/lang.service';
-import { CommonService } from "../services/common.service";
+import { Profile } from '../entities/profile';
 
 @Component({
   selector: 'sector51-menu',
@@ -10,14 +7,9 @@ import { CommonService } from "../services/common.service";
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
-  @Input('user') currentUser: Profile;
-  private permissions: number[];
+  @Input() currentUser: Profile;
 
-  constructor(private http: HttpClient, public lang: LangService,
-              public common: CommonService) {
-    console.log(common.currentUser['roles'].toLowerCase().includes('owner'))
-  }
+  constructor() {}
 
   ngOnInit() {}
 }
-

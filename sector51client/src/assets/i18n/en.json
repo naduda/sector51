@@ -1,0 +1,44 @@
+{
+  "locale": [
+    {
+      "name": "uk",
+      "text": "Українська",
+      "ico": "./assets/images/ukFlag.png"
+    },
+    {
+      "name": "ru",
+      "text": "Русский",
+      "ico": "./assets/images/ruFlag.png"
+    },
+    {
+      "name": "en",
+      "text": "English",
+      "ico": "./assets/images/enFlag.png"
+    }
+  ],
+  "login": {
+    "title": "Authentication",
+    "button": "Login",
+    "login": "login",
+    "logout": "logout",
+    "error": {
+      "incorrectLogin": "Username or password is incorrect"
+    }
+  },
+  "frmProfile": {
+    "difPasswords": "Passwords aren't equal"
+  },
+  "password": "password",
+  "showAll": "show All",
+  "account": "account",
+  "addUser": "add user",
+  "deleteUser": "delete user",
+  "profile": "profile",
+  "permissions": "permissions",
+  "promptRemoveUserQuestion": "are you sure you want delete selected user?",
+  "apply": "apply",
+  "cancel": "cancel",
+  "attention": "attention",
+  "properties": "properties",
+  "delete": "delete"
+}

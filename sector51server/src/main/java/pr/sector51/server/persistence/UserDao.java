@@ -2,7 +2,6 @@ package pr.sector51.server.persistence;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -64,11 +63,35 @@ public class UserDao extends CommonDao implements IUserMapper {
   }
 
   @Override
+  public void updateUserSecurity(UserInfo user) {
+    userMapper.updateUserSecurity(user);
+  }
+
+  @Override
+  public void deleteUser(Timestamp created) {
+    userMapper.deleteUser(created);
+  }
+
+  public ESector51Result removeUser(long created) {
+    try {
+      deleteUser(new Timestamp(created));
+    } catch (Exception e) {
+      return ESector51Result.ERROR;
+    }
+    return ESector51Result.OK;
+  }
+
+  @Override
   public void insertUserInfo(UserInfo user) {
     userMapper.insertUserInfo(user);
   }
 
-  public void insertUser(ERole role) {
+  @Override
+  public void updateUserInfo(UserInfo user) {
+    userMapper.updateUserInfo(user);
+  }
+
+  private void insertUser(ERole role) {
     UserSecurity user = new UserSecurityBuilder()
         .setUsername(role.name().toLowerCase())
         .setPassword(role.name().toLowerCase())
@@ -81,17 +104,17 @@ public class UserDao extends CommonDao implements IUserMapper {
         .setName("Name" + role.name())
         .setSurname("Surname" + role.name())
         .setEmail(role.name() + "@gmail.com")
-        .setPhone("+380501234567").build();
+        .setPhone("+380501234567")
+        .setRoles(user.getRoles()).build();
     insertUserInfo(userInfo);
-    System.out.println("User " + role.name() + " was inserted.");
   }
 
-  public int insertUser(UserInfo userInfo){
+  public ESector51Result insertUser(UserInfo userInfo){
     UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
     if (userExist != null) {
-      return 1;
+      return ESector51Result.USER_ALREADY_EXIST;
     }
-    runTransaction(() -> {
+    boolean result = runTransaction(() -> {
       UserSecurity user = new UserSecurityBuilder()
               .setUsername(userInfo.getLogin())
               .setPassword(userInfo.getPassword())
@@ -101,7 +124,21 @@ public class UserDao extends CommonDao implements IUserMapper {
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
     });
-    return 0;
+    return result ? ESector51Result.OK : ESector51Result.ERROR;
+  }
+
+  public ESector51Result updateUser(UserInfo userInfo){
+    UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
+    if (userInfo.getPassword() == null) {
+      userInfo.setPassword(userExist.getPassword());
+    } else {
+      userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+    }
+    boolean result = runTransaction(() -> {
+      updateUserSecurity(userInfo);
+      updateUserInfo(userInfo);
+    });
+    return result ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
   @Override
@@ -117,6 +154,11 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public UserSecurity getUserSecurityById(Timestamp stamp) {
     return userMapper.getUserSecurityById(stamp);
+  }
+
+  @Override
+  public List<UserInfo> getUsersInfo() {
+    return userMapper.getUsersInfo();
   }
 
   public Optional<UserSecurity> getUserSecurityById(String id) {

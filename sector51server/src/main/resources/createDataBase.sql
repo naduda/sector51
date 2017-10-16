@@ -23,16 +23,6 @@ CREATE TABLE userinfo (
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
 
-CREATE TABLE permition (
-	id integer NOT NULL,
-	name character varying(25) NOT NULL
-);
-
-CREATE TABLE userpermition (
-	iduser integer NOT NULL,
-	idpermition integer NOT NULL
-);
-
 CREATE TABLE barcode (
 	id integer NOT NULL,
 	code character varying(13) NOT NULL,
