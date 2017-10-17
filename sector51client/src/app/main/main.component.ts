@@ -20,10 +20,12 @@ export class MainComponent implements OnInit {
   public users: Profile[];
   public showAll: boolean;
   public permissions: boolean;
+  public wWidth: number;
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
               private modalService: ModalService, public common: CommonService,
               private translate: TranslateService) {
+    this.wWidth = window.innerWidth;
   }
 
   ngOnInit() {
@@ -31,10 +33,11 @@ export class MainComponent implements OnInit {
     this.route.queryParams
     .do(params => {
       this.showAll = params['all'] === 'true';
-      this.selectedUserId = params['user'] ? +params['user'] : -1;
+      this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
     .flatMap(params => this.users ? Observable.of(this.users) : this.http.get<Profile[]>('/api/getUsers'))
     .do(users => this.users = users)
+    .do(users => users.find(u => u['created'] === this.common.profile['created'])['active'] = true)
     .subscribe(users => this.user = users.find(u => u['created'] === this.selectedUserId));
   }
 

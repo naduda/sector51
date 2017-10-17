@@ -20,7 +20,7 @@ export class Sector51MenuPage extends ABase {
     this.openMainPage()
       .then(() => this.checkProfileIsLoaded())
       .then(() => this.checkProfileNavigate())
-      .then(() => this.addUser('login', 'name', 'surname', '+380502222225', 
+      .then(() => this.addUser('login', 'name', 'surname', '+380502222225',
                                'ng@qa.test', 'psw', '2', ERole.ADMIN, ERole.USER))
       .then(() => this.updateUser('login', 'NewName', 'NewSurname', '+380502222226',
                                   'new.ng@qa.test', 'newpsw', '3', ERole.USER, ERole.ADMIN))
@@ -45,11 +45,9 @@ export class Sector51MenuPage extends ABase {
 
   addUser(login: string, name: string, surname: string, phone: string,
           email: string, psw: string, card: string, role: ERole, oldRole: ERole) {
-    expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBe(1);
-    expect(element(by.css('sector51-main div.users > ul > li')).isDisplayed()).toBeFalsy();
-    element(by.css('sector51-main > div > label')).click()
-      .then(() => expect(element(by.css('sector51-main div.users > ul > li')).isDisplayed()).toBeTruthy())
-      .then(this.menuUser.click)
+    expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBe(1);
+    expect(element(by.css('sector51-main split-area ul > li')).isDisplayed()).toBeTruthy();
+    this.menuUser.click()
       .then(this.addUserLink.click)
       .then(() => this.checkUrl('/registration'))
       .then(() => element(by.css('form input[name="login"]')).sendKeys(login))
@@ -65,14 +63,15 @@ export class Sector51MenuPage extends ABase {
       .then(() => expect(element(by.css('i.text-right')).getText()).toEqual(ERole[role], 'should be new role'))
       .then(element(by.css('button[type="submit"]')).click)
       .then(() => this.checkUrl('/main'))
-      .then(() => expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBe(2))
+      .then(() => expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBe(2))
       .then(() => this.printText('User was added successful'));
   }
 
   updateUser(login: string, name: string, surname: string, phone: string,
              email: string, psw: string, card: string, role: ERole, oldRole: ERole) {
-    expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBeGreaterThan(0);
-    this.openCreateUserForm(login)
+    expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBeGreaterThan(0);
+    element(by.css('sector51-main label > input')).click()
+      .then(() => this.openCreateUserForm(login))
       .then(() => this.setInput('form input[name="name"]', name))
       .then(() => this.setInput('form input[name="surname"]', surname))
       .then(() => this.setInput('form input[name="phone"]', phone))
@@ -96,13 +95,12 @@ export class Sector51MenuPage extends ABase {
 
   deleteUser(login: string) {
     this.checkUrl('/main');
-    expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBe(2);
-    expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBeGreaterThan(0);
+    expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBe(2);
     expect(element(by.css('li[title="' + login + '"]'))).toBeTruthy();
     element(by.css('li[title="' + login + '"]')).click()
       .then(element(by.css('button.btn-danger')).click)
       .then(element(by.css('ngb-modal-window button.btn-primary')).click)
-      .then(() => expect(element.all(by.css('sector51-main div.users > ul > li')).count()).toBe(1))
+      .then(() => expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBe(1))
       .then(() => this.printText('User was deleted successful'));
   }
 

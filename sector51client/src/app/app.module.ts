@@ -8,6 +8,7 @@ import { Sector51RoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AngularSplitModule } from 'angular-split';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -50,6 +51,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     NgbModule.forRoot(),
+    AngularSplitModule,
     Sector51RoutingModule
   ],
   entryComponents: [ModalComponent],

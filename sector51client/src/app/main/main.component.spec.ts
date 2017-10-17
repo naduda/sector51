@@ -14,6 +14,7 @@ import { ERole } from '../entities/common';
 import { USERS_MOCK, ElementTools } from '../testing/commonTest';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
+import { AngularSplitModule } from 'angular-split';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -36,7 +37,8 @@ describe('MainComponent', () => {
           { path: 'main', component: MainComponent },
           { path: 'registration/:idUser', component: MainComponent }
         ]),
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        AngularSplitModule
       ],
       providers: [
         { provide: ModalService, useValue: {
@@ -66,13 +68,13 @@ describe('MainComponent', () => {
 
   it('check showAll functionality', fakeAsync(() => {
     fixture.detectChanges();
-    const selector = 'div.users > ul > li';
+    const selector = 'split-area ul > li';
     const users = et.all(selector);
     expect(users.length).toBe(7, 'all users should be 7');
-    expect(et.all(selector + '[hidden]').length).toBe(6, 'not active users should be 6');
+    expect(et.all(selector + '[hidden]').length).toBe(5, 'not active users should be 5');
     component.users[5]['active'] = true;
     fixture.detectChanges();
-    expect(et.all(selector + '[hidden]').length).toBe(5, 'not active users should be 5');
+    expect(et.all(selector + '[hidden]').length).toBe(4, 'not active users should be 4');
     et.click('div.mt-3 > label > input[type="checkbox"]');
     expect(et.all(selector + '[hidden]').length).toBe(0, 'not active users should be 0');
   }));
@@ -80,19 +82,19 @@ describe('MainComponent', () => {
   it('check card functionality', fakeAsync(() => {
     currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.OWNER);
     fixture.detectChanges();
-    const card = et.de('div.user-flex > div.card');
-    expect(card).toBe(null, 'card is empty while user isn\'t selected');
-    et.click('div.users > ul > li:first-child');
+    const card = et.de('split-area div.card');
+    expect(card).toBeDefined('card of logined user');
+    et.click('split-area ul > li:nth-child(2)');
     expect(card).toBeDefined('card should be visible');
-    const buttons = et.de('div.bg-faded');
+    const buttons = et.de('div.card div.bg-faded');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
   }));
 
   it('check permissions for USER', fakeAsync(() => {
     currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.USER);
     fixture.detectChanges();
-    const card = et.de('div.user-flex > div.card');
-    et.click('div.users > ul > li:first-child');
+    const card = et.de('split-area div.card');
+    et.click('split-area ul > li:first-child');
     expect(card).toBeDefined('card should be visible');
     const buttons = et.de('div.bg-faded');
     expect(buttons).toBe(null, 'buttons should not be visible for USER');
@@ -101,7 +103,7 @@ describe('MainComponent', () => {
   it('check permissions for USER', fakeAsync(() => {
     currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.ADMIN);
     fixture.detectChanges();
-    et.click('div.users > ul > li:first-child');
+    et.click('split-area ul > li:first-child');
     const buttons = et.de('div.bg-faded');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
     expect(location).toBeUndefined();
