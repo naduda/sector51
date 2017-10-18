@@ -19,7 +19,8 @@
       surname: 'SurnameOwner',
       phone: '+380501111112',
       email: 'owner@e2e.com',
-      card: '0123456789876'
+      card: '0123456789876',
+      sex: true
     });
   }
 
@@ -38,7 +39,8 @@
       surname: user.surname,
       phone: user.phone,
       email: user.email,
-      card: user.card
+      card: user.card,
+      sex: user.sex
     }).write();
   }
 
@@ -73,7 +75,8 @@
         surname: userInfo.surname,
         phone: userInfo.phone,
         email: userInfo.email,
-        card: userInfo.card
+        card: userInfo.card,
+        sex: userInfo.sex
       });
     });
     return result;
@@ -96,7 +99,8 @@
       surname: userInfo[0].surname,
       phone: userInfo[0].phone,
       email: userInfo[0].email,
-      card: userInfo[0].card
+      card: userInfo[0].card,
+      sex: userInfo[0].sex
     };
   }
 

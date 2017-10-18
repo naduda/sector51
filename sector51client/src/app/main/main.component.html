@@ -4,7 +4,7 @@
     <span class="mt-2">{{'showAll' | translate | titlecase}}</span>
   </label>
   <hr>
-  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="5">
+  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3">
     <split-area [size]="25" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">

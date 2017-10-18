@@ -20,6 +20,7 @@ CREATE TABLE userinfo (
 	phone character varying(20) NOT NULL,
 	email character varying(50) NOT NULL,
 	card character varying(15),
+	sex boolean,
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
 

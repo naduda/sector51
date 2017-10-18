@@ -1,6 +1,6 @@
 import { WebElement, element, by, browser } from 'protractor';
 import { ABase, USER } from './ABase';
-import { ERole } from '../src/app/entities/common';
+import { ERole, ESex } from '../src/app/entities/common';
 
 export class Sector51MenuPage extends ABase {
   private readonly username: WebElement;
@@ -21,9 +21,9 @@ export class Sector51MenuPage extends ABase {
       .then(() => this.checkProfileIsLoaded())
       .then(() => this.checkProfileNavigate())
       .then(() => this.addUser('login', 'name', 'surname', '+380502222225',
-                               'ng@qa.test', 'psw', '2', ERole.ADMIN, ERole.USER))
+                               'ng@qa.test', 'psw', '2', ERole.ADMIN, ERole.USER, ESex.MAN))
       .then(() => this.updateUser('login', 'NewName', 'NewSurname', '+380502222226',
-                                  'new.ng@qa.test', 'newpsw', '3', ERole.USER, ERole.ADMIN))
+                                  'new.ng@qa.test', 'newpsw', '3', ERole.USER, ERole.ADMIN, ESex.WOMAN))
       .then(() => this.deleteUser('login'));
   }
 
@@ -44,7 +44,7 @@ export class Sector51MenuPage extends ABase {
   }
 
   addUser(login: string, name: string, surname: string, phone: string,
-          email: string, psw: string, card: string, role: ERole, oldRole: ERole) {
+          email: string, psw: string, card: string, role: ERole, oldRole: ERole, sex: ESex) {
     expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBe(1);
     expect(element(by.css('sector51-main split-area ul > li')).isDisplayed()).toBeTruthy();
     this.menuUser.click()
@@ -58,8 +58,11 @@ export class Sector51MenuPage extends ABase {
       .then(() => element(by.css('form input[name="password"]')).sendKeys(psw))
       .then(() => element(by.css('form input[name="password2"]')).sendKeys(psw))
       .then(() => element(by.css('form input[name="card"]')).sendKeys(card))
-      .then(element(by.css('i.text-right')).click)
+      .then(element(by.css('div.form-group.row:nth-child(9) > div:first-child > div > i')).click)
       .then(element(by.css('input[value="' + ERole[role] + '"]')).click)
+      .then(() => expect(element(by.css('i.text-right')).getText()).toEqual(ERole[role], 'should be new role'))
+      .then(element(by.css('div.form-group.row:nth-child(9) > div:last-child > div > i')).click)
+      .then(element(by.css('input[value="' + ESex[sex] + '"]')).click)
       .then(() => expect(element(by.css('i.text-right')).getText()).toEqual(ERole[role], 'should be new role'))
       .then(element(by.css('button[type="submit"]')).click)
       .then(() => this.checkUrl('/main'))
@@ -68,7 +71,7 @@ export class Sector51MenuPage extends ABase {
   }
 
   updateUser(login: string, name: string, surname: string, phone: string,
-             email: string, psw: string, card: string, role: ERole, oldRole: ERole) {
+             email: string, psw: string, card: string, role: ERole, oldRole: ERole, sex: ESex) {
     expect(element.all(by.css('sector51-main split-area ul > li')).count()).toBeGreaterThan(0);
     element(by.css('sector51-main label > input')).click()
       .then(() => this.openCreateUserForm(login))
@@ -77,8 +80,10 @@ export class Sector51MenuPage extends ABase {
       .then(() => this.setInput('form input[name="phone"]', phone))
       .then(() => this.setInput('form input[name="email"]', email))
       .then(() => this.setInput('form input[name="card"]', card))
-      .then(element(by.css('i.text-right')).click)
+      .then(element(by.css('div.form-group.row:nth-child(9) > div:first-child > div > i')).click)
       .then(element(by.css('input[value="' + ERole[role] + '"]')).click)
+      .then(element(by.css('div.form-group.row:nth-child(9) > div:last-child > div > i')).click)
+      .then(element(by.css('input[value="' + ESex[sex] + '"]')).click)
       .then(element(by.css('button[type="submit"]')).click)
       .then(() => this.openCreateUserForm(login))
       .then(() => this.expectInput('form input[name="name"]', name))
@@ -86,8 +91,10 @@ export class Sector51MenuPage extends ABase {
       .then(() => this.expectInput('form input[name="phone"]', phone))
       .then(() => this.expectInput('form input[name="email"]', email))
       .then(() => this.expectInput('form input[name="card"]', card))
-      .then(() => expect(element(by.css('form div.d-inline-block.dropdown > i'))
+      .then(() => expect(element(by.css('div.form-group.row:nth-child(9) > div:first-child > div > i'))
                     .getText()).toEqual(ERole[role]))
+      .then(() => expect(element(by.css('div.form-group.row:nth-child(9) > div:last-child > div > i'))
+                    .getText()).toEqual(ESex[sex]))
       .then(() => this.setInput('form input[name="password"]', psw))
       .then(element(by.css('button[type="submit"]')).click)
       .then(() => this.printText('User was updated successful'));

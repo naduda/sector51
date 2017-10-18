@@ -117,6 +117,21 @@ describe('CreateUserComponent', () => {
     expect(locationState).toBeDefined();
   }));
 
+  it('check dropdown lists (Authorities and Gender)', fakeAsync(() => {
+    fixture.detectChanges();
+    const divSelector = 'div.form-group.row:nth-child(9)';
+    checkDropDown(divSelector, ' > div:first-child > div > i', 'OWNER');
+    checkDropDown(divSelector, ' > div:first-child > div > i', 'ADMIN');
+    checkDropDown(divSelector, ' > div:last-child > div > i', 'MAN');
+    checkDropDown(divSelector, ' > div:last-child > div > i', 'WOMAN');
+  }));
+
+  function checkDropDown(selector: string, iSelector: string, inputValue: string) {
+    et.click(selector + iSelector);
+    et.click(selector + ' input[value="' + inputValue + '"]');
+    expect(et.ne(selector + iSelector).innerHTML).toEqual(inputValue);
+  }
+
   function validateField(selector: string, value: string, expectValue: string) {
     et.setInputValue(selector, value);
     expect(et.ne(selector).getAttribute('class')).toContain(expectValue);

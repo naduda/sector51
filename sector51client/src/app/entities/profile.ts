@@ -1,4 +1,4 @@
-import { ERole } from '../entities/common';
+import { ERole, ESex } from '../entities/common';
 
 export class Profile {
   readonly login: string;
@@ -9,9 +9,10 @@ export class Profile {
   authorities: string;
   readonly card: string;
   role: ERole;
+  sex: ESex | boolean;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,
-    email?: string, card?: string, role?: ERole, randomId?: boolean) {
+    email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean) {
     this.role = role === undefined ? ERole.USER : role;
     this.authorities = ERole[this.role];
     this.login = login;
@@ -20,6 +21,7 @@ export class Profile {
     this.phone = phone;
     this.email = email;
     this.card = card;
+    this.sex = sex;
     this['created'] = new Date().getMilliseconds();
     if (randomId) {
       this['created'] -= Math.floor(Math.random() * 100);

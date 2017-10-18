@@ -8,6 +8,8 @@ form {
     background-color: #eee;
 }
 
+label { font-weight: 500; }
+
 button.btn { width: 6rem; }
 button.btn:hover { cursor: pointer; }
 
