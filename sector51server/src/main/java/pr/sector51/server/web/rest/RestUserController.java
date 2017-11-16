@@ -6,18 +6,27 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.ibatis.annotations.Insert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 import pr.sector51.server.security.ERole;
+import pr.sector51.server.security.services.TokenHandler;
 
 import javax.management.relation.Role;
 
+@RequestMapping("/api")
 @RestController
-public class RestUserController extends ARestController {
+public class RestUserController {
+  @Autowired
+  private UserDao userDao;
+  @Autowired
+  private TokenHandler tokenHandler;
+
   private List<ERole> getPermissionsByContext() {
     SecurityContext context = SecurityContextHolder.getContext();
     UserSecurity userSecurity = (UserSecurity) context.getAuthentication().getPrincipal();

@@ -8,6 +8,7 @@ import { Sector51RoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AngularSplitModule } from 'angular-split';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -23,6 +24,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MenuComponent } from './menu/menu.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ModalComponent } from './pages/modal/modal.component';
+import { TranslatePipeStub } from './testing/TranslatePipeStub';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -36,7 +38,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToolbarComponent,
     MenuComponent,
     CreateUserComponent,
-    ModalComponent
+    ModalComponent,
+    TranslatePipeStub
   ],
   imports: [
     BrowserModule,
@@ -50,6 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     NgbModule.forRoot(),
+    AngularSplitModule,
     Sector51RoutingModule
   ],
   entryComponents: [ModalComponent],

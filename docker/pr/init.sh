@@ -38,6 +38,7 @@ if [ ! -d "$PGDATA/base" ]; then
   gosu postgres psql -U postgres -c "ALTER USER postgres WITH SUPERUSER PASSWORD '$POSTGRES_PASSWORD';"
   gosu postgres psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || \
                      psql -U postgres -c "CREATE DATABASE $DB_NAME;"
+  gosu postgres psql -U postgres -d $DB_NAME -f /pr/createDataBase.sql
   gosu postgres pg_ctl stop
 
   echo "host all all 0.0.0.0/0 md5" >> $PGDATA/pg_hba.conf

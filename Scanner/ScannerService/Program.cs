@@ -7,6 +7,9 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
 
 namespace ScannerService
 {
@@ -14,6 +17,7 @@ namespace ScannerService
   {
     private static Logger logger = LogManager.GetCurrentClassLogger();
     private static bool _mainThreadFinished = false;
+    private static MyService _service;
 
     #region WinAPI
     private static HandlerRoutine _handlerRoutine;
@@ -37,20 +41,18 @@ namespace ScannerService
     }
     #endregion
 
-    private static CancellationTokenSource _cts;
-
     static InstallContext GetInstallContext(string[] args)
     {
-      InstallContext context = new InstallContext(null, args);
-      UriBuilder uri = new UriBuilder(Assembly.GetEntryAssembly().GetName().CodeBase);
-      string execPath = Uri.UnescapeDataString(uri.Path);
+      var context = new InstallContext(null, args);
+      var uri = new UriBuilder(Assembly.GetEntryAssembly().GetName().CodeBase);
+      var execPath = Uri.UnescapeDataString(uri.Path);
       context.Parameters.Add("assemblypath", execPath);
       return context;
     }
 
     private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
     {
-      _cts.Cancel();
+      _service.StopInConsole();
       while (!_mainThreadFinished) Thread.Sleep(100);
       return true;
     }
@@ -58,27 +60,26 @@ namespace ScannerService
     static void RunAsConsole()
     {
       _handlerRoutine = new HandlerRoutine(ConsoleCtrlCheck);
-      _cts = new CancellationTokenSource();
       SetConsoleCtrlHandler(_handlerRoutine, true);
-
-      var service = new MyService();
-      service.OnConsoleStart();
-
-      for (;;)
-      {
-        _cts.Token.WaitHandle.WaitOne(1000);
-        if (_cts.IsCancellationRequested) break;
-      }
-
-      service.OnConsoleStop();
+      _service = new MyService();
+      Task.WaitAll(_service.StartInConsole());
       _mainThreadFinished = true;
+    }
+
+    static void saveConnectionString(string host, int port, string db, string user, string psw)
+    {
+      var template = "Host={0};Port={1};Database={2};Username={3};Password={4};";
+      var connectionString = string.Format(template, host, port, db, user, psw);
+      var encrypted = Crypt.Encrypt256(connectionString);
+      var path = Assembly.GetExecutingAssembly().Location.Replace("ScannerService.exe", "settings.txt");
+      File.WriteAllText(path, encrypted);
     }
 
     static void Main(string[] args)
     {
       if (!Environment.UserInteractive)
       {
-        ServiceBase[] ServicesToRun = new ServiceBase[] { new MyService() };
+       var ServicesToRun = new ServiceBase[] { new MyService() };
         ServiceBase.Run(ServicesToRun);
         return;
       }
@@ -86,8 +87,7 @@ namespace ScannerService
       var context = GetInstallContext(args);
       var myAssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
       Console.WriteLine("Scanner Server, version {0}.{1}", myAssemblyVersion.Major, myAssemblyVersion.Minor);
-      Console.WriteLine("Use /? or /h switches for help.", myAssemblyVersion.Major, myAssemblyVersion.Minor);
-      Console.WriteLine();
+      Console.WriteLine("Use /? or /h switches for help.\n", myAssemblyVersion.Major, myAssemblyVersion.Minor);
 
       if (context.Parameters.Count == 1)
       {
@@ -108,8 +108,9 @@ namespace ScannerService
       {
         Console.WriteLine("The following switches may be used in the command line:");
         Console.WriteLine("/?\t This help.");
-        Console.WriteLine("/i\t");
-        Console.WriteLine("/s\t Install UserScanner as service and start.");
+        Console.WriteLine("/i host=hostName port=0 db=dbName user=userName psw=password\t " +
+          "Install {0} as service.", Constants.SCANNER_NAME);
+        Console.WriteLine("/s\t Install {0} as service and start.", Constants.SCANNER_NAME);
         Console.WriteLine("/u\t Uninstall service.");
         return;
       }
@@ -119,33 +120,50 @@ namespace ScannerService
         IDictionary stateSaver = new Hashtable();
         try
         {
-          ServiceController controller = new ServiceController(installer.ServiceName);
+          var controller = new ServiceController(Constants.SERVICE_NAME);
           if (context.Parameters.ContainsKey("i") || context.Parameters.ContainsKey("s"))
           {
+            var host = context.Parameters["host"];
+            host = string.IsNullOrEmpty(host) ? "localhost" : host;
+            int port = 5432;
+            int.TryParse(context.Parameters["port"], out port);
+            var dbName = context.Parameters["db"];
+            dbName = string.IsNullOrEmpty(dbName) ? "db" : dbName;
+            var user = context.Parameters["user"];
+            user = string.IsNullOrEmpty(user) ? "postgres" : user;
+            var password = context.Parameters["psw"];
+            password = string.IsNullOrEmpty(password) ? "123456" : password;
+            saveConnectionString(host, port == 0 ? 5432 : port, dbName, user, password);
             installer.Install(stateSaver);
             installer.Commit(stateSaver);
-            Console.WriteLine("Service was succefully registered.");
+            logger.Info("Service was succefully registered.");
             if (context.Parameters.ContainsKey("s"))
             {
               controller.Start();
-              Console.WriteLine("Service was started.");
             }
           }
           else if (context.Parameters.ContainsKey("u"))
           {
-            try
+            if (controller.Status != ServiceControllerStatus.Stopped)
             {
               controller.Stop();
             }
-            catch { }
+            var proces = Process.GetProcessesByName(Constants.SCANNER_NAME);
+            foreach (var p in proces)
+            {
+              p.Kill();
+            }
             installer.Uninstall(null);
-            Console.WriteLine("Service was succefully unregistered.");
+            logger.Info("Service was succefully unregistered.");
           }
         }
         catch (Exception ex)
         {
-          installer.Rollback(stateSaver);
-          Console.WriteLine(ex.Message);
+          if (stateSaver.Count > 0)
+          {
+            installer.Rollback(stateSaver);
+          }
+          logger.Error(ex.Message);
         }
       }
     }

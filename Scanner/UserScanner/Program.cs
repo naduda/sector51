@@ -3,8 +3,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace UserScanner
@@ -32,22 +30,34 @@ namespace UserScanner
     private static LowLevelKeyboardProc _proc = HookCallback;
     private static IntPtr _hookID = IntPtr.Zero;
     private static string message = string.Empty;
+    private const int RETRIES = 10;
+    private static ASaver sqlWorker;
 
     private static IntPtr SetHook(LowLevelKeyboardProc proc)
     {
-      using (Process curProcess = Process.GetCurrentProcess())
-      using (ProcessModule curModule = curProcess.MainModule)
+      using (var curProcess = Process.GetCurrentProcess())
+      using (var curModule = curProcess.MainModule)
       {
         return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
             GetModuleHandle(curModule.ModuleName), 0);
       }
     }
-    
+
     static void Main(string[] args)
     {
+      if (args.Length < 1)
+      {
+        logger.Error("You didn't set connectionString.");
+        return;
+      }
+      logger.Info("User scanner started.");
+      sqlWorker = new SqlSaver(RETRIES, args[0]);
+      //sqlWorker = new FileSaver(RETRIES);
       _hookID = SetHook(_proc);
       Application.Run();
+      logger.Info("User scanner started. 4");
       UnhookWindowsHookEx(_hookID);
+      logger.Info("User scanner stopped.");
     }
 
     private static char[] nums = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
@@ -60,10 +70,15 @@ namespace UserScanner
         var keyChar = kc.ConvertToString(vkCode);
         if ((Keys)vkCode == Keys.Enter)
         {
-          if (message.Length > 0) logger.Info("Hooked message: {0}", message);
+          logger.Debug("ENTER");
+          if (message.Length > 0)
+          {
+            logger.Debug("Hooked message: {0}", message);
+            sqlWorker.save(message);
+          }
           message = "";
         }
-        else if (nums.Contains(keyChar[0]))
+        else if (keyChar.Length > 0 && nums.Contains(keyChar[0]))
         {
           message += keyChar;
         }

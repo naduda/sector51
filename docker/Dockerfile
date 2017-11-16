@@ -12,7 +12,7 @@ ENV GOSU_VERSION 1.10
 RUN mkdir -p $PGDATA && chown -R postgres $PGDATA && chmod 0700 -R $PGDATA
 VOLUME /var/lib/postgresql/data
 
-ADD ./pr/init.sh /pr/
+ADD ./pr/*.* /pr/
 
 RUN apk update && \
     apk add postgresql postgresql-client git wget && \

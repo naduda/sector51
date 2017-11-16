@@ -4,17 +4,9 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 call :read_settings %~dp0settings.properties || exit /b 1
 
-IF NOT EXIST %~dp0services (
-  mkdir %~dp0services
-  set url="https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe"
-  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%url%','%~dp0services\winsw.exe')"
-)
-IF NOT EXIST %~dp0services\scanner (
-  mkdir %~dp0services\scanner
-  call build.bat
-  for %%i in ("%~dp0..") do set "scannerFolder=%%~fi\Scanner\Scanner\bin\Debug"
-  xcopy /s /y %scannerFolder% %~dp0services\scanner
-  call createService.bat scanner
+IF NOT EXIST %~dp0scanner (
+  mkdir %~dp0scanner
+  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/naduda/sector51/master/docker/install.bat','%~dp0docker/install.bat')"
 )
 
 docker stop %container_name%

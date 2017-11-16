@@ -22,15 +22,15 @@ public interface IUserMapper {
           "DELETE FROM userinfo WHERE created = #{created};")
   void deleteUser(@Param("created") Timestamp created);
 
-  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card) "
-      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card})")
+  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex) "
+      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex});")
   void insertUserInfo(UserInfo user);
 
   @Update("UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
-          "email = #{email}, card = #{card} WHERE created = #{created};")
+          "email = #{email}, card = #{card}, sex = #{sex} WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 
-  @Select("SELECT * FROM usersecurity")
+  @Select("SELECT * FROM usersecurity;")
   List<UserSecurity> getUsersSecurity();
 
   @Select("SELECT * FROM usersecurity WHERE username = #{value}")

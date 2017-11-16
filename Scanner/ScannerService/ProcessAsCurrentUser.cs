@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Management;
 using System.Runtime.InteropServices;
+using System.Linq;
+using NLog;
 
 namespace ScannerService
 {
@@ -62,6 +65,8 @@ namespace ScannerService
 
   public class ProcessAsCurrentUser
   {
+    private static Logger logger = LogManager.GetCurrentClassLogger();
+
     #region WinAPI
     [DllImport("advapi32.dll", SetLastError = true)]
     private static extern bool CreateProcessAsUser(
@@ -110,29 +115,18 @@ namespace ScannerService
 
     private static bool LaunchProcessAsUser(string cmdLine, IntPtr token, IntPtr envBlock)
     {
-      bool result = false;
+      var result = false;
+      var pi = new PROCESS_INFORMATION();
+      var saProcess = new SECURITY_ATTRIBUTES();
+      var saThread = new SECURITY_ATTRIBUTES();
+      var si = new STARTUPINFO();
 
-      PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
-      SECURITY_ATTRIBUTES saProcess = new SECURITY_ATTRIBUTES();
-      SECURITY_ATTRIBUTES saThread = new SECURITY_ATTRIBUTES();
       saProcess.nLength = (uint)Marshal.SizeOf(saProcess);
       saThread.nLength = (uint)Marshal.SizeOf(saThread);
-
-      STARTUPINFO si = new STARTUPINFO();
       si.cb = (uint)Marshal.SizeOf(si);
-
-      //if this member is NULL, the new process inherits the desktop 
-      //and window station of its parent process. If this member is 
-      //an empty string, the process does not inherit the desktop and 
-      //window station of its parent process; instead, the system 
-      //determines if a new desktop and window station need to be created. 
-      //If the impersonated user already has a desktop, the system uses the 
-      //existing desktop. 
-
-      si.lpDesktop = @"WinSta0\Default"; //Modify as needed 
+      si.lpDesktop = @"WinSta0\Default";
       si.dwFlags = STARTF_USESHOWWINDOW | STARTF_FORCEONFEEDBACK;
       si.wShowWindow = SW_SHOW;
-      //Set other si properties as required. 
 
       result = CreateProcessAsUser(
           token,
@@ -149,9 +143,9 @@ namespace ScannerService
 
       if (result == false)
       {
-        int error = Marshal.GetLastWin32Error();
-        string message = String.Format("CreateProcessAsUser Error: {0}", error);
-        Debug.WriteLine(message);
+        var error = Marshal.GetLastWin32Error();
+        var message = string.Format("CreateProcessAsUser Error: {0}", error);
+        logger.Debug(message);
       }
 
       return result;
@@ -159,9 +153,9 @@ namespace ScannerService
 
     private static IntPtr GetPrimaryToken(int processId)
     {
-      IntPtr token = IntPtr.Zero;
-      IntPtr primaryToken = IntPtr.Zero;
-      bool retVal = false;
+      var token = IntPtr.Zero;
+      var primaryToken = IntPtr.Zero;
+      var retVal = false;
       Process p = null;
 
       try
@@ -170,8 +164,8 @@ namespace ScannerService
       }
       catch (ArgumentException)
       {
-        string details = String.Format("ProcessID {0} Not Available", processId);
-        Debug.WriteLine(details);
+        var details = string.Format("ProcessID {0} Not Available", processId);
+        logger.Debug(details);
         throw;
       }
 
@@ -179,7 +173,7 @@ namespace ScannerService
       retVal = OpenProcessToken(p.Handle, TOKEN_DUPLICATE, ref token);
       if (retVal == true)
       {
-        SECURITY_ATTRIBUTES sa = new SECURITY_ATTRIBUTES();
+        var sa = new SECURITY_ATTRIBUTES();
         sa.nLength = (uint)Marshal.SizeOf(sa);
 
         //Convert the impersonation token into Primary token 
@@ -195,14 +189,14 @@ namespace ScannerService
         CloseHandle(token);
         if (retVal == false)
         {
-          string message = String.Format("DuplicateTokenEx Error: {0}", Marshal.GetLastWin32Error());
-          Debug.WriteLine(message);
+          var message = string.Format("DuplicateTokenEx Error: {0}", Marshal.GetLastWin32Error());
+          logger.Debug(message);
         }
       }
       else
       {
-        string message = String.Format("OpenProcessToken Error: {0}", Marshal.GetLastWin32Error());
-        Debug.WriteLine(message);
+        var message = String.Format("OpenProcessToken Error: {0}", Marshal.GetLastWin32Error());
+        logger.Debug(message);
       }
 
       //We'll Close this token after it is used. 
@@ -211,30 +205,29 @@ namespace ScannerService
 
     private static IntPtr GetEnvironmentBlock(IntPtr token)
     {
-      IntPtr envBlock = IntPtr.Zero;
-      bool retVal = CreateEnvironmentBlock(ref envBlock, token, false);
+      var envBlock = IntPtr.Zero;
+      var retVal = CreateEnvironmentBlock(ref envBlock, token, false);
       if (retVal == false)
       {
-        //Environment Block, things like common paths to My Documents etc. 
-        //Will not be created if "false" 
-        //It should not adversley affect CreateProcessAsUser. 
-
-        string message = String.Format("CreateEnvironmentBlock Error: {0}", Marshal.GetLastWin32Error());
-        Debug.WriteLine(message);
+        var message = string.Format("CreateEnvironmentBlock Error: {0}", Marshal.GetLastWin32Error());
+        logger.Debug(message);
       }
       return envBlock;
     }
 
+    public static string GetLoggedInUserName()
+    {
+      var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+      var collection = searcher.Get();
+      return (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+    }
+    
     public static bool Launch(string appCmdLine /*,int processId*/)
     {
-      bool ret = false;
+      var ret = false;
+      var ps = Process.GetProcessesByName("explorer");
+      var processId = -1;
 
-      //Either specify the processID explicitly 
-      //Or try to get it from a process owned by the user. 
-      //In this case assuming there is only one explorer.exe 
-
-      Process[] ps = Process.GetProcessesByName("explorer");
-      int processId = -1;//=processId 
       if (ps.Length > 0)
       {
         processId = ps[0].Id;
@@ -242,11 +235,11 @@ namespace ScannerService
 
       if (processId > 1)
       {
-        IntPtr token = GetPrimaryToken(processId);
+        var token = GetPrimaryToken(processId);
 
         if (token != IntPtr.Zero)
         {
-          IntPtr envBlock = GetEnvironmentBlock(token);
+          var envBlock = GetEnvironmentBlock(token);
           ret = LaunchProcessAsUser(appCmdLine, token, envBlock);
           if (envBlock != IntPtr.Zero)
             DestroyEnvironmentBlock(envBlock);

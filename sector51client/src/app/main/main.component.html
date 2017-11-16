@@ -1,51 +1,54 @@
-<div class="mt-3">
+<div class="mt-3" (window:resize)="wWidth = $event.target.innerWidth">
   <label class="form-check-label">
     <input class="form-check-input" type="checkbox" [checked]="showAll" (change)="changeQueryParam('all', !showAll)">
     <span class="mt-2">{{'showAll' | translate | titlecase}}</span>
   </label>
   <hr>
-  <div class="user-flex">
-    <div class="card" *ngIf="user">
-      <div class="card-block">
-        <h4 class="card-title">{{user.surname}} {{user.name}}</h4>
-        <table class="table table-bordered table-sm">
-          <tbody>
-            <tr>
-              <th scope="row">
-                <i class="fa fa-fw fa-phone"></i>
-              </th>
-              <td>{{user.phone}}</td>
-            </tr>
-            <tr>
-              <th scope="row">
-                <i class="fa fa-fw fa-envelope"></i>
-              </th>
-              <td>{{user.email}}</td>
-            </tr>
-          </tbody>
-        </table>
-        <hr>
-        <div class="bg-faded p-2" *ngIf="permissions">
-          <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
-            {{'properties' | translate | titlecase}}
-          </a>
-          <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
-            {{'delete' | translate | uppercase}}
-          </button>
+  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3">
+    <split-area [size]="25" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
+      <div class="rounded mt-0">
+        <ul class="list-group">
+          <li class="list-group-item p-2" *ngFor="let u of users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" [hidden]="!showAll && !u.active"
+            (click)="changeQueryParam('user', u['created'])" [title]="u.login">
+            <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active, 'text-white': u['created'] === selectedUserId}">
+              {{u.surname + ' ' + u.name}}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </split-area>
+
+    <split-area [size]="75" [ngClass]="{'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth<=540}">
+      <div class="card" *ngIf="user">
+        <div class="card-block">
+          <h4 class="card-title">{{user.surname}} {{user.name}}</h4>
+          <table class="table table-bordered table-sm">
+            <tbody>
+              <tr>
+                <th scope="row">
+                  <i class="fa fa-fw fa-phone"></i>
+                </th>
+                <td>{{user.phone}}</td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  <i class="fa fa-fw fa-envelope"></i>
+                </th>
+                <td>{{user.email}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr>
+          <div class="bg-faded p-2" *ngIf="permissions">
+            <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
+              {{'properties' | translate | titlecase}}
+            </a>
+            <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
+              {{'delete' | translate | uppercase}}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="users mt-2 p-1">
-      <ul class="list-group">
-        <li class="list-group-item p-2" *ngFor="let u of users"
-          [ngClass]="{'bg-info': u['created'] === selectedUserId}"
-          [hidden]="!showAll && !u.active"
-          (click)="changeQueryParam('user', u['created'])" [title]="u.login">
-          <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active, 'text-white': u['created'] === selectedUserId}">
-            {{u.surname + ' ' + u.name}}
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
+    </split-area>
+  </split>
 </div>

@@ -10,17 +10,15 @@ namespace ScannerService
   {
     private ServiceProcessInstaller serviceProcessInstaller;
     private ServiceInstaller serviceInstaller;
-    public string ServiceName => "ScannerService";
-    public string ServiceDescription => "Manages keyboard hookers";
 
     public MyServiceInstaller()
     {
       serviceProcessInstaller = new ServiceProcessInstaller { Account = ServiceAccount.LocalSystem };
       serviceInstaller = new ServiceInstaller
       {
-        ServiceName = ServiceName,
-        DisplayName = ServiceName,
-        Description = ServiceDescription,
+        ServiceName = Constants.SERVICE_NAME,
+        DisplayName = Constants.SERVICE_NAME,
+        Description = Constants.SERVICE_DESCRIPTION,
         StartType = ServiceStartMode.Automatic
       };
       Installers.AddRange(new Installer[] { serviceProcessInstaller, serviceInstaller });

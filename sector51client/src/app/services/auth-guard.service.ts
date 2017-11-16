@@ -42,7 +42,6 @@ export class CanActivateAuthGuard implements CanActivate {
           return user['permited'];
         })
         .catch(ex => {
-          // console.log(ex)
           this.router.navigate(['/login']);
           return Observable.of(false);
         });

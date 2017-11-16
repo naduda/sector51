@@ -29,6 +29,14 @@ public class UserDao extends CommonDao implements IUserMapper {
 
   @PostConstruct
   public void init() {
+    List<UserInfo> users = userMapper.getUsersInfo();
+    if (users.size() == 0) {
+      boolean res = runTransaction(() -> {
+        insertUser(ERole.OWNER);
+        insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
+      });
+      System.out.println("\n\n\tTable users was " + (res ? "" : "not ") + "created\n\n");
+    }
     if (isTableExist(TABLE_NAME)) {
       return;
     }

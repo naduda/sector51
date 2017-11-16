@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { CommonService } from '../../services/common.service';
 import { Profile } from '../../entities/profile';
-import { IRole, ERole } from '../../entities/common';
+import { IRole, ERole, ESex } from '../../entities/common';
 
 @Component({
   selector: 'sector51-create-user',
@@ -37,9 +37,18 @@ export class CreateUserComponent implements OnInit {
         user.authorities = user['roles'];
       }
       this.user = user;
+      this.user.sex = user['sex'] === true ? ESex.MAN : ESex.WOMAN;
     })
     .do(user => this.allRoles = this.common.profile['iroles'])
     .subscribe(user => this.user['password'] = this.user['password2'] = '');
+  }
+
+  get genders() {
+    return [ ESex.MAN, ESex.WOMAN ];
+  }
+
+  genderText(sex: ESex): string {
+    return ESex[sex];
   }
 
   changePassword(value: string, isRepeat: boolean) {

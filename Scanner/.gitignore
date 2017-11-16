@@ -8,9 +8,13 @@
 *.user
 *.userosscache
 *.sln.docstates
+bin
+obj
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+!./packages/NLog.4.4.12/lib/net45/*
+!./packages/Npgsql.3.2.5/lib/net451/*
 
 # Build results
 [Dd]ebug/

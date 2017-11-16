@@ -2,102 +2,121 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ScannerService
 {
   public partial class MyService : ServiceBase
   {
-    private const string ScannerName = "UserScanner";
     private static Logger logger = LogManager.GetCurrentClassLogger();
+    private string _loggedUser = String.Empty;
+    
+    private CancellationTokenSource _cts;
+    private Task serviceTask;
+    private readonly string connectionString;
 
     public MyService()
     {
       InitializeComponent();
       CanHandleSessionChangeEvent = true;
+      var path = Assembly.GetExecutingAssembly().Location.Replace("ScannerService.exe", "settings.txt");
+      var encrepted = File.ReadAllText(path);
+      connectionString = Crypt.Decrypt256(encrepted);
     }
     
     protected override void OnStart(string[] args)
     {
-      OnConsoleStart();
+      _cts = new CancellationTokenSource();
+      serviceTask = Task.Factory.StartNew(() => Idle());
     }
 
     protected override void OnStop()
     {
-      OnConsoleStop();
+      _cts.Cancel();
     }
 
-    protected override void OnSessionChange(SessionChangeDescription changeDescription)
-    {
-      logger.Info("Session changed");
-
-      if (changeDescription.Reason == SessionChangeReason.SessionLogon)
-      {
-        base.OnSessionChange(changeDescription);
-        KillAllScanners();
-        Thread.Sleep(1000);
-        var user = Session.Get(changeDescription.SessionId);
-        if (user != null)
-        {
-          Debugger.Launch();
-          logger.Info("User {0} logged in.", user.Name);
-          LaunchScannerForLoggedUser();
-        }
-      }
-
-      base.OnSessionChange(changeDescription);
-    }
-    
-    public void OnConsoleStart()
+    private void Idle()
     {
       logger.Info("Scanner service started");
       KillAllScanners();
-      LaunchScannerForLoggedUser();
-    }
 
-    public void OnConsoleStop()
-    {
+      while (true)
+      {
+        try
+        {
+          if (_cts.IsCancellationRequested) break;
+
+          var loggedInUserName = ProcessAsCurrentUser.GetLoggedInUserName();
+          if (_loggedUser != loggedInUserName)
+          {
+            KillAllScanners();
+            _loggedUser = loggedInUserName;
+          }
+
+          var userService = Process.GetProcessesByName(Constants.SCANNER_NAME);
+          if (userService.Length < 1 && !string.IsNullOrEmpty(_loggedUser))
+            LaunchScannerForLoggedUser();
+          _cts.Token.WaitHandle.WaitOne(1000);
+        }
+        catch(Exception ex)
+        {
+          logger.Error(ex);
+        }
+      }
       KillAllScanners();
-      logger.Info("Scanner service stopped");
     }
     
-    private string GetScannerAppPath()
+    public Task StartInConsole()
     {
-      string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-      UriBuilder uri = new UriBuilder(codeBase);
-      string path = Uri.UnescapeDataString(uri.Path);
-      return Path.Combine(Path.GetDirectoryName(path), ScannerName + ".exe");
+      OnStart(new string[] { });
+      return serviceTask;
     }
-        
+    
+    public void StopInConsole()
+    {
+      OnStop();
+    }
+       
     private void LaunchScannerForLoggedUser()
     {
       try
       {
-        ProcessAsCurrentUser.Launch(GetScannerAppPath());
+        var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+        var uri = new UriBuilder(codeBase);
+        var path = Uri.UnescapeDataString(uri.Path);
+        path = Path.Combine(Path.GetDirectoryName(path), Constants.SCANNER_NAME + ".exe " + connectionString);
+        ProcessAsCurrentUser.Launch(path);
       }
       catch (Exception ex)
       {
-        logger.Error(ex, "Launch {0}", ScannerName);
+        logger.Error(ex, "Launch {0}", Constants.SCANNER_NAME);
       }
     }
 
     private void KillAllScanners()
     {
-      foreach (var service in Process.GetProcesses().Where(p => p.ProcessName.StartsWith(ScannerName)))
+      logger.Info("KillAllScanners");
+      var proces = Process.GetProcessesByName(Constants.SCANNER_NAME);
+      if (proces.Length < 1) return;
+      foreach (var service in proces)
       {
         try
         {
+          logger.Info("PID:{0} User scanner is stopped", service.Id);
           service.Kill();
-          logger.Info("Kill {0}, id={1}", service.ProcessName, service.Id);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           logger.Error(ex, "Kill failed {0}, id={1}", service.ProcessName, service.Id);
         }
       }
+      var command = "docker stop db_container && docker stop web_container && docker start db_container && docker start web_container";
+      logger.Info(command);
+      Process.Start("CMD.exe", "/C " + command);
+      logger.Info("Scanner service stopped");
     }
   }
 }

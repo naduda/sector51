@@ -2,52 +2,50 @@
   <div class="form-group row">
     <label for="login" class="col-3 col-form-label">Login</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" [readOnly]="!created"
-        type="text" name="login" [(ngModel)]="user.login" pattern="[A-Za-z0-9]{1,10}" [required]="created">
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" [readOnly]="!created" type="text" name="login"
+        [(ngModel)]="user.login" pattern="[A-Za-z0-9]{1,10}" [required]="created">
     </div>
   </div>
   <div class="form-group row">
     <label for="name" class="col-3 col-form-label">Name</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="text" name="name" [(ngModel)]="user.name" pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="name" [(ngModel)]="user.name"
+        pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
     </div>
   </div>
   <div class="form-group row">
     <label for="surname" class="col-3 col-form-label">SurName</label>
     <div class="col-9">
-      <input class="form-control"  [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="search" name="surname" [(ngModel)]="user.surname" pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="search" name="surname" [(ngModel)]="user.surname"
+        pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
     </div>
   </div>
   <div class="form-group row">
     <label for="phone" class="col-3 col-form-label">Telephone</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="tel" name="phone" placeholder="+38(050) 662-25-56" 
-        pattern="\+38[\(,\s]*[0-9]{3}[\),\s]{0,2}[0-9]{3}[-,\s]*[0-9]{2}[-,\s]*[0-9]{2}"  [(ngModel)]="user.phone" required>
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="tel" name="phone" placeholder="+38(050) 662-25-56"
+        pattern="\+38[\(,\s]*[0-9]{3}[\),\s]{0,2}[0-9]{3}[-,\s]*[0-9]{2}[-,\s]*[0-9]{2}" [(ngModel)]="user.phone" required>
     </div>
   </div>
   <div class="form-group row">
     <label for="email" class="col-3 col-form-label">Email</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="email" name="email" [(ngModel)]="user.email"
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="email" name="email" [(ngModel)]="user.email"
         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
     </div>
   </div>
   <div class="form-group row">
     <label for="password" class="col-3 col-form-label">Password</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="password" name="password" [(ngModel)]="user['password']" #psw="ngModel" [required]="created">
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="password" name="password" [(ngModel)]="user['password']"
+        #psw="ngModel" [required]="created">
     </div>
   </div>
   <div class="form-group row" [hidden]="!created">
     <label for="password2" class="col-3 col-form-label">Password2</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" 
-        type="password" name="password2" [(ngModel)]="user['password2']" #psw2="ngModel" [required]="created">
+      <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" type="password" name="password2" [(ngModel)]="user['password2']"
+        #psw2="ngModel" [required]="created">
     </div>
     <div class="col-9" [hidden]="psw.untouched || psw2.untouched || (psw.value === psw2.value)">
       <small class="text-danger">{{ 'frmProfile.difPasswords' | translate }}</small>
@@ -56,23 +54,40 @@
   <div class="form-group row">
     <label for="card" class="col-3 col-form-label">Card</label>
     <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" 
-        type="text" name="card" [(ngModel)]="user.card" pattern="[0-9]{1,15}" required>
+      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="card" [(ngModel)]="user.card"
+        pattern="[0-9]{1,15}" required>
     </div>
   </div>
   <div class="form-group row">
-    <label class="col-3 col-form-label">Authorities</label>
-    <div ngbDropdown class="d-inline-block" #dropAutorities="ngbDropdown">
-      <i class="nav-item nav-link text-right" ngbDropdownToggle>{{this.user.authorities}}</i>
-      <div class="dropdown-menu">
-        <div class="form-check" *ngFor="let r of allRoles">
-          <label class="form-check-label ml-2">
-            <input class="form-check-input" type="radio" [checked]="this.user.authorities.indexOf(r.name) != -1"
-              (change)="this.user.authorities = r.name" [value]="r.name">
-            <span class="mt-2">{{r.name | uppercase}}</span>
-          </label>
+    <div class="d-inline-block col-6">
+      <label class="col-6 col-form-label pl-0">Authorities</label>
+      <div ngbDropdown class="d-inline-block">
+        <i class="nav-item nav-link text-right" ngbDropdownToggle>{{this.user.authorities}}</i>
+        <div class="dropdown-menu">
+          <div class="form-check" *ngFor="let r of allRoles">
+            <label class="form-check-label ml-2">
+              <input class="form-check-input" type="radio" [checked]="this.user.authorities.indexOf(r.name) != -1" (change)="this.user.authorities = r.name"
+                [value]="r.name">
+              <span class="mt-2">{{r.name | uppercase}}</span>
+            </label>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="col-6 col-form-label">
+        <label class="col-6 col-form-label pl-0">Gender</label>
+        <div ngbDropdown class="d-inline-block">
+          <i class="nav-item nav-link text-right" ngbDropdownToggle>{{genderText(this.user.sex)}}</i>
+          <div class="dropdown-menu">
+            <div class="form-check" *ngFor="let g of genders">
+              <label class="form-check-label ml-2">
+                <input class="form-check-input" type="radio" [checked]="this.user.sex === g"
+                  (change)="this.user.sex = g" [value]="genderText(g)">
+                <span class="mt-2">{{genderText(g) | uppercase}}</span>
+              </label>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
   <hr>
