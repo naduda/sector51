@@ -11,8 +11,10 @@ rem rd /s /q %installDir%
 
 IF NOT EXIST %installDir% (
   set branch=master && set /p branch=Enter branch:
-  echo Selected branch is %branch%
-  call :saveGitScanner %branch%
+  echo Selected branch is !branch!
+  set nuget=https://dist.nuget.org/win-x86-commandline/v4.3.0/nuget.exe
+  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('!nuget!','%~dp0/nuget.exe')"
+  call :saveGitScanner !branch!
   echo %installDir%\.gitignore
   del /q /s %installDir%\.gitignore
 )
@@ -28,6 +30,8 @@ IF NOT EXIST %props% (
 )
 copy /y %~dp0%props% %installDir%\docker\%props%
 
+call nuget.exe restore %installDir%\Scanner\Scanner.sln
+pause
 call %installDir%\docker\build.bat
 pause
 cd ../
