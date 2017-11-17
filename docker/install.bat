@@ -2,109 +2,54 @@
 cls
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-call :read_settings %~dp0settings.properties || exit /b 1
+echo You can press ENTER to set value by default
+set dirName=sector51
+set installDir=%~dp0%dirName%
+set props=settings.properties
 
-IF NOT EXIST %~dp0scanner (
-  mkdir %~dp0scanner
-  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/naduda/sector51/master/docker/install.bat','%~dp0docker/install.bat')"
-)
+rem rd /s /q %installDir%
 
-docker stop %container_name%
+IF NOT EXIST %installDir% (
+  set branch=master && set /p branch=Enter branch:
+  echo Selected branch is !branch!
+  call :saveGitScanner !branch!
+  echo %installDir%\.gitignore
+  del /q /s %installDir%\.gitignore
+)
+IF NOT EXIST %~dp0\Scanner (
+  mkdir %~dp0\Scanner
+  set release=%installDir%\Scanner\ScannerService\bin\Release
+  copy /y !release! %~dp0\Scanner
+)
+IF NOT EXIST %props% (
+  set line=localhost && set /p line=Enter db host:
+  call :saveKeyValueToFile %props% POSTGRES_HOST !line!
+  set line=5432 && set /p line=Enter db port:
+  call :saveKeyValueToFile %props% POSTGRES_PORT !line!
+  set line=sector51 && set /p line=Enter db name:
+  call :saveKeyValueToFile %props% POSTGRES_DB !line!
+  set line=12345678 && set /p line=Enter db password:
+  call :saveKeyValueToFile %props% POSTGRES_PASSWORD !line!
+)
+call :read_settings %props%
+copy /y %~dp0%props% %~dp0\Scanner\%props%
+mkdir %~dp0\Scanner\pr
+copy /y %installDir%\docker\pr %~dp0\Scanner\pr
+call %~dp0\Scanner\ScannerService.exe -s ^
+              host=%POSTGRES_HOST% port=%POSTGRES_PORT% ^
+              db=%POSTGRES_DB% psw=%POSTGRES_PASSWORD%
 
-set param=%1
-for %%A in (civ cvi icv ivc vic vci) do if /i "%param%"=="--clean-%%A" (
-  echo qwe2
-  call :delete-containers
-  call :delete-images
-  call :delete-volumes
-  echo qwe
+set file=uninstall_scanner.bat
+copy /y %installDir%\docker\%file% %~dp0\%file%
+set list=docker-compose.yml,Dockerfile.db,Dockerfile.web
+FOR %%F IN (%list%) DO (
+  echo file_is %%F
+  copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
 )
+call docker-compose -f %~dp0\Scanner\docker-compose.yml up -d
 
-for %%A in (cv vc) do if /i "%param%"=="--clean-%%A" (
-  call :delete-containers
-  call :delete-volumes
-)
-
-if /i "%param%"=="--clean-c" (
-  call :delete-containers
-)
-
-if /i "%param%"=="--clean-i" (
-  call :delete-images
-)
-
-if /i "%param%"=="--clean-v" (
-  call :delete-volumes
-)
-
-REM Create image if not exist
-set /a isexist=0
-for /f "tokens=1,3 skip=1 usebackq" %%i in (`docker image ls -a`) do (
-  if %%i==%image_name% set isexist=1
-)
-if %isexist%==0 (
-  (docker build -t %image_name% .) || (exit /b %errorlevel%)
-)
-
-REM Create volume if not exist
-set /a isexist=0
-for /f "tokens=2 skip=1 usebackq" %%i in (`docker volume ls`) do (
-  if %%i==%volume_name% set isexist=1
-)
-if %isexist%==0 (
-  (docker volume create --name %volume_name%) || (exit /b %errorlevel%)
-  echo volume "%volume_name%" was created
-)
-
-REM Create container if not exist
-set /a isexist=0
-for /f "tokens=1,2 skip=1 usebackq" %%i in (`docker ps -a`) do (
-  if /i %%j==%image_name% set isexist=1
-)
-
-if %isexist%==0 (
-  (docker create --name %container_name% ^
-    --restart=always ^
-    -p 5432:5432 ^
-    -v %~dp0pr:/pr/data ^
-    -v %volume_name%:/var/lib/postgresql/data ^
-    %image_name% ^
-    --POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^
-    --DB_NAME=%DB_NAME%) || (exit /b %errorlevel%)
-  echo container "%container_name%" was created
-  pause
-)
-
-docker start %container_name%
-rem docker exec -it %container_name% /bin/sh
-rem docker logs %container_name%
-rem docker ps
-set url=https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe
-IF NOT EXIST %~dp0service mkdir %~dp0service
-powershell -Command (New-Object Net.WebClient).DownloadFile('%url%','%~dp0service\winsv.exe')
-exit /b 0
-
-rem ****************************** Functions ******************************
-:delete-volumes
-for /f "tokens=2 skip=1 usebackq" %%i in (`docker volume ls`) do (
-  docker volume rm -f %%i
-)
-exit /b 0
-
-:delete-images
-for /f "tokens=1,3 skip=1 usebackq" %%i in (`docker image ls -a`) do (
-  if %%i NEQ anapsix/alpine-java (
-    echo **************** %%i ==================^> %%j
-    docker rmi -f %%j
-  )
-)
-docker images ls
-exit /b 0
-
-:delete-containers
-for /f "tokens=1 skip=1 usebackq" %%i in (`docker ps -a`) do (
-  docker rm -f %%i
-)
+rd /s /q %installDir%
+pause
 exit /b 0
 
 :read_settings
@@ -116,4 +61,18 @@ if not exist %SETTINGSFILE% (
 for /f "eol=# delims== tokens=1,2" %%i in (%SETTINGSFILE%) do (
   set %%i=%%j
 )
+exit /b 0
+
+:saveKeyValueToFile
+set file=%1
+set content=%2=%3
+echo %content% && echo %content% >> %file%
+exit /b 0
+
+:saveGitScanner
+set btanch=%1
+set all=https://github.com/naduda/sector51/archive/%branch%.zip
+powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%all%','%~dp0/project.zip')"
+powershell -Command "Expand-Archive -Path %~dp0/project.zip -DestinationPath %~dp0/"
+rename sector51-%branch% sector51 && del /s /q project.zip
 exit /b 0

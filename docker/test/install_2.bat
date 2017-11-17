@@ -2,13 +2,6 @@
 cls
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-rem set list=uninstall_scanner.bat,docker-compose.yml,Dockerfile.db,Dockerfile.web
-rem FOR %%F IN (%list%) DO (
-rem   echo file_is %installDir%\docker\%%F
-rem   copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
-rem )
-rem exit /b 0
-
 echo You can press ENTER to set value by default
 set dirName=sector51
 set installDir=%~dp0%dirName%
@@ -46,13 +39,16 @@ call %~dp0\Scanner\ScannerService.exe -s ^
               host=%POSTGRES_HOST% port=%POSTGRES_PORT% ^
               db=%POSTGRES_DB% psw=%POSTGRES_PASSWORD%
 
-set list=uninstall_scanner.bat,docker-compose.yml,Dockerfile.db,Dockerfile.web
+set file=uninstall_scanner.bat
+copy /y %installDir%\docker\%file% %~dp0\%file%
+set list=docker-compose.yml,Dockerfile.db,Dockerfile.web
 FOR %%F IN (%list%) DO (
   echo file_is %%F
   copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
 )
-call docker-compose -f %~dp0\Scanner\docker-compose.yml up
+call docker-compose -f %~dp0\Scanner\docker-compose.yml up -d
 
+rd /s /q %installDir%
 pause
 exit /b 0
 
