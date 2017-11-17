@@ -1,7 +1,6 @@
 .gradle
 /build/
 /out/
-**/resources/static/*
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###

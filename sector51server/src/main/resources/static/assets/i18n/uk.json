@@ -1,0 +1,44 @@
+{
+  "locale": [
+    {
+      "name": "uk",
+      "text": "Українська",
+      "ico": "./assets/images/ukFlag.png"
+    },
+    {
+      "name": "ru",
+      "text": "Русский",
+      "ico": "./assets/images/ruFlag.png"
+    },
+    {
+      "name": "en",
+      "text": "English",
+      "ico": "./assets/images/enFlag.png"
+    }
+  ],
+  "login": {
+    "title": "автентифікація",
+    "button": "вхід",
+    "login": "логін",
+    "logout": "вийти",
+    "error": {
+      "incorrectLogin": "Невірний пароль або логін"
+    }
+  },
+  "frmProfile": {
+    "difPasswords": "Різні паролі"
+  },
+  "password": "пароль",
+  "showAll": "показати всіх",
+  "account": "користувач",
+  "addUser": "добавити користувача",
+  "deleteUser": "видалити користувача",
+  "profile": "профіль",
+  "permissions": "права доступу",
+  "promptRemoveUserQuestion": "ви дійсно бажаєте видалити вибраного користувача?",
+  "apply": "застосувати",
+  "cancel": "відхилити",
+  "attention": "увага",
+  "properties": "властивості",
+  "delete": "видалити"
+}
