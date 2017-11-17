@@ -2,10 +2,10 @@ FROM anapsix/alpine-java:8_jdk
 
 ENV LANG en_US.utf8
 
-ADD ./wait-for.sh /pr/
+ADD ./pr/wait-for.sh /pr/
 ADD ./pr/clone.sh /pr/
 ADD ./pr/build.sh /pr/
-ADD ./settings.properties /pr/
 ADD ./pr/init_web.sh /pr/
+ADD ./settings.properties /pr/
 
 RUN apk update && apk add git && rm -rf /var/cache/apk/*
