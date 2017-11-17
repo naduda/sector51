@@ -17,8 +17,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.web
-    volumes:
-      - "/d/GIT/sector51/docker/pr/:/pr/shared/"
     links:
       - db
     ports:
@@ -26,6 +24,6 @@ services:
     depends_on:
       - db
     restart: always
-    command: ["/pr/wait-for-it.sh", "db:5432", "--", "/pr/init_web.sh"]
+    command: ["/pr/wait-for.sh", "db:5432", "--", "/pr/init_web.sh"]
 volumes:
   db_volume:

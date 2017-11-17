@@ -2,39 +2,58 @@
 cls
 SETLOCAL ENABLEDELAYEDEXPANSION
 
+rem set list=uninstall_scanner.bat,docker-compose.yml,Dockerfile.db,Dockerfile.web
+rem FOR %%F IN (%list%) DO (
+rem   echo file_is %installDir%\docker\%%F
+rem   copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
+rem )
+rem exit /b 0
+
 echo You can press ENTER to set value by default
 set dirName=sector51
 set installDir=%~dp0%dirName%
-set props=settings2.properties
+set props=settings.properties
 
 rem rd /s /q %installDir%
 
 IF NOT EXIST %installDir% (
   set branch=master && set /p branch=Enter branch:
   echo Selected branch is !branch!
-  set nuget=https://dist.nuget.org/win-x86-commandline/v4.3.0/nuget.exe
-  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('!nuget!','%~dp0/nuget.exe')"
   call :saveGitScanner !branch!
   echo %installDir%\.gitignore
   del /q /s %installDir%\.gitignore
 )
+IF NOT EXIST %~dp0\Scanner (
+  mkdir %~dp0\Scanner
+  set release=%installDir%\Scanner\ScannerService\bin\Release
+  copy /y !release! %~dp0\Scanner
+)
 IF NOT EXIST %props% (
   set line=localhost && set /p line=Enter db host:
-  call :saveKeyValueToFile %props% POSTGRES_HOST %line%
+  call :saveKeyValueToFile %props% POSTGRES_HOST !line!
   set line=5432 && set /p line=Enter db port:
-  call :saveKeyValueToFile %props% POSTGRES_PORT %line%
+  call :saveKeyValueToFile %props% POSTGRES_PORT !line!
   set line=sector51 && set /p line=Enter db name:
-  call :saveKeyValueToFile %props% POSTGRES_DB %line%
+  call :saveKeyValueToFile %props% POSTGRES_DB !line!
   set line=12345678 && set /p line=Enter db password:
-  call :saveKeyValueToFile %props% POSTGRES_PASSWORD %line%
+  call :saveKeyValueToFile %props% POSTGRES_PASSWORD !line!
 )
-copy /y %~dp0%props% %installDir%\docker\%props%
+call :read_settings %props%
+copy /y %~dp0%props% %~dp0\Scanner\%props%
+mkdir %~dp0\Scanner\pr
+copy /y %installDir%\docker\pr %~dp0\Scanner\pr
+call %~dp0\Scanner\ScannerService.exe -s ^
+              host=%POSTGRES_HOST% port=%POSTGRES_PORT% ^
+              db=%POSTGRES_DB% psw=%POSTGRES_PASSWORD%
 
-call nuget.exe restore %installDir%\Scanner\Scanner.sln
+set list=uninstall_scanner.bat,docker-compose.yml,Dockerfile.db,Dockerfile.web
+FOR %%F IN (%list%) DO (
+  echo file_is %%F
+  copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
+)
+call docker-compose -f %~dp0\Scanner\docker-compose.yml up
+
 pause
-call %installDir%\docker\build.bat
-pause
-cd ../
 exit /b 0
 
 :read_settings

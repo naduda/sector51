@@ -2,6 +2,7 @@
 # build.sh branch folder fullFileName.jar
 set -e
 
+sed -i "s/\\r//g" /pr/settings.properties
 while read assignment; do
   export "$assignment"
 done </pr/settings.properties
