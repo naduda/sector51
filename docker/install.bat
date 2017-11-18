@@ -46,7 +46,7 @@ FOR %%F IN (%list%) DO (
   echo file_is %%F
   copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
 )
-call docker-compose -f %~dp0\Scanner\docker-compose.yml up -d
+call docker-compose -f %~dp0Scanner\docker-compose.yml up -d
 
 rd /s /q %installDir%
 pause

@@ -22,6 +22,7 @@ IF NOT EXIST %~dp0\Scanner (
   copy /y !release! %~dp0\Scanner
 )
 IF NOT EXIST %props% (
+  call :saveKeyValueToFile %props% GIT_BRANCH %branch%
   set line=localhost && set /p line=Enter db host:
   call :saveKeyValueToFile %props% POSTGRES_HOST !line!
   set line=5432 && set /p line=Enter db port:
@@ -43,12 +44,11 @@ set file=uninstall_scanner.bat
 copy /y %installDir%\docker\%file% %~dp0\%file%
 set list=docker-compose.yml,Dockerfile.db,Dockerfile.web
 FOR %%F IN (%list%) DO (
-  echo file_is %%F
   copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
 )
-call docker-compose -f %~dp0\Scanner\docker-compose.yml up -d
+docker-compose -f %~dp0Scanner\docker-compose.yml up --build -d
 
-rd /s /q %installDir%
+rem rd /s /q %installDir%
 pause
 exit /b 0
 

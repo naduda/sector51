@@ -2,4 +2,7 @@
 cls
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-call %~dp0\Scanner\ScannerService.exe -u
+call %~dp0Scanner\ScannerService.exe -u
+docker-compose -f %~dp0Scanner\docker-compose.yml down -v
+call rd /s q/ %~dp0Scanner
+pause

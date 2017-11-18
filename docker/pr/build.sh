@@ -1,17 +1,15 @@
 #!/bin/sh
-# build.sh branch folder fullFileName.jar
+# build.sh branch folder fullFileName.jar POSTGRES_PORT POSTGRES_DB
 set -e
-
-sed -i "s/\\r//g" /pr/settings.properties
-while read assignment; do
-  export "$assignment"
-done </pr/settings.properties
 
 mkdir /pr/temp
 cd /pr/temp
 ../clone.sh $1 $2
-
 cd /pr/temp/$2
+
+jarFile=$3
+POSTGRES_PORT=$4
+POSTGRES_DB=$5
 propFile="$PWD/src/main/resources/application.properties"
 pattern="localhost:5432/sector51"
 replacement="db:$POSTGRES_PORT/$POSTGRES_DB"
@@ -19,7 +17,7 @@ replacement="db:$POSTGRES_PORT/$POSTGRES_DB"
 sed -i -e "s|$pattern|$replacement|g" "$propFile"
 chmod +x ./gradlew
 ./gradlew build -x test
-cp -R ./build/libs/sector51server-0.0.1-SNAPSHOT.jar "$3"
+cp -R ./build/libs/sector51server-0.0.1-SNAPSHOT.jar "$jarFile"
 
 cd /pr
 su -c "rm -r /pr/settings.properties"
