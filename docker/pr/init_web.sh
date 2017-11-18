@@ -8,7 +8,9 @@ done </pr/settings.properties
 
 jarFile="/pr/sector51server.jar"
 if [ ! -f "$jarFile" ]; then
-  /pr/build.sh $GIT_BRANCH sector51server "$jarFile"
+  port=$POSTGRES_PORT
+  db=POSTGRES_DB
+  /pr/build.sh $GIT_BRANCH sector51server "$jarFile" $port $db
 fi
 
 java -jar "$jarFile"
