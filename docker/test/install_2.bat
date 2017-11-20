@@ -46,7 +46,7 @@ xcopy %installDir%\sector51server %~dp0Scanner\sector51server /y /e /i
 powershell -Command "(gc %~dp0Scanner\docker-compose.yml) -replace '5432:5432', '%POSTGRES_PORT%:5432' | Out-File %~dp0Scanner\docker-compose.yml"
 docker-compose -f %~dp0Scanner\docker-compose.yml up --build -d
 
-rd /s /q %installDir%
+rem rd /s /q %installDir%
 pause
 exit /b 0
 

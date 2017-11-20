@@ -3,6 +3,10 @@ set -e
 
 sed "s/\\r//g" /pr/settings.properties > /tmp/settings
 while read -r line; do declare $line; done < /tmp/settings
+echo ==========================
+cat /pr/settings.properties
+echo ==========================
+cat /tmp/settings
 rm -f /tmp/settings
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
@@ -10,4 +14,4 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
   CREATE DATABASE $POSTGRES_DB;
 EOSQL
 
-psql -U postgres -d sector51 -f /pr/createDataBase.sql
+psql -U postgres -d $POSTGRES_DB -f /pr/createDataBase.sql
