@@ -7,8 +7,6 @@ set dirName=sector51
 set installDir=%~dp0%dirName%
 set props=settings.properties
 
-rem rd /s /q %installDir%
-
 IF NOT EXIST %installDir% (
   set branch=master && set /p branch=Enter branch:
   echo Selected branch is !branch!

@@ -3,23 +3,20 @@ cls
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 echo You can press ENTER to set value by default
-set dirName=sector51
-set installDir=%~dp0%dirName%
+set installDir=%~dp0sector51
 set props=settings.properties
-
-rem rd /s /q %installDir%
+set branch=dev
 
 IF NOT EXIST %installDir% (
-  set branch=master && set /p branch=Enter branch:
+  set /p branch=Enter branch:
   echo Selected branch is !branch!
-  call :saveGitScanner !branch!
-  echo %installDir%\.gitignore
+  call :saveGitRepository !branch!
   del /q /s %installDir%\.gitignore
 )
-IF NOT EXIST %~dp0\Scanner (
-  mkdir %~dp0\Scanner
+IF NOT EXIST %~dp0Scanner (
+  mkdir %~dp0Scanner
   set release=%installDir%\Scanner\ScannerService\bin\Release
-  copy /y !release! %~dp0\Scanner
+  copy /y !release! %~dp0Scanner
 )
 IF NOT EXIST %props% (
   call :saveKeyValueToFile %props% GIT_BRANCH %branch%
@@ -33,19 +30,20 @@ IF NOT EXIST %props% (
   call :saveKeyValueToFile %props% POSTGRES_PASSWORD !line!
 )
 call :read_settings %props%
-copy /y %~dp0%props% %~dp0\Scanner\%props%
-mkdir %~dp0\Scanner\pr
-copy /y %installDir%\docker\pr %~dp0\Scanner\pr
-call %~dp0\Scanner\ScannerService.exe -s ^
+copy /y %~dp0%props% %~dp0Scanner\%props%
+xcopy %installDir%\docker\pr %~dp0Scanner\pr /y /e /i
+call %~dp0Scanner\ScannerService.exe -s ^
               host=%POSTGRES_HOST% port=%POSTGRES_PORT% ^
               db=%POSTGRES_DB% psw=%POSTGRES_PASSWORD%
 
 set file=uninstall_scanner.bat
-copy /y %installDir%\docker\%file% %~dp0\%file%
+copy /y %installDir%\docker\%file% %~dp0%file%
 set list=docker-compose.yml,Dockerfile.db,Dockerfile.web
 FOR %%F IN (%list%) DO (
-  copy /y %installDir%\docker\%%F %~dp0\Scanner\%%F
+  copy /y %installDir%\docker\%%F %~dp0Scanner\%%F
 )
+xcopy %installDir%\sector51server %~dp0Scanner\sector51server /y /e /i
+powershell -Command "(gc %~dp0Scanner\docker-compose.yml) -replace '5432:5432', '%POSTGRES_PORT%:5432' | Out-File %~dp0Scanner\docker-compose.yml"
 docker-compose -f %~dp0Scanner\docker-compose.yml up --build -d
 
 rem rd /s /q %installDir%
@@ -64,15 +62,12 @@ for /f "eol=# delims== tokens=1,2" %%i in (%SETTINGSFILE%) do (
 exit /b 0
 
 :saveKeyValueToFile
-set file=%1
-set content=%2=%3
-echo %content% && echo %content% >> %file%
+echo %2=%3 && echo %2=%3>>%1
 exit /b 0
 
-:saveGitScanner
-set btanch=%1
-set all=https://github.com/naduda/sector51/archive/%branch%.zip
-powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%all%','%~dp0/project.zip')"
-powershell -Command "Expand-Archive -Path %~dp0/project.zip -DestinationPath %~dp0/"
+:saveGitRepository
+set all=https://github.com/naduda/sector51/archive/%1.zip
+powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%all%','%~dp0project.zip')"
+powershell -Command "Expand-Archive -Path %~dp0project.zip -DestinationPath %~dp0/"
 rename sector51-%branch% sector51 && del /s /q project.zip
 exit /b 0
