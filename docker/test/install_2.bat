@@ -19,7 +19,7 @@ IF NOT EXIST %~dp0Scanner (
   copy /y !release! %~dp0Scanner
 )
 IF NOT EXIST %props% (
-  call :saveKeyValueToFile %props% GIT_BRANCH %branch%
+  call :saveKeyValueToFile %props% GIT_BRANCH "%branch%"
   set line=localhost&& set /p line=Enter db host:
   call :saveKeyValueToFile %props% POSTGRES_HOST "!line!"
   set line=5432&& set /p line=Enter db port:
@@ -31,8 +31,8 @@ IF NOT EXIST %props% (
 )
 call :read_settings %props%
 copy /y %~dp0%props% %~dp0Scanner\%props%
-powershell -Command "(gc %~dp0Scanner\settings.env) -replace '\u0022', '' | Out-File %~dp0Scanner\settings.env"
 rem copy /y %~dp0Scanner\%props% %~dp0Scanner\settings.env
+rem powershell -Command "(gc %~dp0Scanner\settings.env) -replace '\u0022', '' | Out-File %~dp0Scanner\settings.env"
 rem powershell -Command "(gc %~dp0Scanner\settings.env) -replace '`r`n', '`n' | sc %~dp0Scanner\settings.env -Force"
 xcopy %installDir%\docker\pr %~dp0Scanner\pr /y /e /i
 call %~dp0Scanner\ScannerService.exe -s ^

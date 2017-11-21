@@ -6,6 +6,6 @@ ADD ./pr/wait-for.sh /pr/
 ADD ./pr/clone.sh /pr/
 ADD ./pr/build.sh /pr/
 ADD ./pr/init_web.sh /pr/
-ADD ./settings.properties /pr/
+ADD ./settings.properties /tmp/
 
 RUN apk update && apk add git && rm -rf /var/cache/apk/*
