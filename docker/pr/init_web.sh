@@ -1,11 +1,12 @@
 #!/bin/sh
 set -e
 
-sed -i "s/\\r//g" /pr/settings.properties
+sed -i "s/\\r//g" /tmp/settings.properties
+sed -i 's/"//g' /tmp/settings.properties
 while read assignment; do
   export "$assignment"
-done </pr/settings.properties
-rm -f /tmp/settings
+done </tmp/settings.properties
+rm -f /tmp/settings.properties
 POSTGRES_DB=$(echo "$POSTGRES_DB" | tr '[:upper:]' '[:lower:]')
 
 jarFile="/pr/sector51server.jar"

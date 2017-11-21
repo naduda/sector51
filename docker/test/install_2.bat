@@ -10,7 +10,7 @@ set branch=dev
 IF NOT EXIST %installDir% (
   set /p branch=Enter branch:
   echo Selected branch is !branch!
-  call :saveGitRepository !branch!
+  call :saveGitRepository "!branch!"
   del /q /s %installDir%\.gitignore
 )
 IF NOT EXIST %~dp0Scanner (
@@ -20,17 +20,20 @@ IF NOT EXIST %~dp0Scanner (
 )
 IF NOT EXIST %props% (
   call :saveKeyValueToFile %props% GIT_BRANCH %branch%
-  set line=localhost && set /p line=Enter db host:
-  call :saveKeyValueToFile %props% POSTGRES_HOST !line!
-  set line=5432 && set /p line=Enter db port:
-  call :saveKeyValueToFile %props% POSTGRES_PORT !line!
-  set line=sector51 && set /p line=Enter db name:
-  call :saveKeyValueToFile %props% POSTGRES_DB !line!
-  set line=12345678 && set /p line=Enter db password:
-  call :saveKeyValueToFile %props% POSTGRES_PASSWORD !line!
+  set line=localhost&& set /p line=Enter db host:
+  call :saveKeyValueToFile %props% POSTGRES_HOST "!line!"
+  set line=5432&& set /p line=Enter db port:
+  call :saveKeyValueToFile %props% POSTGRES_PORT "!line!"
+  set line=sector51&& set /p line=Enter db name:
+  call :saveKeyValueToFile %props% POSTGRES_DB "!line!"
+  set line=12345678&& set /p line=Enter db password:
+  call :saveKeyValueToFile %props% POSTGRES_PASSWORD "!line!"
 )
 call :read_settings %props%
 copy /y %~dp0%props% %~dp0Scanner\%props%
+powershell -Command "(gc %~dp0Scanner\settings.env) -replace '\u0022', '' | Out-File %~dp0Scanner\settings.env"
+rem copy /y %~dp0Scanner\%props% %~dp0Scanner\settings.env
+rem powershell -Command "(gc %~dp0Scanner\settings.env) -replace '`r`n', '`n' | sc %~dp0Scanner\settings.env -Force"
 xcopy %installDir%\docker\pr %~dp0Scanner\pr /y /e /i
 call %~dp0Scanner\ScannerService.exe -s ^
               host=%POSTGRES_HOST% port=%POSTGRES_PORT% ^

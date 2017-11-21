@@ -17,6 +17,4 @@ chmod +x ./gradlew
 ./gradlew build -x test
 cp -R ./build/libs/sector51server-0.0.1-SNAPSHOT.jar "$jarFile"
 
-cd /pr
-su -c "rm -r /pr/settings.properties"
 su -c "rm -r /pr/temp"
