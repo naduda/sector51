@@ -1,3 +1,12 @@
 div[ngbdropdown] > i { font-style: normal; }
+
+.dropdown-menu { position: absolute; }
+
 div[ngbdropdown] > i:hover,
 div[ngbdropdown] .dropdown-item:hover { cursor: pointer; }
+
+.navbar-nav { flex-direction: row; }
+
+@media (max-width: 576px) {
+  .navbar-nav { flex-direction: column; }
+}

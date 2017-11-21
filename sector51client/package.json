@@ -14,7 +14,9 @@
     "poste2e": "taskkill /fi \"WindowTitle eq json-server\"",
     "predeploy": "(del /F /S /Q ..\\sector51server\\src\\main\\resources\\static\\*) && (ng build)",
     "deploy": "(xcopy /s .\\dist ..\\sector51server\\src\\main\\resources\\static) && (ng serve --proxy-config proxy.conf.json)",
-    "postdeploy": ""
+    "postdeploy": "",
+    "prefake": "start \"json-server\" node ./e2e/scripts/server.js",
+    "fake": "ng serve --proxy-config proxy.conf.e2e.json"
   },
   "private": true,
   "dependencies": {
@@ -26,7 +28,7 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
-    "@ng-bootstrap/ng-bootstrap": "^1.0.0-alpha.27",
+    "@ng-bootstrap/ng-bootstrap": "^1.0.0-beta.5",
     "@ngx-translate/core": "^8.0.0",
     "@ngx-translate/http-loader": "^2.0.0",
     "angular-split": "^0.2.2",
@@ -38,7 +40,7 @@
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "^1.2.0",
+    "@angular/cli": "^1.5.0",
     "@angular/compiler-cli": "^4.0.0",
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",

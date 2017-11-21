@@ -28,7 +28,7 @@ export class CreateUserComponent implements OnInit {
 
     this.route.params
     .do(params => this.idUser = params['idUser'] === undefined ? -1 : +params['idUser'])
-    .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser))
+    .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser).catch(e => Observable.of(null)))
     .do(user => {
       if (!user) {
         user = new Profile();

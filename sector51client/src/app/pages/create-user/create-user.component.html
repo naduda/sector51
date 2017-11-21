@@ -59,11 +59,11 @@
     </div>
   </div>
   <div class="form-group row">
-    <div class="d-inline-block col-6">
+    <div class="col-6 col-form-label">
       <label class="col-6 col-form-label pl-0">Authorities</label>
       <div ngbDropdown class="d-inline-block">
         <i class="nav-item nav-link text-right" ngbDropdownToggle>{{this.user.authorities}}</i>
-        <div class="dropdown-menu">
+        <div ngbDropdownMenu>
           <div class="form-check" *ngFor="let r of allRoles">
             <label class="form-check-label ml-2">
               <input class="form-check-input" type="radio" [checked]="this.user.authorities.indexOf(r.name) != -1" (change)="this.user.authorities = r.name"
@@ -75,19 +75,18 @@
       </div>
     </div>
     <div class="col-6 col-form-label">
-        <label class="col-6 col-form-label pl-0">Gender</label>
-        <div ngbDropdown class="d-inline-block">
-          <i class="nav-item nav-link text-right" ngbDropdownToggle>{{genderText(this.user.sex)}}</i>
-          <div class="dropdown-menu">
-            <div class="form-check" *ngFor="let g of genders">
-              <label class="form-check-label ml-2">
-                <input class="form-check-input" type="radio" [checked]="this.user.sex === g"
-                  (change)="this.user.sex = g" [value]="genderText(g)">
-                <span class="mt-2">{{genderText(g) | uppercase}}</span>
-              </label>
-            </div>
+      <label class="col-6 col-form-label pl-0">Gender</label>
+      <div ngbDropdown class="d-inline-block">
+        <i class="nav-item nav-link text-right" ngbDropdownToggle>{{genderText(this.user.sex)}}</i>
+        <div ngbDropdownMenu>
+          <div class="form-check" *ngFor="let g of genders">
+            <label class="form-check-label ml-2">
+              <input class="form-check-input" type="radio" [checked]="this.user['sex'] === g" (change)="this.user.sex = g" [value]="genderText(g)">
+              <span class="mt-2">{{genderText(g) | uppercase}}</span>
+            </label>
           </div>
         </div>
+      </div>
     </div>
   </div>
   <hr>

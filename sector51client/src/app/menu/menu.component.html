@@ -1,25 +1,25 @@
 <nav class="navbar navbar-toggleable navbar-light p-1 pl-2 pr-2">
   <div class="collapse navbar-collapse show">
     <div class="navbar-nav">
-      <div ngbDropdown class="d-inline-block user">
+      <div ngbDropdown class="d-inline-block mr-4 user">
         <i class="nav-item nav-link" ngbDropdownToggle>{{'account' | translate | uppercase}}</i>
-        <div class="dropdown-menu">
+        <div ngbDropdownMenu>
           <a routerLink="/registration" class="dropdown-item">{{'addUser' | translate | titlecase}}</a>
         </div>
       </div>
 
-      <div ngbDropdown class="d-inline-block">
+      <div ngbDropdown class="d-inline-block mr-4">
         <i class="nav-item nav-link " ngbDropdownToggle>Menu-2</i>
-        <div class="dropdown-menu">
+        <div ngbDropdownMenu>
           <button class="dropdown-item">Action - 2.1</button>
           <button class="dropdown-item">Action - 2.2</button>
           <button class="dropdown-item">Action - 2.3</button>
         </div>
       </div>
 
-      <div ngbDropdown class="d-inline-block">
+      <div ngbDropdown class="d-inline-block mr-4">
         <i class="nav-item nav-link" ngbDropdownToggle>Menu-3</i>
-        <div class="dropdown-menu">
+        <div ngbDropdownMenu>
           <button class="dropdown-item">Action - 3.1</button>
           <button class="dropdown-item">Action - 3.2</button>
           <button class="dropdown-item">Action - 3.3</button>

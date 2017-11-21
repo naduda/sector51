@@ -8,7 +8,7 @@
       <i class="fa fa-fw fa-user"></i>
       <span>{{common.profile.login}}</span>
     </a>
-    <div class="dropdown-menu">
+    <div ngbDropdownMenu>
       <a [routerLink]="['/registration', common.profile['created']]" class="dropdown-item pl-2 pr-2">
         <i class="fa fa-fw fa-user"></i>
         <span>{{'profile' | translate | titlecase}}</span>
@@ -24,7 +24,7 @@
       <img src="{{locale.ico}}" alt="{{locale.name}}">
       <span>{{locale.text}}</span>
     </span>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <div ngbDropdownMenu>
       <button *ngFor="let l of locales"
         class="dropdown-item" (click)="changeLang(l)">
         <img src="{{l.ico}}" alt="{{l.name | uppercase}}"
