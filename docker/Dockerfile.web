@@ -8,4 +8,8 @@ ADD ./pr/build.sh /pr/
 ADD ./pr/init_web.sh /pr/
 ADD ./settings.properties /tmp/
 
-RUN apk update && apk add git && rm -rf /var/cache/apk/*
+RUN apk update && apk add git && \
+    chmod 777 /tmp && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    rm -rf /var/cache/apk/*
