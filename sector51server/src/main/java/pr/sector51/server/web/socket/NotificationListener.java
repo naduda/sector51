@@ -21,9 +21,6 @@ class NotificationListener extends Thread
   }
 
   public void setConnection(Connection connection) {
-    if (this.pgconn != null) {
-      return;
-    }
     try (Statement stmt = connection.createStatement()) {
       this.pgconn = connection.unwrap(PGConnection.class);
       stmt.execute("LISTEN scanner_update");
@@ -33,33 +30,25 @@ class NotificationListener extends Thread
     }
   }
 
-  public void run()
-  {
-    try
-    {
-      while (pgconn == null) {
-        Thread.sleep(500);
-      }
-
-      while (true)
-      {
+  public void run() {
+    while (true) {
+      try {
+        while (pgconn == null) {
+          Thread.sleep(100);
+        }
         PGNotification notifications[] = pgconn.getNotifications();
 
-        if (notifications != null)
-        {
-          for (int i=0; i < notifications.length; i++) {
-            System.out.println("Got notification name: " + notifications[i].getName());
+        if (notifications != null) {
+          for (int i = 0; i < notifications.length; i++) {
             System.out.println("Got notification para: " + notifications[i].getParameter());
             sendMessage(notifications[i].getParameter());
           }
         }
 
         Thread.sleep(500);
+      } catch (SQLException | InterruptedException ex) {
+        ex.printStackTrace();
       }
-    }
-    catch (SQLException | InterruptedException ex)
-    {
-      ex.printStackTrace();
     }
   }
 
