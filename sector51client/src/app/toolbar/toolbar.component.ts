@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
 import { CommonService } from '../services/common.service';
-import { WebsocketService } from '../services/websocket.service';
 import { Profile } from '../entities/profile';
 import { ILocale } from '../entities/common';
 

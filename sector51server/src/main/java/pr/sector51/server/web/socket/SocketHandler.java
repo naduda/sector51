@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -19,33 +21,24 @@ import pr.sector51.server.security.services.TokenHandler;
 @Component
 public class SocketHandler extends TextWebSocketHandler {
   private final List<WebSocketSession> sessions;
-  private WebSocketSession session;
+  private final NotificationListener listener;
   @Autowired
   private TokenHandler tokenHandler;
   @Autowired
   private UserDao userDao;
+  @Autowired
+  private DataSource dataSource;
 
   public SocketHandler() {
     super();
     sessions = new ArrayList<>();
-  }
-
-  public void sendMessage(String message) {
-    sessions.forEach(s -> {
-      if (s.isOpen()) {
-        try {
-          s.sendMessage(new TextMessage("{\"value\": \"" + message + "\"}"));
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
+    listener = new NotificationListener(sessions);
+    listener.start();
   }
 
   @Override
   public void afterConnectionEstablished(WebSocketSession session) {
     System.out.println("Connection established");
-    this.session = session;
     String token = session.getUri().getQuery();
     if (token != null) {
       token = token.substring(token.indexOf("=") + 1);
@@ -59,21 +52,19 @@ public class SocketHandler extends TextWebSocketHandler {
       }
       UserSecurity user = userDao.getUserSecurityById(userId.get()).get();
       if (user == null || expirationDate.get().getTime() < System.currentTimeMillis() ||
-          (user.getAuthorities().size() == 1 && user.getAuthorities().contains(ERole.USER))) {
+          (user.getAuthorities().size() > 0 && user.getAuthorities().contains(ERole.USER))) {
         session.close();
         return;
       }
+      listener.setConnection(dataSource.getConnection());
+      sessions.add(session);
     } catch (Exception ex) {
       try {
         session.close();
       } catch (IOException e) {
         e.printStackTrace();
       }
-      return;
     }
-
-    sessions.add(session);
-    sendMessage("Connected! " + sessions.size());
   }
 
   @Override
@@ -88,7 +79,6 @@ public class SocketHandler extends TextWebSocketHandler {
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     sessions.remove(session);
-    sendMessage("Connection was CLOSED! " + sessions.size());
     System.out.println("Connection was CLOSED! " + sessions.size());
   }
 }

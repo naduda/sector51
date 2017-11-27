@@ -37,7 +37,7 @@ dependencies {
 	//compile('org.springframework.security:spring-security-messaging')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-websocket')
-	runtime('org.postgresql:postgresql')
+	compile('org.postgresql:postgresql')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 

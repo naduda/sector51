@@ -6,23 +6,25 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { WebsocketService } from './websocket.service';
-import { Profile } from '../entities/profile';
 
 @Injectable()
 export class AuthenticationService {
+  private http: HttpClient;
 
   constructor(private injector: Injector,
               private router: Router,
-              private websoket: WebsocketService,
+              private websocket: WebsocketService
   ) {}
+
+  initWebsocket = (token: string) => this.websocket.initWebSocket(token, this.http);
 
   navigate(path: string) {
     this.router.navigate([path]);
   }
 
   login(username: string, password: string): Observable<boolean> {
-    const http = this.injector.get(HttpClient);
-    return http.post('/api/login', { username: username, password: password })
+    this.http = this.injector.get(HttpClient);
+    return this.http.post('/api/login', { username: username, password: password })
       .map((response: any) => {
         const token = response && response.token;
         if (token) {
@@ -50,7 +52,7 @@ export class AuthenticationService {
   }
 
   logout(): void {
-    this.websoket.disconnect();
+    this.websocket.disconnect();
     localStorage.removeItem('currentUser');
     this.router.navigate(['login']);
   }

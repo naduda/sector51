@@ -91,13 +91,9 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Crypt.cs" />
-    <Compile Include="MyServiceInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MyServiceInstaller.cs" />
     <Compile Include="ProcessAsCurrentUser.cs" />
-    <Compile Include="MyService.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MyService.cs" />
     <Compile Include="MyService.Designer.cs">
       <DependentUpon>MyService.cs</DependentUpon>
     </Compile>

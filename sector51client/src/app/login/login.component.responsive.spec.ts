@@ -37,8 +37,8 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
     const debugElement = fixture.debugElement.query(By.css('form[name="loginForm"]'));
     expect(debugElement).toBeDefined();
-    const element = debugElement.nativeElement;
-    expect(element.offsetWidth).toBeGreaterThan(250);
-    expect(element.offsetWidth).toBeLessThan(365);
+    const nativeElement = debugElement.nativeElement;
+    expect(nativeElement.offsetWidth).toBeGreaterThan(250);
+    expect(nativeElement.offsetWidth).toBeLessThan(365);
   });
 });

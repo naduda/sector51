@@ -34,6 +34,7 @@ export class CanActivateAuthGuard implements CanActivate {
         .flatMap(pairs => this.http.get<Profile>('/api/profile/' + this.auth.username))
         .do(user => Observable.of(this.setPermissions(route, state, user)))
         .map(user => {
+          this.auth.initWebsocket(this.auth.token);
           this.common.profile = user;
           this.common.profile['iroles'] = this.iroles;
           if (!user['permited']) {

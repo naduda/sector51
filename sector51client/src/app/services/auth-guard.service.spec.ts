@@ -4,8 +4,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClient } from '@angular/common/http';
 
 import { CanActivateAuthGuard } from './auth-guard.service';
-import { AuthenticationService } from 'app/services/authentication.service';
-import { CommonService } from 'app/services/common.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { CommonService } from '../services/common.service';
 
 describe('AuthGuardService', () => {
   beforeEach(() => {

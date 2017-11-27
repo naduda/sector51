@@ -1,19 +1,15 @@
-import { Injectable, Injector, OnInit } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Profile } from '../entities/profile';
 
 @Injectable()
-export class WebsocketService implements OnInit {
+export class WebsocketService {
   private ws: WebSocket;
   private http: HttpClient;
 
-  constructor(private injector: Injector, private router: Router) {}
-
-  ngOnInit(): void {
-    this.http = this.injector.get(HttpClient);
-  }
+  constructor(private router: Router) {}
 
   public disconnect() {
     if (this.ws) {
@@ -21,32 +17,21 @@ export class WebsocketService implements OnInit {
     }
   }
 
-  public initWebSocket(token: string, user: Profile): void {
+  public initWebSocket(token: string, httpClient: HttpClient): void {
+    this.http = httpClient;
     this.ws = new WebSocket('ws://localhost:8089/wsapi?token=' + token);
 
     this.ws.onopen = () => {
-        console.log('FileServer Connected.');
-        this.ws.send(user.email);
+        console.log('Server Connected.');
     };
 
     this.ws.onmessage = (evt) => {
-      const value: string = JSON.parse(evt.data).value;
-      if (value.startsWith('user_')) {
-        const key = value.substring(5);
-        this.http.get<Profile>('/api/getUserByCard?card=' + key)
-          .subscribe(data => {
-            console.log(data);
-            if (data) {
-              this.router.navigate(['profile', data.login]);
-            } else {
-              this.router.navigate(['registration']);
-            }
-          });
-      }
+      const data = JSON.parse(evt.data);
+      console.log(data);
     };
 
     this.ws.onclose = () => {
-      setTimeout(() => this.initWebSocket(token, user), 5000);
+      setTimeout(() => this.initWebSocket(token, this.http), 5000);
     };
 
     this.ws.onerror = (e) => {
