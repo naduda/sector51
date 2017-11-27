@@ -1141,7 +1141,6 @@ var ModalService = (function () {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return WebsocketService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1152,10 +1151,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
-
 var WebsocketService = (function () {
-    function WebsocketService(router) {
-        this.router = router;
+    function WebsocketService() {
     }
     WebsocketService.prototype.disconnect = function () {
         if (this.ws) {
@@ -1164,8 +1161,9 @@ var WebsocketService = (function () {
     };
     WebsocketService.prototype.initWebSocket = function (token, httpClient) {
         var _this = this;
+        var wsUrl = location.origin.replace('http://', 'ws://') + '/wsapi?token=' + token;
         this.http = httpClient;
-        this.ws = new WebSocket('ws://localhost:8089/wsapi?token=' + token);
+        this.ws = new WebSocket(wsUrl.includes(':4200') ? wsUrl.replace(':4200', ':8089') : wsUrl);
         this.ws.onopen = function () {
             console.log('Server Connected.');
         };
@@ -1182,7 +1180,7 @@ var WebsocketService = (function () {
     };
     WebsocketService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]])
+        __metadata("design:paramtypes", [])
     ], WebsocketService);
     return WebsocketService;
 }());

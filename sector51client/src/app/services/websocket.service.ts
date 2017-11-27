@@ -1,15 +1,12 @@
 import { Injectable} from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { Profile } from '../entities/profile';
 
 @Injectable()
 export class WebsocketService {
   private ws: WebSocket;
   private http: HttpClient;
 
-  constructor(private router: Router) {}
+  constructor() {}
 
   public disconnect() {
     if (this.ws) {
@@ -18,8 +15,9 @@ export class WebsocketService {
   }
 
   public initWebSocket(token: string, httpClient: HttpClient): void {
+    const wsUrl = location.origin.replace('http://', 'ws://') + '/wsapi?token=' + token;
     this.http = httpClient;
-    this.ws = new WebSocket('ws://localhost:8089/wsapi?token=' + token);
+    this.ws = new WebSocket(wsUrl.includes(':4200') ? wsUrl.replace(':4200', ':8089') : wsUrl);
 
     this.ws.onopen = () => {
         console.log('Server Connected.');
