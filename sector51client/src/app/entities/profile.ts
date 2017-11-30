@@ -1,7 +1,6 @@
 import { ERole, ESex } from '../entities/common';
 
 export class Profile {
-  readonly login: string;
   readonly name: string;
   readonly surname: string;
   readonly phone: string;
@@ -15,7 +14,6 @@ export class Profile {
     email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean) {
     this.role = role === undefined ? ERole.USER : role;
     this.authorities = ERole[this.role];
-    this.login = login;
     this.name = name;
     this.surname = surname;
     this.phone = phone;

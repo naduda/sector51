@@ -111,20 +111,19 @@ public class UserDao extends CommonDao implements IUserMapper {
         .setCreated(user.getCreated())
         .setName("Name" + role.name())
         .setSurname("Surname" + role.name())
-        .setEmail(role.name() + "@gmail.com")
+        .setEmail(role.name().toLowerCase() + "@gmail.com")
         .setPhone("+380501234567")
         .setRoles(user.getRoles()).build();
     insertUserInfo(userInfo);
   }
 
   public ESector51Result insertUser(UserInfo userInfo){
-    UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
+    UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userExist != null) {
       return ESector51Result.USER_ALREADY_EXIST;
     }
     boolean result = runTransaction(() -> {
       UserSecurity user = new UserSecurityBuilder()
-              .setUsername(userInfo.getLogin())
               .setPassword(userInfo.getPassword())
               .setRoles(userInfo.getRoles())
               .build();
@@ -136,7 +135,7 @@ public class UserDao extends CommonDao implements IUserMapper {
   }
 
   public ESector51Result updateUser(UserInfo userInfo){
-    UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
+    UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userInfo.getPassword() == null) {
       userInfo.setPassword(userExist.getPassword());
     } else {
@@ -190,5 +189,20 @@ public class UserDao extends CommonDao implements IUserMapper {
     UserInfo user = userMapper.getUserInfoByCard(value);
     user.setPassword(null);
     return user;
+  }
+
+  @Override
+  public List<UserInfo> getUserInfoByEmail(String value) {
+    return userMapper.getUserInfoByEmail(value);
+  }
+
+  @Override
+  public List<UserInfo> getUserInfoByPnone(String value) {
+    value = value
+        .replaceAll(" ", "")
+        .replaceAll("\\(", "")
+        .replaceAll("\\)", "")
+        .replaceAll("-", "");
+    return userMapper.getUserInfoByPnone("%" + value);
   }
 }

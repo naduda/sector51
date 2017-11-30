@@ -65,6 +65,6 @@ public class UserInfoBuilder {
   }
 
   public UserInfo build() {
-    return new UserInfo(login, password, created, name, surname, phone, email, roles, card, sex);
+    return new UserInfo(password, created, name, surname, phone, email, roles, card, sex);
   }
 }

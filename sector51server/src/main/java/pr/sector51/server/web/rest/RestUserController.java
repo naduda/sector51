@@ -40,12 +40,21 @@ public class RestUserController {
     return permissions.stream().findFirst().get();
   }
 
+  private UserInfo getUserInfoByLogin(String login) {
+    List<UserInfo> users = null;
+    if (login.contains("@")) {
+      users = userDao.getUserInfoByEmail(login.replaceAll(",", "."));
+    } else if (login.length() > 9) {
+      users = userDao.getUserInfoByPnone(login);
+    }
+    return users == null || users.size() < 1 ? null : users.get(0);
+  }
+
   @RequestMapping("/profile/{name}")
   @ResponseBody
-  public UserInfo profile(@PathVariable("name") String name) {
-    Timestamp created = userDao.getUserSecurityByName(name).getCreated();
-    UserInfo user = userDao.getUserInfoById(created);
-    return user;
+  public UserInfo profile(@PathVariable("name") String login) {
+    UserInfo userInfo = getUserInfoByLogin(login);
+    return userDao.getUserInfoById(userInfo.getCreated());
   }
 
   @RequestMapping("/getUserById/{id}")
@@ -58,11 +67,15 @@ public class RestUserController {
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public String getToken(@RequestBody UserSecurity user) {
-    UserSecurity dbUser = userDao.getUserSecurityByName(user.getUsername());
     String token = "";
+    UserInfo userInfo = getUserInfoByLogin(user.getUsername());
+    if (userInfo == null) {
+      return String.format("{\"token\": \"%s\"}", token);
+    }
+
+    UserSecurity dbUser = userDao.getUserSecurityById(userInfo.getCreated());
     if (dbUser != null && userDao.encoder.matches(user.getPassword(), dbUser.getPassword())) {
-      token = tokenHandler
-          .generateToken(dbUser.getCreated().getTime(), LocalDateTime.now().plusDays(1));
+      token = tokenHandler.generateToken(dbUser.getCreated().getTime(), LocalDateTime.now().plusDays(1));
     }
     return String.format("{\"token\": \"%s\"}", token);
   }

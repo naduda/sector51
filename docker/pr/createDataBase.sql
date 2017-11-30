@@ -1,5 +1,4 @@
 CREATE TABLE usersecurity (
-	username character varying(10) NOT NULL,
 	password character varying(100) NOT NULL,
 	roles character varying(100) NOT NULL,
 	accountNonExpired boolean,
@@ -9,8 +8,7 @@ CREATE TABLE usersecurity (
 	attempts integer NOT NULL DEFAULT 0,
 	lastmodified timestamp without time zone NOT NULL DEFAULT now(),
 	created timestamp without time zone NOT NULL DEFAULT now(),
-	CONSTRAINT pk_user_security PRIMARY KEY (created),
-	CONSTRAINT pk_login UNIQUE (username)
+	CONSTRAINT pk_user_security PRIMARY KEY (created)
 );
 
 CREATE TABLE userinfo (
@@ -21,6 +19,7 @@ CREATE TABLE userinfo (
 	email character varying(50) NOT NULL,
 	card character varying(15),
 	sex boolean,
+	CONSTRAINT pk_uniqe UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
 

@@ -8,9 +8,9 @@ import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
 public interface IUserMapper {
-  @Insert("INSERT INTO usersecurity(username, password, roles, accountNonExpired, accountNonLocked,"
+  @Insert("INSERT INTO usersecurity(password, roles, accountNonExpired, accountNonLocked,"
       + "credentialsNonExpired, enabled, created) "
-      + "VALUES (#{username}, #{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "
+      + "VALUES (#{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "
       + "#{credentialsNonExpired}, #{enabled}, #{created})")
   void insertUserSecurity(UserSecurity user);
 
@@ -39,15 +39,21 @@ public interface IUserMapper {
   @Select("SELECT * FROM usersecurity WHERE created = #{value}")
   UserSecurity getUserSecurityById(Timestamp value);
 
-  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui " +
+  @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui " +
           "WHERE us.created = ui.created")
   List<UserInfo> getUsersInfo();
 
-  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui "
+  @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "
       + "WHERE ui.created = #{value} AND us.created = ui.created")
   UserInfo getUserInfoById(Timestamp value);
 
-  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui "
+  @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "
       + "WHERE ui.card = #{value} AND us.created = ui.created")
   UserInfo getUserInfoByCard(String value);
+
+  @Select("SELECT * FROM userinfo WHERE email = #{value};")
+  List<UserInfo> getUserInfoByEmail(String value);
+
+  @Select("SELECT * FROM userinfo WHERE phone like #{value};")
+  List<UserInfo> getUserInfoByPnone(String value);
 }

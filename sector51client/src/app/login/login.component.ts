@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../services/authentication.service';
 import { Profile } from '../entities/profile';
+import { environment } from '../../environments/environment.responsive';
 
 @Component({
   selector: 'sector51-login',
@@ -17,8 +18,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.auth.logout();
-    this.model.username = 'owner';
-    this.model.password = 'owner';
+    if (!environment.production) {
+      this.model.username = 'owner@gmail.com';
+      this.model.password = 'owner';
+    }
   }
 
   login() {

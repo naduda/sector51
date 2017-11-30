@@ -6,7 +6,7 @@
   <div class="d-inline-block" ngbDropdown *ngIf="common.profile">
     <a href="javascript: void(0);" ngbDropdownToggle>
       <i class="fa fa-fw fa-user"></i>
-      <span>{{ common.profile.login }}</span>
+      <span>{{ common.profile.name }}</span>
     </a>
     <div ngbDropdownMenu>
       <a [routerLink]="['/registration', common.profile['created']]" class="dropdown-item pl-2 pr-2">
@@ -19,8 +19,8 @@
       </a>
     </div>
   </div>
-  <div ngbDropdown class="d-inline-block nav-link">
-    <span class="btn btn-sm" ngbDropdownToggle [hidden]="!locale.ico">
+  <div id="divLang" ngbDropdown class="d-inline-block nav-link">
+    <span class="btn btn-sm text-right" ngbDropdownToggle [hidden]="!locale.ico">
       <img src="{{locale.ico}}" alt="{{locale.name}}">
       <span>{{ locale.text }}</span>
     </span>

@@ -42,9 +42,8 @@ export class ProductComponent implements OnInit {
       });
   }
 
-  btOkClick(props: IModalProperties): any {
-    console.log(this.common.barcode);
-    this.router.navigate(['/registration'], { queryParams: { code: this.common.barcode } });
+  btOkClick(props: any): any {
+    props.instance.router.navigate(['/registration'], { queryParams: { code: props.code } });
   }
 
   btCancelClick(reason: any) {

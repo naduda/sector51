@@ -31,7 +31,7 @@ export class CreateUserComponent implements OnInit {
       .do(params => this.idUser = params['idUser'] || -1)
       .flatMap(params => this.route.queryParams)
       .do(queryParams => code = queryParams['code'] || '')
-      .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser))
+      .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser).catch(e => of(null)))
       .do(user => {
         if (!user) {
           user = new Profile();

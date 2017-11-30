@@ -32,7 +32,7 @@
   </form>
 </div>
 <div class="modal-footer" [hidden]="!ready">
-  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)" autofocus>
     {{ btOk | translate | titlecase }}
   </button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.close(false)">{{ 'cancel' | translate | titlecase }}</button>

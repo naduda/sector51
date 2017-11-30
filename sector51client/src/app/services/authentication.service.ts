@@ -26,15 +26,12 @@ export class AuthenticationService {
       .map((response: any) => {
         const token = response && response.token;
         if (token) {
-          localStorage.setItem('currentUser', JSON.stringify({
-            username: username,
-            token: token
-          }));
+          localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
           return true;
         }
         return false;
-      });
-      // .catch((error: any) => Observable.throw(error || 'Server error'));
+      })
+      .catch((error: any) => Observable.throw(error || 'Server error'));
   }
 
   get token(): string {
