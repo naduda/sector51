@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { CommonService } from './services/common.service';
-import { ILocale, STORAGE_NAME } from 'app/entities/common';
+import { ILocale, STORAGE_NAME } from './entities/common';
 
 @Component({
   selector: 'sector51-root',

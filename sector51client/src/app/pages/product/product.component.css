@@ -1,0 +1,13 @@
+.form-inline > label { width: 20%; }
+.form-inline > input { width: 30%; height: 2.5rem; }
+.form-inline > button {background-color: transparent; height: 2.5rem; }
+.form-inline > button:hover { cursor: pointer; }
+
+div[ngbdropdown] { width: 30%; }
+div[ngbdropdown] > i {
+  background-color: rgb(236, 238, 239);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  height: 2.5rem;
+}
+
+div[ngbdropdown] > i:hover { cursor: pointer; }

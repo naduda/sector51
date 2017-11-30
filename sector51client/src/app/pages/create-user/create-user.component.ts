@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { CommonService } from '../../services/common.service';
 import { Profile } from '../../entities/profile';
 import { IRole, ERole, ESex } from '../../entities/common';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   selector: 'sector51-create-user',
@@ -17,6 +18,7 @@ export class CreateUserComponent implements OnInit {
   public allRoles: IRole[];
   public created: boolean;
   public user: Profile;
+  public cardRedonly: boolean;
   private idUser: number;
 
   constructor(private http: HttpClient, private location: Location,
@@ -24,23 +26,27 @@ export class CreateUserComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.common.sidenavVisible = false;
-
+    let code;
     this.route.params
-    .do(params => this.idUser = params['idUser'] === undefined ? -1 : +params['idUser'])
-    .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser).catch(e => Observable.of(null)))
-    .do(user => {
-      if (!user) {
-        user = new Profile();
-        this.created = true;
-      } else {
-        user.authorities = user['roles'];
-      }
-      this.user = user;
-      this.user.sex = user['sex'] === true ? ESex.MAN : ESex.WOMAN;
-    })
-    .do(user => this.allRoles = this.common.profile['iroles'])
-    .subscribe(user => this.user['password'] = this.user['password2'] = '');
+      .do(params => this.idUser = params['idUser'] || -1)
+      .flatMap(params => this.route.queryParams)
+      .do(queryParams => code = queryParams['code'] || '')
+      .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser))
+      .do(user => {
+        if (!user) {
+          user = new Profile();
+          this.created = true;
+        } else {
+          user.email = user.email.toLowerCase();
+          user.authorities = user['roles'];
+        }
+        user.sex = user['sex'] === true ? ESex.MAN : ESex.WOMAN;
+        user.card = code || user.card;
+        this.cardRedonly = code;
+        this.user = user;
+        this.allRoles = this.common.profile['iroles'];
+      })
+      .subscribe(user => this.user['password'] = this.user['password2'] = '');
   }
 
   get genders() {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -12,7 +12,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     button.btn:hover { cursor: pointer; }
   `]
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent {
   @Input() header;
   @Input() body;
   @Input() btOK;
@@ -21,6 +21,4 @@ export class ModalComponent implements OnInit {
   @Input() bodyClass;
 
   constructor(public activeModal: NgbActiveModal) {}
-
-  ngOnInit() {}
 }

@@ -14,6 +14,7 @@ import { ERole } from '../../entities/common';
 import { By } from '@angular/platform-browser';
 import { ElementTools } from '../../testing/commonTest';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
+import { of } from 'rxjs/observable/of';
 
 describe('CreateUserComponent', () => {
   let component: CreateUserComponent;
@@ -34,11 +35,14 @@ describe('CreateUserComponent', () => {
         { provide: Location, useValue: { back: () => locationState = 'back'} },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         { provide: CommonService, useValue: { profile: profileMock } },
-        { provide: ActivatedRoute, useValue: { params: Observable.of({ idUser: undefined }) } },
+        { provide: ActivatedRoute, useValue: {
+          params: of({ idUser: -1 }),
+          queryParams: of({ })
+        }},
         { provide: HttpClient, useValue: {
-            get: (idUser: string) => Observable.of(undefined),
-            post: (url: string, body: any | null, options?: any) => Observable.of({name: 'qqqq'}),
-            put: (q: string, body: any) => Observable.of({})
+            get: (idUser: string) => of(undefined),
+            post: (url: string, body: any | null, options?: any) => of({name: 'qqqq'}),
+            put: (q: string, body: any) => of({})
           }
         }
       ],
@@ -119,17 +123,16 @@ describe('CreateUserComponent', () => {
 
   it('check dropdown lists (Authorities and Gender)', fakeAsync(() => {
     fixture.detectChanges();
-    const divSelector = 'div.form-group.row:nth-child(9)';
-    checkDropDown(divSelector, ' > div:first-child > div > i', 'OWNER');
-    checkDropDown(divSelector, ' > div:first-child > div > i', 'ADMIN');
-    checkDropDown(divSelector, ' > div:last-child > div > i', 'MAN');
-    checkDropDown(divSelector, ' > div:last-child > div > i', 'WOMAN');
+    checkDropDown('div[id="divAuthorities"] > div', 'OWNER');
+    checkDropDown('div[id="divAuthorities"] > div', 'ADMIN');
+    checkDropDown('div[id="divGender"] > div', 'MAN');
+    checkDropDown('div[id="divGender"] > div', 'WOMAN');
   }));
 
-  function checkDropDown(selector: string, iSelector: string, inputValue: string) {
-    et.click(selector + iSelector);
+  function checkDropDown(selector: string, inputValue: string) {
+    et.click(selector + ' > i');
     et.click(selector + ' input[value="' + inputValue + '"]');
-    expect(et.ne(selector + iSelector).innerHTML).toEqual(inputValue);
+    expect(et.ne(selector + ' > i').innerHTML).toEqual(inputValue);
   }
 
   function validateField(selector: string, value: string, expectValue: string) {

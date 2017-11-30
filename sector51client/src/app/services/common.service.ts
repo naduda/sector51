@@ -9,6 +9,7 @@ export class CommonService {
   public profile: Profile;
   public currentUser: BehaviorSubject<Profile>;
   public sidenavVisible: boolean;
+  public barcode: string;
 
   constructor(public router: Router) {
     this.currentUser = new BehaviorSubject(null);

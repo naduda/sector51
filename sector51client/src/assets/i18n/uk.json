@@ -40,5 +40,7 @@
   "cancel": "відхилити",
   "attention": "увага",
   "properties": "властивості",
-  "delete": "видалити"
+  "delete": "видалити",
+  "unknownBarcode": "невідомий баркод",
+  "add": "добавити"
 }

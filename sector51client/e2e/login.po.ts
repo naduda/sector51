@@ -7,14 +7,14 @@ export class Sector51LoginPage extends ABase {
   private readonly button: WebElement;
 
   constructor() {
-    super(true);
+    super(false);
     this.username = element(by.name('username'));
     this.password = element(by.name('password'));
     this.button = element(by.css('form button'));
   }
 
   test(): void {
-    this.loginAsUser('wrongUser', 'wrongPassword')
+    this.loginAsUser('wrongUser', 'wrongPassword');
     this.checkUrl('/login');
     expect(element(by.className('alert alert-danger')).isPresent()).toBeTruthy();
     this.printText('Check unsuccess login');

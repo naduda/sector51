@@ -19,7 +19,7 @@ export abstract class ABase implements ITest {
       .then(present => present ? sectorLink.click() : browser.get('/#/main'));
     browser.waitForAngular();
     browser.getCurrentUrl()
-      .then(url => url.includes('/main') ? null : this.loginAsUser())
+      .then(url => url.includes('/main') ? null : this.loginAsUser());
     expect(browser.getCurrentUrl()).toContain('/main');
   }
 

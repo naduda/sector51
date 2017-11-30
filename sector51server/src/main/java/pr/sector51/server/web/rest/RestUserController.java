@@ -34,8 +34,10 @@ public class RestUserController {
   }
 
   private ERole GetCurrentUserRole() {
-    List<ERole> permissions = getPermissionsByContext();
-    return permissions.stream().sorted(Comparator.comparingInt(a -> a.value)).findFirst().get();
+    SecurityContext context = SecurityContextHolder.getContext();
+    UserSecurity userSecurity = (UserSecurity) context.getAuthentication().getPrincipal();
+    List<ERole> permissions = (List<ERole>) userSecurity.getAuthorities();
+    return permissions.stream().findFirst().get();
   }
 
   @RequestMapping("/profile/{name}")
@@ -81,8 +83,8 @@ public class RestUserController {
 
   @RequestMapping(value = "/removeUser/{created}", method = RequestMethod.DELETE)
   public Sector51Result removeUser(@PathVariable("created") long created) {
-    Collection<? extends GrantedAuthority> permissions = getPermissionsByContext();
-    ESector51Result result = permissions.contains(2) ? userDao.removeUser(created) : ESector51Result.NOT_DENIED;
+    ERole mRole = GetCurrentUserRole();
+    ESector51Result result = mRole.value <= ERole.ADMIN.value ? userDao.removeUser(created) : ESector51Result.NOT_DENIED;
     return new Sector51Result(result);
   }
 

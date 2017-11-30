@@ -6,8 +6,10 @@ import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
 import { ERole } from '../entities/common';
-import { Observable } from 'rxjs/Observable';
 import { TranslateService } from '@ngx-translate/core';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/mergeMap';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   selector: 'sector51-main',
@@ -35,7 +37,7 @@ export class MainComponent implements OnInit {
       this.showAll = params['all'] === 'true';
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
-    .flatMap(params => this.users ? Observable.of(this.users) : this.http.get<Profile[]>('/api/getUsers'))
+    .flatMap(params => this.users ? of(this.users) : this.http.get<Profile[]>('/api/getUsers'))
     .do(users => this.users = users)
     .do(users => users.find(u => u['created'] === this.common.profile['created'])['active'] = true)
     .subscribe(users => this.user = users.find(u => u['created'] === this.selectedUserId));
@@ -59,7 +61,7 @@ export class MainComponent implements OnInit {
       btCancel: 'cancel'
     };
     this.translate.get('attention').subscribe(value => props.header = value + '!');
-    this.modalService.open(props, (result) =>
+    this.modalService.open(ModalComponent, props, (result) =>
       this.http.delete('/api/removeUser/' + idUser)
         .subscribe((response: any) => {
           if (response.result === 'OK') {

@@ -3,18 +3,19 @@ import { HttpClient } from '@angular/common/http';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { ModalService, IModalProperties } from '../services/modal.service';
+import { ModalService } from '../services/modal.service';
 import { CommonService } from '../services/common.service';
 
 import { MainComponent } from './main.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { Profile } from '../entities/profile';
-import { ERole } from '../entities/common';
+import { ERole, IModalProperties } from '../entities/common';
 import { USERS_MOCK, ElementTools } from '../testing/commonTest';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { AngularSplitModule } from 'angular-split';
+import { of } from 'rxjs/observable/of';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -47,7 +48,7 @@ describe('MainComponent', () => {
           }}
         },
         { provide: HttpClient, useValue: {} },
-        { provide: TranslateService, useValue: { get: (key) => Observable.of(key) } },
+        { provide: TranslateService, useValue: { get: (key) => of(key) } },
         { provide: CommonService, useClass: CommonServiceStub }
       ]
     })

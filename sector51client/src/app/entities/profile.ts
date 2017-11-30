@@ -5,9 +5,9 @@ export class Profile {
   readonly name: string;
   readonly surname: string;
   readonly phone: string;
-  readonly email: string;
+  email: string;
   authorities: string;
-  readonly card: string;
+  card: string;
   role: ERole;
   sex: ESex | boolean;
 

@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Profile } from '../entities/profile';
 import { IRole, ERole } from '../entities/common';
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class CanActivateAuthGuard implements CanActivate {
@@ -30,9 +32,9 @@ export class CanActivateAuthGuard implements CanActivate {
       }
       return this.common.currentUser
         .flatMap(user => this.http.get<any[]>('/api/getRoles'))
-        .do(pairs => this.iroles = pairs.map(pair => { return {id: +pair['key'], name: pair['value']}; }))
+        .do(pairs => this.iroles = pairs.map(pair => ({id: +pair['key'], name: pair['value']})))
         .flatMap(pairs => this.http.get<Profile>('/api/profile/' + this.auth.username))
-        .do(user => Observable.of(this.setPermissions(route, state, user)))
+        .do(user => of(this.setPermissions(route, state, user)))
         .map(user => {
           this.auth.initWebsocket(this.auth.token);
           this.common.profile = user;
@@ -44,7 +46,7 @@ export class CanActivateAuthGuard implements CanActivate {
         })
         .catch(ex => {
           this.router.navigate(['/login']);
-          return Observable.of(false);
+          return of(false);
         });
     }
     this.router.navigate(['/login']);

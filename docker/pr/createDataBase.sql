@@ -25,12 +25,18 @@ CREATE TABLE userinfo (
 );
 
 CREATE TABLE barcode (
-	id integer NOT NULL,
+	productId integer NOT NULL,
 	code character varying(13) NOT NULL,
-	entity character varying(25) NOT NULL,
-	entityId integer NOT NULL,
 	CONSTRAINT pk_barcode PRIMARY KEY (code)
 );
+
+CREATE TABLE product
+(
+  id integer NOT NULL,
+  name character varying(25) NOT NULL,
+  "desc" character varying(100) NOT NULL
+)
+INSERT INTO product (id, name, "desc") VALUES(0, 'USER', 'Відвідувач');
 
 CREATE TABLE scanner (
 	code character varying(13) NOT NULL,

@@ -6,30 +6,30 @@
   <div class="d-inline-block" ngbDropdown *ngIf="common.profile">
     <a href="javascript: void(0);" ngbDropdownToggle>
       <i class="fa fa-fw fa-user"></i>
-      <span>{{common.profile.login}}</span>
+      <span>{{ common.profile.login }}</span>
     </a>
     <div ngbDropdownMenu>
       <a [routerLink]="['/registration', common.profile['created']]" class="dropdown-item pl-2 pr-2">
         <i class="fa fa-fw fa-user"></i>
-        <span>{{'profile' | translate | titlecase}}</span>
+        <span>{{ 'profile' | translate | titlecase }}</span>
       </a>
       <a href="#" class="dropdown-item pl-2 pr-2" (click)="auth.logout()">
         <i class="fa fa-fw fa-sign-out"></i>
-        <span>{{'login.logout' | translate | titlecase}}</span>
+        <span>{{ 'login.logout' | translate | titlecase }}</span>
       </a>
     </div>
   </div>
   <div ngbDropdown class="d-inline-block nav-link">
     <span class="btn btn-sm" ngbDropdownToggle [hidden]="!locale.ico">
       <img src="{{locale.ico}}" alt="{{locale.name}}">
-      <span>{{locale.text}}</span>
+      <span>{{ locale.text }}</span>
     </span>
     <div ngbDropdownMenu>
       <button *ngFor="let l of locales"
         class="dropdown-item" (click)="changeLang(l)">
         <img src="{{l.ico}}" alt="{{l.name | uppercase}}"
           style="height: auto; width: 1rem;">
-        <span>{{l.text}}</span>
+        <span>{{ l.text }}</span>
       </button>
     </div>
   </div>

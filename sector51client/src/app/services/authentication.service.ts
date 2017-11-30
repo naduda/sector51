@@ -1,10 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { Observable } from 'rxjs/Observable';
 import { WebsocketService } from './websocket.service';
 
 @Injectable()
@@ -35,8 +33,8 @@ export class AuthenticationService {
           return true;
         }
         return false;
-      })
-      .catch((error: any) => Observable.throw(error || 'Server error'));
+      });
+      // .catch((error: any) => Observable.throw(error || 'Server error'));
   }
 
   get token(): string {

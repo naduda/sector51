@@ -9,6 +9,7 @@ import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ElementTools } from '../testing/commonTest';
+import { of } from 'rxjs/observable/of';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -17,7 +18,7 @@ describe('LoginComponent', () => {
 
   const form: any = {};
   const AuthenticationServiceStub = {
-    login: (name: string, psw: string): Observable<boolean> => Observable.of(name === psw),
+    login: (name: string, psw: string): Observable<boolean> => of(name === psw),
     logout: () => component.loading = false,
     navigate: () => component.error = undefined
   };
