@@ -35,7 +35,7 @@ CREATE TABLE product
   id integer NOT NULL,
   name character varying(25) NOT NULL,
   "desc" character varying(100) NOT NULL
-)
+);
 INSERT INTO product (id, name, "desc") VALUES(0, 'USER', 'Відвідувач');
 
 CREATE TABLE scanner (

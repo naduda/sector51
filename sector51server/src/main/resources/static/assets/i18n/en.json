@@ -40,5 +40,7 @@
   "cancel": "cancel",
   "attention": "attention",
   "properties": "properties",
-  "delete": "delete"
+  "delete": "delete",
+  "unknownBarcode": "unknown barcode",
+  "add": "add"
 }

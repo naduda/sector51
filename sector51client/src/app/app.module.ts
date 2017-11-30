@@ -24,7 +24,6 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MenuComponent } from './menu/menu.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ModalComponent } from './pages/modal/modal.component';
-import { TranslatePipeStub } from './testing/TranslatePipeStub';
 import { ProductComponent } from './pages/product/product.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
