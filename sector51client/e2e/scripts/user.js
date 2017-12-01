@@ -3,7 +3,7 @@
 
   app.init = (db) => {
     db.set('login', {}).write();
-    const u = db.get('usersecurity').filter({username: 'owner'}).value();
+    const u = db.get('usersecurity').filter({password: 'owner'}).value();
     const ui = db.get('userinfo').filter({created: u[0].created}).value();
     db.set('usersecurity', u).write();
     db.set('userinfo', ui).write();

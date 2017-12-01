@@ -25,11 +25,8 @@ export class AuthenticationService {
     return this.http.post('/api/login', { username: username, password: password })
       .map((response: any) => {
         const token = response && response.token;
-        if (token) {
-          localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-          return true;
-        }
-        return false;
+        token && localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
+        return token ? true : false;
       })
       .catch((error: any) => Observable.throw(error || 'Server error'));
   }
@@ -37,13 +34,13 @@ export class AuthenticationService {
   get token(): string {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const token = currentUser && currentUser.token;
-    return token ? token : '';
+    return token || '';
   }
 
   get username(): string {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const username = currentUser && currentUser.username;
-    return username ? username : '';
+    return username || '';
   }
 
   logout(): void {

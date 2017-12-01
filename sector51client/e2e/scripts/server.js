@@ -34,7 +34,8 @@ server.use((req, res, next) => {
   if (req.method === 'GET') {
     if (req.url.includes('/api/profile/')) {
       const login = req.url.substring(req.url.lastIndexOf('/') + 1);
-      res.jsonp(userScript.getUserByLogin(login));
+      const userInfo = router.db.get('userinfo').filter({ name: login }).value();
+      res.jsonp(userScript.getUserById(+userInfo[0].created));
       return;
     }
     if (req.url.includes('/api/getUserById/')) {
@@ -58,8 +59,9 @@ server.get('/api/getUsers', (req, res) => res.jsonp(userScript.users()));
 
 server.post('/api/login', (req, res) => {
   const data = req.body;
-  const user = router.db.get('usersecurity')
-    .filter({ username: data.username, password: data.password }).value()[0];
+  const userInfo = router.db.get('userinfo').filter({ name: data.username }).value();
+  const user = userInfo.length != 1 ? undefined :
+    router.db.get('usersecurity').filter({ created: userInfo[0].created, password: data.password }).value()[0];
   req.body = {token: user ? (user.created + '_' + (new Date().valueOf() + 24*60*60000)) : ''};
   router.db.set('login', req.body).write();
   res.jsonp(req.body);

@@ -1,7 +1,7 @@
 import { element, by, browser, protractor, WebElement, promise } from 'protractor';
 
 export interface ITest { test(): void; }
-export const USER = {name: 'owner', password: 'owner'};
+export const USER = {name: 'rightOwner', password: 'owner'};
 
 export abstract class ABase implements ITest {
   private counter = 0;
@@ -13,14 +13,14 @@ export abstract class ABase implements ITest {
 
   abstract test(): void;
 
-  openMainPage() {
+  openMainPage(): promise.Promise<boolean> {
     const sectorLink = element(by.css('.navbar-brand > a'));
     sectorLink.isPresent()
       .then(present => present ? sectorLink.click() : browser.get('/#/main'));
     browser.waitForAngular();
-    browser.getCurrentUrl()
-      .then(url => url.includes('/main') ? null : this.loginAsUser());
-    expect(browser.getCurrentUrl()).toContain('/main');
+    return browser.getCurrentUrl()
+      .then(url => url.includes('/main') ? null : this.loginAsUser())
+      .then(() => this.checkUrl('/main'));
   }
 
   loginAsUser(name?: string, psw?: string) {
@@ -31,7 +31,7 @@ export abstract class ABase implements ITest {
     username.sendKeys(name || USER.name);
     password.sendKeys(psw || USER.password);
     this.elementClick('form button');
-    browser.waitForAngular();
+    return browser.waitForAngular();
   }
 
   sleep(ms) {
@@ -61,8 +61,8 @@ export abstract class ABase implements ITest {
     webElement.sendKeys(protractor.Key.BACK_SPACE);
   }
 
-  checkUrl(url: string) {
-    expect(browser.getCurrentUrl()).toContain(url);
+  checkUrl(url: string): promise.Promise<boolean> {
+    return browser.getCurrentUrl().then(result => result.includes(url));
   }
 
   navigateTo(path: string) {

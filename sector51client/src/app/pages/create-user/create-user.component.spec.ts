@@ -69,10 +69,6 @@ describe('CreateUserComponent', () => {
   });
 
   it('validate form', fakeAsync(() => {
-    validateField('input[name="login"]', '', 'ng-dirty ng-invalid');
-    expect(et.ne('form').getAttribute('class')).toContain('ng-invalid');
-    validateField('input[name="login"]', 'Login12ю', 'ng-invalid');
-    validateField('input[name="login"]', 'Login12', 'ng-valid');
     validateField('input[name="name"]', 'TestТест ', 'ng-invalid');
     validateField('input[name="name"]', 'TestТест', 'ng-valid');
     validateField('input[name="surname"]', 'TestТестsuname ', 'ng-invalid');
@@ -105,11 +101,10 @@ describe('CreateUserComponent', () => {
   it('check button click', fakeAsync(() => {
     fixture.detectChanges();
     expect(locationState).toBeUndefined();
-    et.setInputValue('input[name="login"]', '');
+    et.setInputValue('input[name="name"]', '');
     et.ne('button.btn-primary').click();
     expect(locationState).toBeUndefined();
 
-    et.setInputValue('input[name="login"]', 'login');
     et.setInputValue('input[name="name"]', 'name');
     et.setInputValue('input[name="surname"]', 'surname');
     et.setInputValue('input[name="phone"]', '+380501234567');

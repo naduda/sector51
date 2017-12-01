@@ -9,8 +9,8 @@
       <div class="rounded mt-0">
         <ul class="list-group">
           <li class="list-group-item p-2" *ngFor="let u of users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" [hidden]="!showAll && !u.active"
-            (click)="changeQueryParam('user', u['created'])" [title]="u.login">
-            <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active, 'text-white': u['created'] === selectedUserId}">
+            (click)="changeQueryParam('user', u['created'])" [title]="u.card">
+            <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
               {{ u.surname + ' ' + u.name }}
             </a>
           </li>
