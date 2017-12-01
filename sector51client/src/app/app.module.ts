@@ -24,7 +24,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MenuComponent } from './menu/menu.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ModalComponent } from './pages/modal/modal.component';
-import { ProductComponent } from './pages/product/product.component';
+import { BarcodeComponent } from './pages/barcode/barcode.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -39,7 +39,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MenuComponent,
     CreateUserComponent,
     ModalComponent,
-    ProductComponent
+    BarcodeComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AngularSplitModule,
     Sector51RoutingModule
   ],
-  entryComponents: [ModalComponent, ProductComponent],
+  entryComponents: [ModalComponent, BarcodeComponent],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

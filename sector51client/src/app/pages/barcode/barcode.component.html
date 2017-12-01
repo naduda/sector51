@@ -1,0 +1,49 @@
+<div class="modal-header rounded-top {{headerClass}}" [hidden]="!ready">
+  <h4 class="modal-title">{{ header | translate | titlecase }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" [hidden]="!ready">
+  <form class="form-inline">
+    <label for="barcode" class="text-right">
+      <strong>Type:</strong>
+    </label>
+    <div ngbDropdown class="d-inline-block mb-2">
+      <i class="nav-item nav-link text-right rounded" ngbDropdownToggle *ngIf="product">
+        <span class="pr-1">{{ product.name }}</span>
+      </i>
+      <div ngbDropdownMenu>
+        <div class="form-check" *ngFor="let p of products">
+          <label class="form-check-label ml-2 w-100" (click)="product=p">{{ p.name }}</label>
+        </div>
+      </div>
+    </div>
+  </form>
+  <form class="form-inline" [hidden]="product.id !== 0">
+    <label for="name" class="text-right">
+      <strong>Name:</strong>
+    </label>
+    <input type="text" class="form-control mb-2 new-product" name="name" required>
+  </form>
+  <form class="form-inline" [hidden]="product.id !== 0">
+    <label for="desc" class="text-right">
+      <strong>Desc:</strong>
+    </label>
+    <input type="text" class="form-control mb-2 new-product" name="desc" value="-" required>
+  </form>
+  <form class="form-inline">
+    <label for="barcode" class="text-right">
+      <strong>Barcode:</strong>
+    </label>
+    <input type="text" class="form-control" name="barcode" [value]="common.barcode" readonly>
+  </form>
+</div>
+<div class="modal-footer" [hidden]="!ready">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)" autofocus>
+    {{ btOk | translate | titlecase }}
+  </button>
+  <button type="button" class="btn btn-secondary" (click)="activeModal.close(false)">
+    {{ 'cancel' | translate | titlecase }}
+  </button>
+</div>

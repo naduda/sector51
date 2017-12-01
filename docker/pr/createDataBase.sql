@@ -8,6 +8,7 @@ CREATE TABLE usersecurity (
 	attempts integer NOT NULL DEFAULT 0,
 	lastmodified timestamp without time zone NOT NULL DEFAULT now(),
 	created timestamp without time zone NOT NULL DEFAULT now(),
+	CONSTRAINT pk_uniqe_us UNIQUE (created),
 	CONSTRAINT pk_user_security PRIMARY KEY (created)
 );
 
@@ -19,13 +20,15 @@ CREATE TABLE userinfo (
 	email character varying(50) NOT NULL,
 	card character varying(15),
 	sex boolean,
-	CONSTRAINT pk_uniqe UNIQUE (email, phone),
+	CONSTRAINT pk_uniqe_ui UNIQUE (created),
+	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
 
 CREATE TABLE barcode (
 	productId integer NOT NULL,
 	code character varying(13) NOT NULL,
+	CONSTRAINT pk_uniqe_barcode UNIQUE (code),
 	CONSTRAINT pk_barcode PRIMARY KEY (code)
 );
 
@@ -33,9 +36,12 @@ CREATE TABLE product
 (
   id integer NOT NULL,
   name character varying(25) NOT NULL,
-  "desc" character varying(100) NOT NULL
+  "desc" character varying(100) NOT NULL,
+  CONSTRAINT pk_uniqe_product UNIQUE (id),
+  CONSTRAINT pk_product PRIMARY KEY (id)
 );
-INSERT INTO product (id, name, "desc") VALUES(0, 'USER', 'Відвідувач');
+INSERT INTO product (id, name, "desc") VALUES(0, 'NEW', '-');
+INSERT INTO product (id, name, "desc") VALUES(1, 'USER', 'Відвідувач');
 
 CREATE TABLE scanner (
 	code character varying(13) NOT NULL,

@@ -9,10 +9,10 @@ import 'rxjs/add/operator/mergeMap';
 
 @Component({
   selector: 'sector51-product',
-  templateUrl: './product.component.html',
-  styleUrls: ['./product.component.css']
+  templateUrl: './barcode.component.html',
+  styleUrls: ['./barcode.component.css']
 })
-export class ProductComponent implements OnInit {
+export class BarcodeComponent implements OnInit {
   public ready: boolean;
   public header: string;
   public headerClass: string;
@@ -27,7 +27,12 @@ export class ProductComponent implements OnInit {
     this.http.get<IProduct[]>('/api/products')
       .do(products => {
         this.products = products;
-        this.product = products[0];
+        this.product = products[1];
+        this.products.push({id: 2, name: 'Вода оболонська сильногазована, 1л', desc: '-'});
+        this.products.push({id: 3, name: 'Вода оболонська сильногазована, 1л', desc: '-'});
+        this.products.push({id: 4, name: 'Вода оболонська сильногазована, 5л', desc: '-'});
+        this.products.push({id: 5, name: 'Вода оболонська сильногазована, 61л', desc: '-'});
+        this.products.push({id: 6, name: 'Вода оболонська сильногазована, 7л', desc: '-'});
       })
       .flatMap(products => this.http.get<IBarcode>('/api/barcode/' + this.common.barcode))
       .subscribe(data => {

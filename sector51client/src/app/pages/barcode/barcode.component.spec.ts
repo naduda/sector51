@@ -4,16 +4,16 @@ import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 import { CommonService } from '../../services/common.service';
-import { ProductComponent } from './product.component';
+import { BarcodeComponent } from './barcode.component';
 import { of } from 'rxjs/observable/of';
 
 describe('ProductComponent', () => {
-  let component: ProductComponent;
-  let fixture: ComponentFixture<ProductComponent>;
+  let component: BarcodeComponent;
+  let fixture: ComponentFixture<BarcodeComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProductComponent, TranslatePipeStub ],
+      declarations: [ BarcodeComponent, TranslatePipeStub ],
       providers: [
         NgbActiveModal,
         { provide: HttpClient, useValue: {
@@ -27,7 +27,7 @@ describe('ProductComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProductComponent);
+    fixture = TestBed.createComponent(BarcodeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,7 +1,7 @@
 import { Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ModalService } from '../services/modal.service';
-import { ProductComponent } from '../pages/product/product.component';
+import { BarcodeComponent } from '../pages/barcode/barcode.component';
 import { CommonService } from '../services/common.service';
 import { ERole } from '../entities/common';
 
@@ -34,7 +34,7 @@ export class WebsocketService {
       console.log(data);
       if (data.code && !location.href.includes('/#/registration')) {
         this.common.barcode = data.code;
-        this.modalService.open(ProductComponent, { code: data.code });
+        this.modalService.open(BarcodeComponent, { code: data.code });
       }
     };
 

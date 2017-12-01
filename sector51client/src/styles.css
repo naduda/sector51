@@ -1,12 +1,10 @@
 html,body,
 div.container-fluid,
 div.row,
-sector51-login {
-  height: 100%;
-}
+sector51-login { height: 100%; }
 
-html {
-  font-size: 14px;
-}
+html { font-size: 14px; }
 
 .bg-faded { background-color: #f7f7f7; }
+
+button:hover { cursor: pointer; }

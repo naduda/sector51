@@ -9,7 +9,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
     }
-    button.btn:hover { cursor: pointer; }
   `]
 })
 export class ModalComponent {

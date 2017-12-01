@@ -1,0 +1,30 @@
+.form-inline { align-items: baseline; }
+.form-inline > label { width: 15%; }
+.form-inline:last-child > input { width: 30%; height: 2.5rem; }
+.form-inline > button { background-color: transparent; height: 2.5rem; }
+
+.dropdown-menu {
+  max-height: 10rem;
+  overflow-y: auto;
+  width: 80%;
+}
+
+.new-product,
+div[ngbdropdown] { width: 85%; }
+div[ngbdropdown] > i {
+  background-color: rgb(236, 238, 239);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+div.form-check:hover { background-color: rgb(236, 238, 239); }
+div.form-check > label:hover,
+div[ngbdropdown] > i:hover { cursor: pointer; }
+
+i.nav-item > span {
+  font-style: normal;
+  text-align: center;
+  width: 100%;
+}
