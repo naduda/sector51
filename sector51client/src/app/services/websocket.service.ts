@@ -33,14 +33,13 @@ export class WebsocketService {
       const data = JSON.parse(evt.data);
       console.log(data);
       if (data.code && !location.href.includes('/#/registration')) {
-        this.common.barcode = data.code;
         this.modalService.open(BarcodeComponent, { code: data.code });
       }
     };
 
     this.ws.onclose = () => {
       console.log('Server Disconnected.');
-      this.common.profile.role < ERole.USER && this.token &&
+      this.common.profile && this.common.profile.role < ERole.USER && this.token &&
         setTimeout(() => this.initWebSocket(this.token, this.http), 5000);
     };
 

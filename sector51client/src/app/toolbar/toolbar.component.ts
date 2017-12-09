@@ -1,7 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AuthenticationService } from '../services/authentication.service';
 import { CommonService } from '../services/common.service';
-import { Profile } from '../entities/profile';
 import { ILocale } from '../entities/common';
 
 @Component({
@@ -15,8 +13,7 @@ export class ToolbarComponent implements OnInit {
   @Output() langChange: EventEmitter<string>;
   locale: ILocale;
 
-  constructor(public auth: AuthenticationService,
-              public common: CommonService) {
+  constructor(public common: CommonService) {
     this.langChange = new EventEmitter();
   }
 

@@ -29,10 +29,17 @@ export class Sector51LoginPage extends ABase {
         return this.checkUrl('/login');
       })
       .then(success => {
+        if (!success) return false;
+        browser.get('#/main');
+        browser.waitForAngular();
+        return this.checkUrl('/login');
+      })
+      .then(success => {
         if (!success) {
           this.printText('Something wrong in Sector51LoginPage');
           return;
         }
+        this.printText('Check protection after logout');
         expect(element(by.className('alert alert-danger')).isPresent()).toBeFalsy();
         this.printText('Check logout');
       });

@@ -1,25 +1,31 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 import { CommonService } from '../../services/common.service';
 import { BarcodeComponent } from './barcode.component';
 import { of } from 'rxjs/observable/of';
+import { FormsModule } from '@angular/forms';
+import { RESERVED_PRODUCTS_ID } from '../../entities/common';
 
-describe('ProductComponent', () => {
+describe('BarcodeComponent', () => {
   let component: BarcodeComponent;
   let fixture: ComponentFixture<BarcodeComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ BarcodeComponent, TranslatePipeStub ],
+      imports: [ FormsModule ],
       providers: [
         NgbActiveModal,
         { provide: HttpClient, useValue: {
-          get: (idUser: string) => of([{ id: 0, name: 'USER', desc: 'user' }]),
-        } },
-        { provide: Router, useValue: { } },
+          get: (key: string) => {
+            if (key === '/api/products')
+              return of([ { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user' } ]);
+            else
+              return of({ productId: -1 });
+          },
+        }},
         { provide: CommonService, useValue: { } }
       ]
     })

@@ -13,17 +13,12 @@ export class AppComponent implements OnInit {
   currentLang: string;
 
   constructor(public common: CommonService, private translate: TranslateService) {
-    const sector = localStorage.getItem('sector');
-    const locale = sector ? JSON.parse(sector).locale : undefined;
+    const locale = common.fromStorage('locale');
     this.currentLang = locale ? locale.name : 'en';
     translate.setDefaultLang(this.currentLang);
     translate.use(this.currentLang);
-    translate.onLangChange.subscribe((e: LangChangeEvent) => {
-      const key: any = localStorage.getItem(STORAGE_NAME);
-      const value = key ? JSON.parse(key) : new Object();
-      value.locale = e.translations.locale.find(l => l.name === e.lang);
-      localStorage.setItem(STORAGE_NAME, JSON.stringify(value));
-    });
+    translate.onLangChange.subscribe((e: LangChangeEvent) =>
+      common.toStorage('locale', e.translations.locale.find(l => l.name === e.lang)));
   }
 
   ngOnInit(): void {

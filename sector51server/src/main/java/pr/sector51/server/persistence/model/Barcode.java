@@ -4,7 +4,9 @@ public class Barcode {
   private int productId;
   private String code;
 
-  public Barcode() {}
+  public Barcode() {
+    this.productId = -1;
+  }
 
   public int getProductId() {
     return productId;

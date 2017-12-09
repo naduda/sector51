@@ -4,8 +4,8 @@
     <span class="mt-2">{{ 'showAll' | translate | titlecase }}</span>
   </label>
   <hr>
-  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3">
-    <split-area [size]="25" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
+  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3" (dragEnd)="onDragEnd(0, $event)" *ngIf="sizeValue">
+    <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
           <li class="list-group-item p-2" *ngFor="let u of users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" [hidden]="!showAll && !u.active"
@@ -18,7 +18,7 @@
       </div>
     </split-area>
 
-    <split-area [size]="75" [ngClass]="{'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth<=540}">
+    <split-area [size]="sizeValue[1]" [ngClass]="{'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth<=540}">
       <div class="card" *ngIf="user">
         <div class="card-block">
           <h4 class="card-title">{{ user.surname + ' ' + user.name }}</h4>

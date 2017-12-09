@@ -3,55 +3,106 @@ import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../../services/common.service';
-import { IProduct, IBarcode, IModalWindow, IModalProperties } from '../../entities/common';
+import { IProduct, IBarcode, IModalWindow, IModalProperties, ERestResult, IResponse, RESERVED_PRODUCTS_ID } from '../../entities/common';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
+import { of } from 'rxjs/observable/of';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'sector51-product',
   templateUrl: './barcode.component.html',
   styleUrls: ['./barcode.component.css']
 })
-export class BarcodeComponent implements OnInit {
+export class BarcodeComponent implements OnInit, IModalWindow {
   public ready: boolean;
   public header: string;
   public headerClass: string;
   public btOk: string;
   public products: IProduct[];
   public product: IProduct;
+  public newProduct: IProduct;
+  public barcode: string;
+  public isEdit: boolean;
 
-  constructor(public activeModal: NgbActiveModal, private http: HttpClient,
-              public common: CommonService, private router: Router) {}
+  constructor(public activeModal: NgbActiveModal, private http: HttpClient, public common: CommonService) {
+    this.newProduct = { id: -1, name: '', desc: '-' };
+  }
 
   ngOnInit(): void {
-    this.http.get<IProduct[]>('/api/products')
+    this.http.get<IProduct[]>('/api/products').catch(e => of(null))
       .do(products => {
-        this.products = products;
-        this.product = products[1];
-        this.products.push({id: 2, name: 'Вода оболонська сильногазована, 1л', desc: '-'});
-        this.products.push({id: 3, name: 'Вода оболонська сильногазована, 1л', desc: '-'});
-        this.products.push({id: 4, name: 'Вода оболонська сильногазована, 5л', desc: '-'});
-        this.products.push({id: 5, name: 'Вода оболонська сильногазована, 61л', desc: '-'});
-        this.products.push({id: 6, name: 'Вода оболонська сильногазована, 7л', desc: '-'});
+        this.isEdit = this.product !== undefined;
+        if (products) {
+          this.products = products;
+          this.newProduct = this.product || this.newProduct;
+          this.product = this.product || products[1];
+        } else {
+          this.activeModal.close();
+          this.common.navigate('login');
+        }
       })
-      .flatMap(products => this.http.get<IBarcode>('/api/barcode/' + this.common.barcode))
+      .flatMap(products => products && this.http.get<IBarcode>('/api/barcode/' +
+        this.barcode, { params: { productId: this.product.id.toString() } }))
+      .do((barcode: IBarcode) => {
+        const exist: boolean = barcode.productId > RESERVED_PRODUCTS_ID;
+        const productId = barcode.productId < 0 ? RESERVED_PRODUCTS_ID : barcode.productId;
+        this.headerClass = exist ? 'bg-info' : 'bg-warning';
+        this.btOk = exist ? 'apply' : 'add';
+        this.product = this.products.find(p => p.id === productId);
+        this.header = exist ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
+        if (!this.barcode) this.barcode = exist ? barcode.code : '';
+      })
+      .flatMap((barcode: IBarcode) => barcode.productId < 0 ? of(undefined) :
+        this.http.get<any>('/api/getUserByCard', { params: { card: barcode.code } }))
       .subscribe(data => {
-        this.headerClass = 'bg-info';
-        this.btOk = 'apply';
+        if (data && data.created) this.header = data.surname + ' ' + data.name;
         this.ready = true;
-      }, error => {
-        this.header = 'unknownBarcode';
-        this.headerClass = 'bg-warning';
-        this.btOk = 'add';
-        this.ready = true;
-      });
+      }, error => console.error(error));
   }
 
   btOkClick(props: any): any {
-    props.instance.router.navigate(['/registration'], { queryParams: { code: props.code } });
+    const _instance = props.instance as BarcodeComponent;
+    if (_instance.isEdit) {
+      _instance.http.put('/api/updateProduct', _instance.newProduct, {
+        params: { code: '', oldProductId: '' }
+      }).subscribe((response: IResponse) => {
+          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+            _instance.common.newProduct.next(response.message);
+          }
+        });
+      return;
+    }
+    if (_instance.product.id === RESERVED_PRODUCTS_ID) {
+      _instance.common.navigate('registration', { code: props.code });
+    } else if (_instance.product.id === 0) {
+      _instance.http.post('/api/addproduct', _instance.newProduct, { params: { code: props.code } })
+        .subscribe((response: IResponse) => {
+          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+            _instance.common.newProduct.observers && _instance.common.newProduct.next(response.message);
+            _instance.common.navigate('products');
+          }
+        });
+    } else {
+      _instance.http.put('/api/updateProduct', _instance.newProduct, {
+        params: { code: props.code, oldProductId: _instance.product.id.toString() }
+      }).subscribe((response: IResponse) => {
+          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+            _instance.common.newProduct.observers && _instance.common.newProduct.next(response.message);
+            _instance.common.navigate('products');
+          }
+        });
+    }
   }
 
-  btCancelClick(reason: any) {
-    console.log(reason);
+  btCancelClick(reason: any) {}
+
+  init(props?: any) {
+    if (!props) return;
+    this.barcode = props.code || undefined;
+    if (props.product) {
+      this.product = props.product;
+      this.barcode = props.barcode;
+    }
   }
 }

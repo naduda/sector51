@@ -11,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pr.sector51.server.persistence.mappers.IScannerMapper;
 import pr.sector51.server.persistence.mappers.ISqlMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
 import pr.sector51.server.persistence.model.*;
@@ -27,12 +28,16 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Autowired
   private IUserMapper userMapper;
 
+  @Autowired
+  private IScannerMapper scannerMapper;
+
   @PostConstruct
   public void init() {
     List<UserInfo> users = userMapper.getUsersInfo();
     if (users.size() == 0) {
       boolean res = runTransaction(() -> {
         insertUser(ERole.OWNER);
+        scannerMapper.insertBarcode(1, 1);
         insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
       });
       System.out.println("\n\n\tTable users was " + (res ? "" : "not ") + "created\n\n");
@@ -130,6 +135,7 @@ public class UserDao extends CommonDao implements IUserMapper {
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
+      scannerMapper.insertBarcode(1, Integer.parseInt(userInfo.getCard()));
     });
     return result ? ESector51Result.OK : ESector51Result.ERROR;
   }
@@ -187,7 +193,11 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public UserInfo getUserInfoByCard(String value) {
     UserInfo user = userMapper.getUserInfoByCard(value);
-    user.setPassword(null);
+    if (user != null) {
+      user.setPassword(null);
+    } else {
+      user = new UserInfo();
+    }
     return user;
   }
 

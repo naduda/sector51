@@ -2,9 +2,7 @@
 # build.sh branch folder fullFileName.jar POSTGRES_DB POSTGRES_PASSWORD
 set -e
 
-mkdir /pr/temp
-cd /pr/temp
-../clone.sh $1 $2
+/pr/clone.sh $1 $2
 cd /pr/temp/$2
 
 jarFile=$3

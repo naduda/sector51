@@ -2,6 +2,7 @@ FROM anapsix/alpine-java:8_jdk
 
 ENV LANG en_US.utf8
 
+COPY ./sector51server /pr/temp/sector51server
 ADD ./pr/wait-for.sh /pr/
 ADD ./pr/clone.sh /pr/
 ADD ./pr/build.sh /pr/

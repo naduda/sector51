@@ -4,8 +4,8 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<div class="modal-body" [hidden]="!ready">
-  <form class="form-inline">
+<div class="modal-body" *ngIf="ready">
+  <form class="form-inline" [hidden]="isEdit">
     <label for="barcode" class="text-right">
       <strong>Type:</strong>
     </label>
@@ -20,30 +20,30 @@
       </div>
     </div>
   </form>
-  <form class="form-inline" [hidden]="product.id !== 0">
+  <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label for="name" class="text-right">
       <strong>Name:</strong>
     </label>
-    <input type="text" class="form-control mb-2 new-product" name="name" required>
+    <input type="text" class="form-control mb-2 new-product" name="name" [(ngModel)]="newProduct.name" required>
   </form>
-  <form class="form-inline" [hidden]="product.id !== 0">
+  <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label for="desc" class="text-right">
       <strong>Desc:</strong>
     </label>
-    <input type="text" class="form-control mb-2 new-product" name="desc" value="-" required>
+    <input type="text" class="form-control mb-2 new-product" name="desc" [(ngModel)]="newProduct.desc" required>
   </form>
   <form class="form-inline">
     <label for="barcode" class="text-right">
       <strong>Barcode:</strong>
     </label>
-    <input type="text" class="form-control" name="barcode" [value]="common.barcode" readonly>
+    <input type="text" class="form-control" name="barcode" [value]="barcode" readonly>
   </form>
 </div>
 <div class="modal-footer" [hidden]="!ready">
   <button type="button" class="btn btn-primary" (click)="activeModal.close(true)" autofocus>
     {{ btOk | translate | titlecase }}
   </button>
-  <button type="button" class="btn btn-secondary" (click)="activeModal.close(false)">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss(0)">
     {{ 'cancel' | translate | titlecase }}
   </button>
 </div>

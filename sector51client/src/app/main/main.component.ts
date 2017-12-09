@@ -23,6 +23,7 @@ export class MainComponent implements OnInit {
   public showAll: boolean;
   public permissions: boolean;
   public wWidth: number;
+  public sizeValue: number[];
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
               private modalService: ModalService, public common: CommonService,
@@ -38,9 +39,17 @@ export class MainComponent implements OnInit {
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
     .flatMap(params => this.users ? of(this.users) : this.http.get<Profile[]>('/api/getUsers'))
-    .do(users => this.users = users)
-    .do(users => users.find(u => u['created'] === this.common.profile['created'])['active'] = true)
+    .do(users => {
+      this.users = users;
+      users.find(u => u['created'] === this.common.profile['created'])['active'] = true;
+      const spliter = this.common.fromStorage('spliter');
+      this.sizeValue = spliter ? spliter.size : [ 25, 75 ];
+    })
     .subscribe(users => this.user = users.find(u => u['created'] === this.selectedUserId));
+  }
+
+  onDragEnd(columnindex: number, e: {gutterNum: number, sizes: Array<number>}) {
+    this.common.toStorage('spliter', { size: e.sizes });
   }
 
   changeQueryParam(name: string, value: any) {
@@ -56,7 +65,7 @@ export class MainComponent implements OnInit {
     const props = {
       header: '',
       headerClass: 'alert alert-danger',
-      body: 'promptRemoveUserQuestion',
+      body: 'prompt.RemoveUserQuestion',
       btOK: 'apply',
       btCancel: 'cancel'
     };

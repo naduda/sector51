@@ -53,7 +53,7 @@ rd /s /q %installDir% && pause
 
 :read_settings
 set SETTINGSFILE=%1
-if not exist %SETTINGSFILE% (
+IF NOT EXIST %SETTINGSFILE% (
   echo FAIL: File "%SETTINGSFILE%" not exist
   exit /b 1
 )

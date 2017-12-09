@@ -35,12 +35,19 @@
   "deleteUser": "delete user",
   "profile": "profile",
   "permissions": "permissions",
-  "promptRemoveUserQuestion": "are you sure you want delete selected user?",
+  "prompt": {
+    "RemoveUserQuestion": "are you sure you want delete selected user?",
+    "RemoveItemQuestion": "are you sure you want delete selected item?"
+  },
   "apply": "apply",
   "cancel": "cancel",
   "attention": "attention",
   "properties": "properties",
   "delete": "delete",
   "unknownBarcode": "unknown barcode",
-  "add": "add"
+  "add": "add",
+  "products": "products",
+  "productsList": "list of products",
+  "name": "name",
+  "desc": "description"
 }

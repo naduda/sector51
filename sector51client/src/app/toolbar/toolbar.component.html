@@ -13,7 +13,7 @@
         <i class="fa fa-fw fa-user"></i>
         <span>{{ 'profile' | translate | titlecase }}</span>
       </a>
-      <a href="#" class="dropdown-item pl-2 pr-2" (click)="auth.logout()">
+      <a [routerLink]="['/login']" class="dropdown-item pl-2 pr-2">
         <i class="fa fa-fw fa-sign-out"></i>
         <span>{{ 'login.logout' | translate | titlecase }}</span>
       </a>

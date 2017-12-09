@@ -1,0 +1,28 @@
+<div>
+  <h5 class="mt-2 text-center">{{ 'productsList' | translate | uppercase }}</h5>
+  <hr>
+  <table class="table table-sm table-striped table-bordered">
+    <thead>
+      <tr>
+        <th class="text-center">#</th>
+        <th class="text-center">{{ 'name' | translate | uppercase }}</th>
+        <th class="text-center">{{ 'desc' | translate | uppercase }}</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of products; let idx = index;">
+        <th class="text-center">{{ idx + 1 }}</th>
+        <td>{{ p.name }}</td>
+        <td>{{ p.desc }}</td>
+        <td class="text-center text-warning" (click)="editProduct(p)">
+          <i class="fa fa-edit"></i>
+        </td>
+        <td class="text-center text-danger" (click)="removeProduct(p)">
+          <i class="fa fa-trash"></i>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

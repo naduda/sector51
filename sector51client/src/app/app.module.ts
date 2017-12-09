@@ -25,6 +25,7 @@ import { MenuComponent } from './menu/menu.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ModalComponent } from './pages/modal/modal.component';
 import { BarcodeComponent } from './pages/barcode/barcode.component';
+import { ProductsComponent } from './pages/products/products.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -39,7 +40,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MenuComponent,
     CreateUserComponent,
     ModalComponent,
-    BarcodeComponent
+    BarcodeComponent,
+    ProductsComponent
   ],
   imports: [
     BrowserModule,

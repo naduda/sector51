@@ -10,7 +10,7 @@ import pr.sector51.server.persistence.model.Event;
 
 import java.util.List;
 
-public class CommonDao implements ICommonMapper {
+public class CommonDao {
   @Autowired
   private ICommonMapper commonMapper;
   @Autowired
@@ -32,12 +32,10 @@ public class CommonDao implements ICommonMapper {
     }
   }
 
-  @Override
   public boolean isTableExist(String name) {
     return commonMapper.isTableExist(name);
   }
 
-  @Override
   public void insertEvent(Event event) {
     commonMapper.insertEvent(event);
   }

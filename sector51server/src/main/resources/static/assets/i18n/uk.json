@@ -35,12 +35,19 @@
   "deleteUser": "видалити користувача",
   "profile": "профіль",
   "permissions": "права доступу",
-  "promptRemoveUserQuestion": "ви дійсно бажаєте видалити вибраного користувача?",
+  "prompt": {
+    "RemoveUserQuestion": "ви дійсно бажаєте видалити вибраного користувача?",
+    "RemoveItemQuestion": "ви дійсно бажаєте видалити вибраний елемент?"
+  },
   "apply": "застосувати",
   "cancel": "відхилити",
   "attention": "увага",
   "properties": "властивості",
   "delete": "видалити",
   "unknownBarcode": "невідомий баркод",
-  "add": "добавити"
+  "add": "добавити",
+  "products": "продукти",
+  "productsList": "список продуктів",
+  "name": "назва",
+  "desc": "опис"
 }

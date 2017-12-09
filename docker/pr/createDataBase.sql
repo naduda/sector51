@@ -41,7 +41,7 @@ CREATE TABLE product
   CONSTRAINT pk_product PRIMARY KEY (id)
 );
 INSERT INTO product (id, name, "desc") VALUES(0, 'NEW', '-');
-INSERT INTO product (id, name, "desc") VALUES(1, 'USER', 'Відвідувач');
+INSERT INTO product (id, name, "desc") VALUES(10, 'USER', 'Відвідувач');
 
 CREATE TABLE scanner (
 	code character varying(13) NOT NULL,

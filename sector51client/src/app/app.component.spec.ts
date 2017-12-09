@@ -6,13 +6,14 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { CommonService } from './services/common.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TranslateServiceStub } from 'app/testing/TranslateServiceStub';
+import { TranslateServiceStub } from './testing/TranslateServiceStub';
 
 export class CommonServiceStub {
   static isLoginValue = true;
   get isLogin() {
     return CommonServiceStub.isLoginValue;
   }
+  fromStorage = (key: string) => undefined;
 }
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;

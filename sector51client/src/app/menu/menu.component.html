@@ -9,9 +9,9 @@
       </div>
 
       <div ngbDropdown class="d-inline-block mr-4">
-        <i class="nav-item nav-link " ngbDropdownToggle>Menu-2</i>
+        <i class="nav-item nav-link " ngbDropdownToggle>{{ 'products' | translate | uppercase }}</i>
         <div ngbDropdownMenu>
-          <button class="dropdown-item">Action - 2.1</button>
+          <a routerLink="/products" class="dropdown-item">{{ 'productsList' | translate | titlecase }}</a>
           <button class="dropdown-item">Action - 2.2</button>
           <button class="dropdown-item">Action - 2.3</button>
         </div>

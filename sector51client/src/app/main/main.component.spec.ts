@@ -28,6 +28,7 @@ describe('MainComponent', () => {
     get profile() {
       return USERS_MOCK[currentProfile];
     }
+    fromStorage = (key: string) => undefined;
   }
 
   beforeEach(async(() => {

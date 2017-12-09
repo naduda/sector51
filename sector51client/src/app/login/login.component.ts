@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment.responsive';
 export class LoginComponent implements OnInit {
   model: any = {};
   loading = false;
-  error = '';
+  error: string;
 
   constructor(private auth: AuthenticationService) {}
 
@@ -27,19 +27,17 @@ export class LoginComponent implements OnInit {
   login() {
     this.loading = true;
     this.auth.login(this.model.username, this.model.password)
-    .subscribe(result => {
-      if (result === true) {
-        this.auth.navigate('main');
-      } else {
-        this.error = 'login.error.incorrectLogin';
+      .subscribe(result => {
+        if (result === true) {
+          this.auth.common.navigate('main');
+        } else {
+          this.loading = false;
+        }
+        this.error = result === true ? '' : 'login.error.incorrectLogin';
+      }, error => {
+        console.log(error);
         this.loading = false;
-      }
-    }, error => {
-      console.log(error);
-      if (error.ok) {
-        this.loading = false;
-        this.error = error;
-      }
-    });
+        this.error = error.statusText || error;
+      });
   }
 }

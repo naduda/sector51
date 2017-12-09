@@ -20,7 +20,10 @@ describe('LoginComponent', () => {
   const AuthenticationServiceStub = {
     login: (name: string, psw: string): Observable<boolean> => of(name === psw),
     logout: () => component.loading = false,
-    navigate: () => component.error = undefined
+    navigate: () => component.error = undefined,
+    common: {
+      navigate: (path: string) => console.log('Navigate to ' + path)
+    }
   };
 
   beforeEach(async(() => {
