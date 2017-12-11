@@ -27,7 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/resources/**", "/api/login", "/**/wsapi");
+    web.ignoring()
+        .antMatchers("/resources/**", "/assets/**", "/**/wsapi", "/*.ico",
+            "/*.wolf*", "/*.ttf", "/*.svg", "/*.eot" );
   }
 
   @Override
@@ -36,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
-        .antMatchers("/").permitAll()
+        .antMatchers("/", "/*.css", "/*.js", "/api/login").permitAll()
         .antMatchers("/api/delete/**").hasAuthority(ERole.ADMIN.getAuthority())
         .antMatchers("/api/add/**").hasAuthority(ERole.ADMIN.getAuthority())
         .antMatchers("/api/update/**").hasAuthority(ERole.ADMIN.getAuthority())
