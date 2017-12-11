@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IProduct, ERestResult, RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { IProduct, ERestResult, RESERVED_PRODUCTS_ID, ERole } from '../../entities/common';
 import { ModalService } from '../../services/modal.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ModalComponent } from '../modal/modal.component';
 import { BarcodeComponent } from '../barcode/barcode.component';
 import { CommonService } from '../../services/common.service';
+import { REST_API } from '../../entities/rest-api';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'sector51-products',
@@ -14,6 +16,8 @@ import { CommonService } from '../../services/common.service';
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   public products: IProduct[];
+  public permissions: boolean;
+  private subscription: Subscription;
   private readonly modalProperties = {
     header: '',
     headerClass: 'alert alert-danger',
@@ -28,20 +32,21 @@ export class ProductsComponent implements OnInit, OnDestroy {
               private translate: TranslateService) { }
 
   ngOnInit() {
+    this.permissions = this.common.profile.role < ERole.USER;
     this.translate.get('attention').subscribe(value => this.modalProperties.header = value + '!');
-    this.common.newProduct.subscribe(product => {
-      this.http.get<IProduct[]>('/api/products')
+    this.subscription = this.common.newProduct.subscribe(product => {
+      this.http.get<IProduct[]>(REST_API.GET.products)
         .subscribe(products => this.products = products.filter(p => p.id > RESERVED_PRODUCTS_ID));
     });
   }
 
   ngOnDestroy(): void {
-    this.common.newProduct.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   removeProduct(product: IProduct) {
     this.modalService.open(ModalComponent, this.modalProperties, (result) => {
-      this.http.delete('/api/removeProduct/' + product.id)
+      this.http.delete(REST_API.DELETE.productById(product.id))
         .subscribe(r => r === ERestResult[ERestResult.OK] && this.products.splice(this.products.indexOf(product), 1));
     });
   }

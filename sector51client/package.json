@@ -14,7 +14,7 @@
     "poste2e": "taskkill /fi \"WindowTitle eq json-server\"",
     "predeploy": "(del /F /S /Q ..\\sector51server\\src\\main\\resources\\static\\*) && (ng build --prod)",
     "deploy": "(xcopy /s .\\dist ..\\sector51server\\src\\main\\resources\\static)",
-    "postdeploy": "",
+    "postdeploy": "git add ../sector51server/src/main/resources/static/**",
     "prefake": "start \"json-server\" node ./e2e/scripts/server.js",
     "fake": "ng serve --proxy-config proxy.conf.e2e.json"
   },

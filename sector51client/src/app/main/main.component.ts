@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { of } from 'rxjs/observable/of';
+import { REST_API } from '../entities/rest-api';
 
 @Component({
   selector: 'sector51-main',
@@ -38,7 +39,7 @@ export class MainComponent implements OnInit {
       this.showAll = params['all'] === 'true';
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
-    .flatMap(params => this.users ? of(this.users) : this.http.get<Profile[]>('/api/getUsers'))
+    .flatMap(params => this.users ? of(this.users) : this.http.get<Profile[]>(REST_API.GET.users))
     .do(users => {
       this.users = users;
       users.find(u => u['created'] === this.common.profile['created'])['active'] = true;
@@ -71,9 +72,9 @@ export class MainComponent implements OnInit {
     };
     this.translate.get('attention').subscribe(value => props.header = value + '!');
     this.modalService.open(ModalComponent, props, (result) =>
-      this.http.delete('/api/removeUser/' + idUser)
+      this.http.delete(REST_API.DELETE.userById(idUser))
         .subscribe((response: any) => {
-          if (response.result === 'OK') {
+          if (response === 'OK') {
             this.users.splice(this.users.indexOf(this.user), 1);
             this.user = undefined;
           }

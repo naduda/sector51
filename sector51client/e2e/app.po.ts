@@ -1,14 +1,14 @@
 import { element, by, browser, protractor, WebElement } from 'protractor';
 import { Sector51LoginPage } from './login.po';
-import { Sector51MenuPage } from './menu.po';
+import { UserPage } from './user.po';
 
 export class Sector51clientPage {
   readonly login: Sector51LoginPage;
-  readonly menu: Sector51MenuPage;
+  readonly user: UserPage;
 
   constructor() {
     this.login = new Sector51LoginPage();
-    this.menu = new Sector51MenuPage();
+    this.user = new UserPage();
   }
 
   init() {

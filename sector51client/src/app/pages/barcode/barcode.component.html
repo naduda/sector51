@@ -22,15 +22,21 @@
   </form>
   <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label for="name" class="text-right">
-      <strong>Name:</strong>
+      <strong>{{ 'name' | translate | titlecase }}:</strong>
     </label>
     <input type="text" class="form-control mb-2 new-product" name="name" [(ngModel)]="newProduct.name" required>
   </form>
   <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label for="desc" class="text-right">
-      <strong>Desc:</strong>
+      <strong>{{ 'desc' | translate | titlecase }}:</strong>
     </label>
     <input type="text" class="form-control mb-2 new-product" name="desc" [(ngModel)]="newProduct.desc" required>
+  </form>
+  <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
+    <label for="price" class="text-right">
+      <strong>{{ 'price' | translate | titlecase }}:</strong>
+    </label>
+    <input type="text" class="form-control mb-2 new-product" name="price" [(ngModel)]="newProduct.price" required>
   </form>
   <form class="form-inline">
     <label for="barcode" class="text-right">

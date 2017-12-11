@@ -3,7 +3,7 @@ import { ABase, USER } from './ABase';
 import { ERole, ESex } from '../src/app/entities/common';
 import { promise } from 'selenium-webdriver';
 
-export class Sector51MenuPage extends ABase {
+export class UserPage extends ABase {
   private readonly username: WebElement;
   private readonly profile: WebElement;
   private readonly menuUser: WebElement;

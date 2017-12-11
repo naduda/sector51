@@ -7,8 +7,9 @@
         <th class="text-center">#</th>
         <th class="text-center">{{ 'name' | translate | uppercase }}</th>
         <th class="text-center">{{ 'desc' | translate | uppercase }}</th>
-        <th></th>
-        <th></th>
+        <th class="text-center">{{ 'price' | translate | uppercase }}</th>
+        <th *ngIf="permissions"></th>
+        <th *ngIf="permissions"></th>
       </tr>
     </thead>
     <tbody>
@@ -16,10 +17,11 @@
         <th class="text-center">{{ idx + 1 }}</th>
         <td>{{ p.name }}</td>
         <td>{{ p.desc }}</td>
-        <td class="text-center text-warning" (click)="editProduct(p)">
+        <td class="text-right pr-2">{{ p.price/100 | number:'0.2' }}</td>
+        <td *ngIf="permissions" class="text-center text-warning" (click)="editProduct(p)">
           <i class="fa fa-edit"></i>
         </td>
-        <td class="text-center text-danger" (click)="removeProduct(p)">
+        <td *ngIf="permissions" class="text-center text-danger" (click)="removeProduct(p)">
           <i class="fa fa-trash"></i>
         </td>
       </tr>

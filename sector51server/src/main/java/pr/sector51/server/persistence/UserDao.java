@@ -37,7 +37,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     if (users.size() == 0) {
       boolean res = runTransaction(() -> {
         insertUser(ERole.OWNER);
-        scannerMapper.insertBarcode(1, 1);
+        scannerMapper.insertBarcode(10, 1);
         insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
       });
       System.out.println("\n\n\tTable users was " + (res ? "" : "not ") + "created\n\n");
@@ -81,17 +81,16 @@ public class UserDao extends CommonDao implements IUserMapper {
   }
 
   @Override
-  public void deleteUser(Timestamp created) {
-    userMapper.deleteUser(created);
+  public int deleteUser(Timestamp created) {
+    return userMapper.deleteUser(created);
   }
 
   public ESector51Result removeUser(long created) {
     try {
-      deleteUser(new Timestamp(created));
+      return deleteUser(new Timestamp(created)) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
     } catch (Exception e) {
       return ESector51Result.ERROR;
     }
-    return ESector51Result.OK;
   }
 
   @Override
@@ -118,6 +117,7 @@ public class UserDao extends CommonDao implements IUserMapper {
         .setSurname("Surname" + role.name())
         .setEmail(role.name().toLowerCase() + "@gmail.com")
         .setPhone("+380501234567")
+        .setCard("1")
         .setRoles(user.getRoles()).build();
     insertUserInfo(userInfo);
   }
@@ -135,7 +135,7 @@ public class UserDao extends CommonDao implements IUserMapper {
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
-      scannerMapper.insertBarcode(1, Integer.parseInt(userInfo.getCard()));
+      scannerMapper.insertBarcode(10, Integer.parseInt(userInfo.getCard()));
     });
     return result ? ESector51Result.OK : ESector51Result.ERROR;
   }

@@ -10,7 +10,7 @@ describe('sector51client App', () => {
 
   it(page.textChar('Sector51', '*'), () => expect(browser.getTitle()).toEqual('Sector51'));
   it(page.textChar('Login page', '·'), () => page.login.test());
-  it(page.textChar('Navigation', '·'), () => page.menu.test());
+  it(page.textChar('User page', '·'), () => page.user.test());
 
   afterAll(() => {});
 });

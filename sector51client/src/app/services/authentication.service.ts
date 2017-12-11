@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { WebsocketService } from './websocket.service';
 import { CommonService } from './common.service';
+import { REST_API } from '../entities/rest-api';
 
 @Injectable()
 export class AuthenticationService {
@@ -19,7 +20,7 @@ export class AuthenticationService {
 
   login(username: string, password: string): Observable<boolean> {
     this.http = this.injector.get(HttpClient);
-    return this.http.post('/api/login', { username: username, password: password })
+    return this.http.post(REST_API.POST.login, { username: username, password: password })
       .map((response: any) => {
         const token = response && response.token;
         token && this.common.toStorage('currentUser', { username: username, token: token });

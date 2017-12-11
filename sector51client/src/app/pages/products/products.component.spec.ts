@@ -7,7 +7,7 @@ import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 import { ModalService } from '../../services/modal.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CommonService } from '../../services/common.service';
-import { RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { RESERVED_PRODUCTS_ID, ERole } from '../../entities/common';
 
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
@@ -19,10 +19,11 @@ describe('ProductsComponent', () => {
       providers: [
         { provide: HttpClient, useValue: {
           get: (idUser: string) => of([
-            { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user' }
+            { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user', price: 0 }
           ]),
         }},
         { provide: CommonService, useValue: {
+          profile: { role: ERole.ADMIN },
           newProduct: {
             subscribe: () => {},
             unsubscribe: () => {}

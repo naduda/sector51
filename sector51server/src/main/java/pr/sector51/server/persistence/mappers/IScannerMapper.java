@@ -30,7 +30,8 @@ public interface IScannerMapper {
   @Insert("INSERT INTO barcode(productId, code) VALUES(#{productId}, #{code});")
   void insertBarcode(@Param("productId") int productId, @Param("code") int code);
 
-  @Update("UPDATE product set name = #{value.name}, \"desc\" = #{value.desc} WHERE id = #{value.id}")
+  @Update("UPDATE product set name = #{value.name}, \"desc\" = #{value.desc}, price = #{value.price} " +
+      "WHERE id = #{value.id}")
   int updateProduct(@Param("value") Product product);
 
   @Update("UPDATE barcode set code = #{barcode.code} WHERE productid = #{barcode.productId}")

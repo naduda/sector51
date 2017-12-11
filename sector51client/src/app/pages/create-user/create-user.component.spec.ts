@@ -41,7 +41,7 @@ describe('CreateUserComponent', () => {
         }},
         { provide: HttpClient, useValue: {
             get: (idUser: string) => of(undefined),
-            post: (url: string, body: any | null, options?: any) => of({name: 'qqqq'}),
+            post: (url: string, body: any | null, options?: any) => of('OK'),
             put: (q: string, body: any) => of({})
           }
         }

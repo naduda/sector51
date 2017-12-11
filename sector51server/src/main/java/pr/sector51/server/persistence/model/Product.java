@@ -4,6 +4,7 @@ public class Product {
   private int id;
   private String name;
   private String desc;
+  private Integer price;
 
   public Product() {}
 
@@ -29,5 +30,13 @@ public class Product {
 
   public void setDesc(String desc) {
     this.desc = desc;
+  }
+
+  public Integer getPrice() {
+    return price;
+  }
+
+  public void setPrice(Integer price) {
+    this.price = price;
   }
 }

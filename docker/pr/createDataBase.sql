@@ -37,6 +37,7 @@ CREATE TABLE product
   id integer NOT NULL,
   name character varying(25) NOT NULL,
   "desc" character varying(100) NOT NULL,
+  price integer NOT NULL DEFAULT 0,
   CONSTRAINT pk_uniqe_product UNIQUE (id),
   CONSTRAINT pk_product PRIMARY KEY (id)
 );

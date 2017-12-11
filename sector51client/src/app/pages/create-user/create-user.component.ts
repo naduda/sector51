@@ -6,8 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { CommonService } from '../../services/common.service';
 import { Profile } from '../../entities/profile';
-import { IRole, ERole, ESex } from '../../entities/common';
+import { IRole, ERole, ESex, ERestResult } from '../../entities/common';
 import { of } from 'rxjs/observable/of';
+import { REST_API } from '../../entities/rest-api';
 
 @Component({
   selector: 'sector51-create-user',
@@ -31,7 +32,7 @@ export class CreateUserComponent implements OnInit {
       .do(params => this.idUser = params['idUser'] || -1)
       .flatMap(params => this.route.queryParams)
       .do(queryParams => code = queryParams['code'] || '')
-      .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser).catch(e => of(null)))
+      .flatMap(params => this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(e => of(null)))
       .do(user => {
         if (!user) {
           user = new Profile();
@@ -74,11 +75,19 @@ export class CreateUserComponent implements OnInit {
       delete this.user['password'];
     }
     if (this.idUser < 0) {
-      this.http.post('/api/createUser', this.user)
-        .subscribe(data => this.location.back());
+      this.http.post(REST_API.POST.user, this.user)
+        .subscribe(result => this.onResult(result));
     } else {
-      this.http.put('/api/updateUser', this.user)
-        .subscribe(data => this.location.back());
+      this.http.put(REST_API.PUT.user, this.user)
+        .subscribe(result => this.onResult(result));
+    }
+  }
+
+  private onResult(result) {
+    if (ERestResult[ERestResult.OK] === result) {
+      this.location.back();
+    } else {
+      alert('Something wrong. Result is ' + result);
     }
   }
 }

@@ -32,30 +32,30 @@ server.use((req, res, next) => {
 server.use(jsonServer.bodyParser);
 server.use((req, res, next) => {
   if (req.method === 'GET') {
-    if (req.url.includes('/api/profile/')) {
+    if (req.url.includes('/api/profileByName/')) {
       const login = req.url.substring(req.url.lastIndexOf('/') + 1);
       const userInfo = router.db.get('userinfo').filter({ name: login }).value();
       res.jsonp(userScript.getUserById(+userInfo[0].created));
       return;
     }
-    if (req.url.includes('/api/getUserById/')) {
+    if (req.url.includes('/api/userById/')) {
       const id = req.url.substring(req.url.lastIndexOf('/') + 1);
       res.jsonp(userScript.getUserById(+id));
       return;
     }
   } else if (req.method === 'DELETE') {
-    if (req.url.includes('/api/removeUser/')) {
+    if (req.url.includes('/api/delete/userById/')) {
       const id = req.url.substring(req.url.lastIndexOf('/') + 1);
       userScript.deleteUserById(+id);
-      res.jsonp({ message: 'User ' + id + ' removed.', result: 'OK' });
+      res.jsonp('OK');
       return;
     }
   }
   next()
 });
 
-server.get('/api/getRoles', (req, res) => res.jsonp(roleScript.roles()));
-server.get('/api/getUsers', (req, res) => res.jsonp(userScript.users()));
+server.get('/api/roles', (req, res) => res.jsonp(roleScript.roles()));
+server.get('/api/users', (req, res) => res.jsonp(userScript.users()));
 
 server.post('/api/login', (req, res) => {
   const data = req.body;
@@ -67,14 +67,14 @@ server.post('/api/login', (req, res) => {
   res.jsonp(req.body);
 });
 
-server.post('/api/createUser', (req, res) => {
+server.post('/api/add/user', (req, res) => {
   userScript.createUser(req.body);
-  res.jsonp({ message: 'User ' + req.body.login + ' created.', result: 'OK' });
+  res.jsonp('OK');
 });
 
-server.put('/api/updateUser', (req, res) => {
+server.put('/api/update/user', (req, res) => {
   userScript.updateUser(req.body);
-  res.jsonp({ message: 'User ' + req.body.login + ' updated.', result: 'OK' });
+  res.jsonp('OK');
 });
 
 server.use('/api', router);

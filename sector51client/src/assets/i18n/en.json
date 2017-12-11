@@ -49,5 +49,6 @@
   "products": "products",
   "productsList": "list of products",
   "name": "name",
-  "desc": "description"
+  "desc": "description",
+  "price": "price"
 }

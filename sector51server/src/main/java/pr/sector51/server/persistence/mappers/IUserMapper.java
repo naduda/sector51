@@ -18,9 +18,10 @@ public interface IUserMapper {
           "attempts = 0, lastmodified = now() WHERE created = #{created};")
   void updateUserSecurity(UserInfo user);
 
-  @Delete("DELETE FROM usersecurity WHERE created = #{created};" +
+  @Delete("DELETE FROM barcode WHERE code = (SELECT card from userinfo WHERE created = #{created});" +
+          "DELETE FROM usersecurity WHERE created = #{created};" +
           "DELETE FROM userinfo WHERE created = #{created};")
-  void deleteUser(@Param("created") Timestamp created);
+  int deleteUser(@Param("created") Timestamp created);
 
   @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex) "
       + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex});")

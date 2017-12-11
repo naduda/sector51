@@ -7,6 +7,7 @@ import { BarcodeComponent } from './barcode.component';
 import { of } from 'rxjs/observable/of';
 import { FormsModule } from '@angular/forms';
 import { RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { REST_API } from '../../entities/rest-api';
 
 describe('BarcodeComponent', () => {
   let component: BarcodeComponent;
@@ -20,8 +21,8 @@ describe('BarcodeComponent', () => {
         NgbActiveModal,
         { provide: HttpClient, useValue: {
           get: (key: string) => {
-            if (key === '/api/products')
-              return of([ { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user' } ]);
+            if (key === REST_API.GET.products)
+              return of([ { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user', price: 0 } ]);
             else
               return of({ productId: -1 });
           },
