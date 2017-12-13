@@ -21,19 +21,10 @@ namespace UserScanner
 
     public void save(string value)
     {
-      if (value == null || value.Length == 0)
-      {
-        return;
-      }
-      if (value.Length > 15)
-      {
-        value = value.Substring(value.Length - 15);
-      }
+      if (value == null || value.Length == 0) return;
+      if (value.Length > 15) value = value.Substring(value.Length - 15);
       queuq.Enqueue(value);
-      if (!isExecuting)
-      {
-        Task.Run(() => ExecuteWriteTask());
-      }
+      if (!isExecuting) Task.Run(() => ExecuteWriteTask());
     }
 
     private void ExecuteWriteTask()
@@ -48,14 +39,11 @@ namespace UserScanner
           var success = false;
           for (var i = 0; i < retries; i++)
           {
-            success = saveToDatabase(value);
-            if (success)
-            {
-              break;
-            }
+            success = saveValue(value);
+            if (success) break;
             Thread.Sleep(100);
           }
-          logger.Debug(string.Format("Value {0} was{1} write to database. [{2} ms]",
+          logger.Debug(string.Format("Value {0} was{1} writen. [{2} ms]",
             value, success ? "" : "n't", (DateTime.Now - start).TotalMilliseconds));
         }
         catch(Exception ex)
@@ -66,6 +54,6 @@ namespace UserScanner
       isExecuting = false;
     }
 
-    protected abstract bool saveToDatabase(string value);
+    protected abstract bool saveValue (string value);
   }
 }

@@ -80,6 +80,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     if (_instance.product.id === RESERVED_PRODUCTS_ID) {
       _instance.common.navigate('registration', { code: props.code });
     } else if (_instance.product.id === 0) {
+      _instance.newProduct.price = _instance.newProduct.price * 100;
       _instance.http.post(REST_API.POST.product, _instance.newProduct, { params: { code: props.code } })
         .subscribe((response: IResponse) => {
           if (response && response.result === ERestResult[ERestResult.OK].toString()) {

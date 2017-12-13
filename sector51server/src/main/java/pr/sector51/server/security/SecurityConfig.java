@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,15 +20,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public RoleHierarchy roleHierarchy() {
     RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-    roleHierarchy.setHierarchy("OWNER > ADMIN > USER");
+    roleHierarchy.setHierarchy(ERole.getHierarchy());
     return roleHierarchy;
   }
 
   @Override
   public void configure(WebSecurity web) throws Exception {
-    web.ignoring()
-        .antMatchers("/resources/**", "/assets/**", "/**/wsapi", "/*.ico",
-            "/*.wolf*", "/*.ttf", "/*.svg", "/*.eot" );
+    web.ignoring().antMatchers("/**/wsapi", "/api/login", "/api/scanner", "/assets/**",
+        "/**/*.css", "/**/*.js", "/**/*.ico", "/**/*.eot", "/**/*.svg", "/**/*.woff*", "/**/*.ttf");
   }
 
   @Override
@@ -38,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
-        .antMatchers("/", "/*.css", "/*.js", "/api/login").permitAll()
+        .antMatchers("/").permitAll()
         .antMatchers("/api/delete/**").hasAuthority(ERole.ADMIN.getAuthority())
         .antMatchers("/api/add/**").hasAuthority(ERole.ADMIN.getAuthority())
         .antMatchers("/api/update/**").hasAuthority(ERole.ADMIN.getAuthority())

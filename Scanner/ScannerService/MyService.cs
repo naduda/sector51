@@ -12,11 +12,11 @@ namespace ScannerService
   public partial class MyService : ServiceBase
   {
     private static Logger logger = LogManager.GetCurrentClassLogger();
-    private string _loggedUser = String.Empty;
+    private string _loggedUser = string.Empty;
     
     private CancellationTokenSource _cts;
     private Task serviceTask;
-    private readonly string connectionString;
+    private readonly string settings;
 
     public MyService()
     {
@@ -24,7 +24,7 @@ namespace ScannerService
       CanHandleSessionChangeEvent = true;
       var path = Assembly.GetExecutingAssembly().Location.Replace("ScannerService.exe", "settings.txt");
       var encrepted = File.ReadAllText(path);
-      connectionString = Crypt.Decrypt256(encrepted);
+      settings = Crypt.Decrypt256(encrepted);
     }
     
     protected override void OnStart(string[] args)
@@ -87,7 +87,7 @@ namespace ScannerService
         var codeBase = Assembly.GetExecutingAssembly().CodeBase;
         var uri = new UriBuilder(codeBase);
         var path = Uri.UnescapeDataString(uri.Path);
-        path = Path.Combine(Path.GetDirectoryName(path), Constants.SCANNER_NAME + ".exe " + connectionString);
+        path = Path.Combine(Path.GetDirectoryName(path), Constants.SCANNER_NAME + ".exe " + settings);
         ProcessAsCurrentUser.Launch(path);
       }
       catch (Exception ex)

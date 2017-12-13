@@ -44,25 +44,6 @@ CREATE TABLE product
 INSERT INTO product (id, name, "desc") VALUES(0, 'NEW', '-');
 INSERT INTO product (id, name, "desc") VALUES(10, 'USER', 'Відвідувач');
 
-CREATE TABLE scanner (
-	code character varying(13) NOT NULL,
-	time timestamp without time zone NOT NULL DEFAULT now()
-);
-INSERT INTO scanner (code) VALUES(0);
-CREATE OR REPLACE FUNCTION PUBLIC.AFTER_SCANNER_UPDATE() RETURNS trigger AS
-$BODY$
-BEGIN
-  PERFORM pg_notify('scanner_update', row_to_json(NEW)::text);
-  RETURN new;
-END;
-$BODY$
-LANGUAGE 'plpgsql' VOLATILE COST 100;
-CREATE TRIGGER SCANNER_UPDATE_TRIGGER
-AFTER UPDATE
-ON PUBLIC.SCANNER
-FOR EACH ROW
-EXECUTE PROCEDURE PUBLIC.AFTER_SCANNER_UPDATE();
-
 CREATE TABLE event (
 	id integer NOT NULL,
 	name character varying(50),

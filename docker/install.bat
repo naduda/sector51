@@ -13,6 +13,8 @@ IF NOT EXIST %props% (
   call :saveKeyValueToFile %props% POSTGRES_HOST "!line!"
   set line=5432&& set /p line=Enter db port:
   call :saveKeyValueToFile %props% POSTGRES_PORT "!line!"
+  set line=8087&& set /p line=Enter webserver port:
+  call :saveKeyValueToFile %props% WEB_SERVER_PORT "!line!"
   set line=sector51&& set /p line=Enter db name:
   call :saveKeyValueToFile %props% POSTGRES_DB "!line!"
   set line=12345678&& set /p line=Enter db password:
@@ -35,9 +37,7 @@ IF NOT EXIST %~dp0Scanner (
 copy /y %props% %~dp0Scanner
 
 xcopy %installDir%\docker\pr %~dp0Scanner\pr /y /e /i
-call %~dp0Scanner\ScannerService.exe -s ^
-              host=%POSTGRES_HOST% port=%POSTGRES_PORT% ^
-              db=%POSTGRES_DB% psw=%POSTGRES_PASSWORD%
+call %~dp0Scanner\ScannerService.exe -s port=%WEB_SERVER_PORT%
 
 set file=uninstall_scanner.bat
 copy /y %installDir%\docker\%file% %~dp0%file%
@@ -47,6 +47,7 @@ FOR %%F IN (%list%) DO (
 )
 xcopy %installDir%\sector51server %~dp0Scanner\sector51server /y /e /i
 powershell -Command "(gc %~dp0Scanner\docker-compose.yml) -replace '5432:5432', '%POSTGRES_PORT%:5432' | Out-File %~dp0Scanner\docker-compose.yml"
+powershell -Command "(gc %~dp0Scanner\docker-compose.yml) -replace '8087:8089', '%WEB_SERVER_PORT%:8089' | Out-File %~dp0Scanner\docker-compose.yml"
 docker-compose -f %~dp0Scanner\docker-compose.yml up --build -d
 
 rd /s /q %installDir% && pause

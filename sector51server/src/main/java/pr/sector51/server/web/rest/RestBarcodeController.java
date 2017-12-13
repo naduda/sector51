@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pr.sector51.server.persistence.BarcodeDao;
 import pr.sector51.server.persistence.model.*;
-import pr.sector51.server.security.ERole;
+import pr.sector51.server.web.socket.ScannerService;
 
 import java.util.List;
 
@@ -13,6 +13,8 @@ import java.util.List;
 public class RestBarcodeController extends RestCommon {
   @Autowired
   private BarcodeDao barcode;
+  @Autowired
+  private ScannerService scannerService;
 
   // DELETE ==========================================================================
   @RequestMapping(value = "/delete/productById/{id}", method = RequestMethod.DELETE)
@@ -36,6 +38,12 @@ public class RestBarcodeController extends RestCommon {
   }
 
   // POST ============================================================================
+  @RequestMapping(value = "/scanner", method = RequestMethod.POST)
+  public ESector51Result fromScanner(@RequestParam(value="code") String code) {
+    scannerService.next(code);
+    return ESector51Result.OK;
+  }
+
   @RequestMapping(value = "/add/product", method = RequestMethod.POST)
   public Sector51Result addproduct(@RequestBody Product product, @RequestParam(value="code") String code) {
     Sector51Result response = new Sector51Result(barcode.insertProduct(product, code));

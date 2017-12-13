@@ -16,8 +16,8 @@ public interface IScannerMapper {
   @Select("SELECT * FROM product;")
   List<Product> getAllProducts();
 
-  @Insert("INSERT INTO product(id, name, \"desc\") VALUES(" +
-      "      (SELECT max(id) + 1 FROM product), #{value.name}, #{value.desc});\n" +
+  @Insert("INSERT INTO product(id, name, \"desc\", price) VALUES(" +
+      "      (SELECT max(id) + 1 FROM product), #{value.name}, #{value.desc}, #{value.price});\n" +
       "INSERT INTO barcode(productid, code) VALUES((SELECT max(id) FROM product), #{code});")
   int insertProduct(@Param("value") Product value, @Param("code") String code);
 

@@ -6,7 +6,7 @@
     {
     }
 
-    protected override bool saveToDatabase(string value)
+    protected override bool saveValue(string value)
     {
       logger.Info("FileSaver: value = " + value);
       return true;
