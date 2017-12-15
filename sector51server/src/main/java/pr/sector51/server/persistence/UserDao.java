@@ -122,7 +122,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     insertUserInfo(userInfo);
   }
 
-  public ESector51Result insertUser(UserInfo userInfo){
+  public ESector51Result insertUser(UserInfo userInfo) {
     UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userExist != null) {
       return ESector51Result.USER_ALREADY_EXIST;
@@ -135,7 +135,7 @@ public class UserDao extends CommonDao implements IUserMapper {
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
-      scannerMapper.insertBarcode(10, Integer.parseInt(userInfo.getCard()));
+      scannerMapper.insertBarcode(10, Long.parseLong(userInfo.getCard()));
     });
     return result ? ESector51Result.OK : ESector51Result.ERROR;
   }

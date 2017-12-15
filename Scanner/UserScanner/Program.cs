@@ -70,16 +70,20 @@ namespace UserScanner
         if ((Keys)vkCode == Keys.Enter)
         {
           logger.Debug("ENTER");
-          if (message.Length > 0)
+          if (message.Length > 5)
           {
             logger.Debug("Hooked message: {0}", message);
             saver.save(message);
           }
-          message = "";
+          message = string.Empty;
         }
         else if (keyChar.Length > 0 && nums.Contains(keyChar[0]))
         {
           message += keyChar;
+        }
+        else
+        {
+          message = string.Empty;
         }
       }
       return CallNextHookEx(_hookID, nCode, wParam, lParam);

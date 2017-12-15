@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, Input, HostListener } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
 
 @Component({
@@ -11,13 +11,24 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
     }
   `]
 })
-export class ModalComponent {
+export class ModalComponent implements OnInit {
   @Input() header;
   @Input() body;
   @Input() btOK;
   @Input() btCancel;
   @Input() headerClass;
   @Input() bodyClass;
+  private ready: boolean;
 
   constructor(public activeModal: NgbActiveModal) {}
+
+  ngOnInit(): void {
+    this.ready = true;
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (!this.ready || event.keyCode !== 13) return;
+    if (event.keyCode === 13) this.activeModal.close(true);
+  }
 }

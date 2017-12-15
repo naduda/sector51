@@ -37,12 +37,26 @@ CREATE TABLE product
   id integer NOT NULL,
   name character varying(25) NOT NULL,
   "desc" character varying(100) NOT NULL,
+  count integer NOT NULL DEFAULT 0,
   price integer NOT NULL DEFAULT 0,
   CONSTRAINT pk_uniqe_product UNIQUE (id),
   CONSTRAINT pk_product PRIMARY KEY (id)
 );
 INSERT INTO product (id, name, "desc") VALUES(0, 'NEW', '-');
 INSERT INTO product (id, name, "desc") VALUES(10, 'USER', 'Відвідувач');
+CREATE OR REPLACE FUNCTION PUBLIC.AFTER_USERINFO_INSERT() RETURNS trigger AS
+$BODY$
+BEGIN
+  UPDATE product SET count = (SELECT count(*) from userinfo);
+  RETURN new;
+END;
+$BODY$
+LANGUAGE 'plpgsql' VOLATILE COST 100;
+CREATE TRIGGER USERINFO_INSERT_TRIGGER
+AFTER INSERT OR DELETE
+ON PUBLIC.USERINFO
+FOR EACH ROW
+EXECUTE PROCEDURE PUBLIC.AFTER_USERINFO_INSERT();
 
 CREATE TABLE event (
 	id integer NOT NULL,

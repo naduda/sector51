@@ -24,19 +24,28 @@
     <label for="name" class="text-right">
       <strong>{{ 'name' | translate | titlecase }}:</strong>
     </label>
-    <input type="text" class="form-control mb-2 new-product" name="name" [(ngModel)]="newProduct.name" required>
+    <input type="text" class="form-control mb-2 new-product" name="name" [(ngModel)]="newProduct.name"
+      [prFocus]="focusName" required>
   </form>
   <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label for="desc" class="text-right">
       <strong>{{ 'desc' | translate | titlecase }}:</strong>
     </label>
-    <input type="text" class="form-control mb-2 new-product" name="desc" [(ngModel)]="newProduct.desc" required>
+    <input type="text" class="form-control mb-2 new-product" name="desc" [(ngModel)]="newProduct.desc"
+      [prFocus]="focusDesc" required>
+  </form>
+  <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
+    <label for="count" class="text-right">
+      <strong>{{ 'count' | translate | titlecase }}:</strong>
+    </label>
+    <input type="number" class="form-control mb-2 new-product" name="count" [(ngModel)]="newProduct.count" required>
   </form>
   <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label for="price" class="text-right">
       <strong>{{ 'price' | translate | titlecase }}:</strong>
     </label>
-    <input type="text" class="form-control mb-2 new-product" name="price" [(ngModel)]="newProduct.price" required>
+    <input type="number" class="form-control mb-2 new-product" name="price" [(ngModel)]="newProduct.price"
+      [prFocus]="focusPrice" min="0" max="10000" step="0.1" required>
   </form>
   <form class="form-inline">
     <label for="barcode" class="text-right">
@@ -46,7 +55,7 @@
   </form>
 </div>
 <div class="modal-footer" [hidden]="!ready">
-  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)" autofocus>
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)">
     {{ btOk | translate | titlecase }}
   </button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss(0)">

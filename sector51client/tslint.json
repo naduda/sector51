@@ -61,7 +61,7 @@
     ],
     "no-misused-new": true,
     "no-non-null-assertion": true,
-    "no-shadowed-variable": true,
+    "no-shadowed-variable": false,
     "no-string-literal": false,
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
@@ -116,13 +116,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      "pr",
       "camelCase"
     ],
     "component-selector": [
-      false,
+      true,
       "element",
-      "app",
+      "sector51",
       "kebab-case"
     ],
     "angular-whitespace": [true, "check-interpolation"],

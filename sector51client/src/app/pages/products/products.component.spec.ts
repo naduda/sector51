@@ -8,6 +8,7 @@ import { ModalService } from '../../services/modal.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CommonService } from '../../services/common.service';
 import { RESERVED_PRODUCTS_ID, ERole } from '../../entities/common';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
@@ -24,10 +25,7 @@ describe('ProductsComponent', () => {
         }},
         { provide: CommonService, useValue: {
           profile: { role: ERole.ADMIN },
-          newProduct: {
-            subscribe: () => {},
-            unsubscribe: () => {}
-          }
+          newProduct: new BehaviorSubject(null)
         }},
         { provide: ModalService, useValue: { open: () => {} } },
         { provide: TranslateService, useValue: { get: (key) => of(key + '!') } }

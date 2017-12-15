@@ -21,6 +21,7 @@ export class ModalService {
     const instance = this.current.componentInstance;
     instance.init && instance.init(props);
     this.current.result.then((result) => {
+      instance.ready = undefined;
       if (result === true) {
         const onOK = instance.btOkClick || btOkClick;
         props.instance = instance;
@@ -28,6 +29,7 @@ export class ModalService {
       }
     }, (reason) => {
       const onCancel = instance.btCancelClick || btCancelClick;
+      instance.ready = undefined;
       onCancel && onCancel(reason);
     });
   }

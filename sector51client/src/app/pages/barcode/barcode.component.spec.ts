@@ -8,6 +8,7 @@ import { of } from 'rxjs/observable/of';
 import { FormsModule } from '@angular/forms';
 import { RESERVED_PRODUCTS_ID } from '../../entities/common';
 import { REST_API } from '../../entities/rest-api';
+import { FocusDirective } from '../../directives/focus.directive';
 
 describe('BarcodeComponent', () => {
   let component: BarcodeComponent;
@@ -15,7 +16,7 @@ describe('BarcodeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BarcodeComponent, TranslatePipeStub ],
+      declarations: [ BarcodeComponent, TranslatePipeStub, FocusDirective ],
       imports: [ FormsModule ],
       providers: [
         NgbActiveModal,

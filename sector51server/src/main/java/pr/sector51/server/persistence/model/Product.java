@@ -4,6 +4,7 @@ public class Product {
   private int id;
   private String name;
   private String desc;
+  private Integer count;
   private Integer price;
 
   public Product() {}
@@ -30,6 +31,14 @@ public class Product {
 
   public void setDesc(String desc) {
     this.desc = desc;
+  }
+
+  public Integer getCount() {
+    return count;
+  }
+
+  public void setCount(Integer count) {
+    this.count = count;
   }
 
   public Integer getPrice() {

@@ -26,6 +26,7 @@ import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ModalComponent } from './pages/modal/modal.component';
 import { BarcodeComponent } from './pages/barcode/barcode.component';
 import { ProductsComponent } from './pages/products/products.component';
+import { FocusDirective } from './directives/focus.directive';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -41,7 +42,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CreateUserComponent,
     ModalComponent,
     BarcodeComponent,
-    ProductsComponent
+    ProductsComponent,
+    FocusDirective
   ],
   imports: [
     BrowserModule,

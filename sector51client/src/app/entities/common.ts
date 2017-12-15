@@ -3,7 +3,7 @@ export const RESERVED_PRODUCTS_ID = 10;
 
 export interface ILocale { name: string; text: string; ico: string; }
 export interface IRole { id: number; name: string; }
-export interface IProduct { id: number; name: string; desc: string; price: number; }
+export interface IProduct { id: number; name: string; desc: string; count: number; price: number; }
 export interface IBarcode { productId: number; code: string; }
 export interface IModalProperties {
   header: string;
