@@ -50,5 +50,6 @@
   "productsList": "list of products",
   "name": "name",
   "desc": "description",
-  "price": "price"
+  "price": "price",
+  "count": "count"
 }
