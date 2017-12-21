@@ -14,8 +14,8 @@ echo $6
 echo $7
 sed -i -e "s|$pattern|$replacement|g" "$propFile"
 sed -i -e "s|password=12345678|password=$5|g" "$propFile"
-sed -i -e "s|password=user@gmail.com|$6|g" "$propFile"
-sed -i -e "s|password=email_password|$7|g" "$propFile"
+sed -i -e "s|user@gmail.com|$6|g" "$propFile"
+sed -i -e "s|email_password|$7|g" "$propFile"
 cat $propFile
 chmod +x ./gradlew
 ./gradlew build -x test
