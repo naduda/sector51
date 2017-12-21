@@ -43,7 +43,7 @@ CREATE TABLE product
   CONSTRAINT pk_product PRIMARY KEY (id)
 );
 INSERT INTO product (id, name, "desc") VALUES(0, 'NEW', '-');
-INSERT INTO product (id, name, "desc") VALUES(10, 'USER', 'Відвідувач');
+INSERT INTO product (id, name, "desc") VALUES(100, 'USER', 'Відвідувач');
 CREATE OR REPLACE FUNCTION PUBLIC.AFTER_USERINFO_INSERT() RETURNS trigger AS
 $BODY$
 BEGIN
