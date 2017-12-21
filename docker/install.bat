@@ -19,6 +19,10 @@ IF NOT EXIST %props% (
   call :saveKeyValueToFile %props% POSTGRES_DB "!line!"
   set line=12345678&& set /p line=Enter db password:
   call :saveKeyValueToFile %props% POSTGRES_PASSWORD "!line!"
+  set line=emailUser&& set /p line=Enter email user:
+  call :saveKeyValueToFile %props% EMAIL_USER "!line!"
+  set line=emailPassword&& set /p line=Enter email password:
+  call :saveKeyValueToFile %props% EMAIL_PASSWORD "!line!"
   powershell -Command "(gc %props%) -replace '\u0022', '' | Out-File %props%"
   powershell -Command "(gc %props%) -replace '`r`n', '`n' | sc %props% -Force"
 )
