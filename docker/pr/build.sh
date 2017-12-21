@@ -10,8 +10,8 @@ jarFile=$3
 propFile="$PWD/src/main/resources/application.properties"
 pattern="localhost:5432/sector51"
 replacement="db:5432/$4"
-cat $6
-cat $7
+echo $6
+echo $7
 sed -i -e "s|$pattern|$replacement|g" "$propFile"
 sed -i -e "s|password=12345678|password=$5|g" "$propFile"
 sed -i -e "s|password=user@gmail.com|$6|g" "$propFile"
