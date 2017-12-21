@@ -10,7 +10,8 @@ import { AuthenticationService } from '../services/authentication.service';
 import { CommonService } from '../services/common.service';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { TranslateServiceStub } from 'app/testing/TranslateServiceStub';
+import { TranslateServiceStub } from '../testing/TranslateServiceStub';
+import { ModalService } from '../services/modal.service';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -26,6 +27,7 @@ describe('ToolbarComponent', () => {
       imports: [ RouterTestingModule ],
       providers: [
         { provide: AuthenticationService, useValue: { username: '' } },
+        { provide: ModalService, useValue: { } },
         { provide: CommonService, useValue: { user: new BehaviorSubject(null), profile: new Profile() } }
       ]
     })

@@ -60,6 +60,7 @@ namespace UserScanner
     }
 
     private static readonly char[] nums = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+    private static DateTime lastTimeMessageUpdate = DateTime.Now;
     private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
       if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
@@ -70,16 +71,23 @@ namespace UserScanner
         if ((Keys)vkCode == Keys.Enter)
         {
           logger.Debug("ENTER");
-          if (message.Length > 5)
+          if (message.Length > 10)
           {
-            logger.Debug("Hooked message: {0}", message);
+            logger.Debug("Hooked message > 10: {0}", message);
             saver.save(message);
           }
           message = string.Empty;
         }
         else if (keyChar.Length > 0 && nums.Contains(keyChar[0]))
         {
+          var delay = (DateTime.Now - lastTimeMessageUpdate).TotalSeconds;
+          if (delay > 1)
+          {
+            logger.Debug("More than 1 sec");
+            message = string.Empty;
+          }
           message += keyChar;
+          lastTimeMessageUpdate = DateTime.Now;
         }
         else
         {

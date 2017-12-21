@@ -25,11 +25,21 @@ export class MainComponent implements OnInit {
   public permissions: boolean;
   public wWidth: number;
   public sizeValue: number[];
+  public letter: any;
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
               private modalService: ModalService, public common: CommonService,
               private translate: TranslateService) {
     this.wWidth = window.innerWidth;
+    this.letter = {
+      'title': 'testTitle',
+      'body': 'Test Message',
+      'recipient': 'pavel.naduda@nik.net.ua'
+    };
+  }
+
+  sendEmail() {
+    this.http.post('/api/sendemail', this.letter).subscribe(result => console.log(result));
   }
 
   ngOnInit() {

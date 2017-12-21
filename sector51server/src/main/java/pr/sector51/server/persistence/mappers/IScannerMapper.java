@@ -13,7 +13,7 @@ public interface IScannerMapper {
   @Select("SELECT * FROM barcode WHERE productid = #{id};")
   Barcode getBarcodeByProductId(@Param("id") int id);
 
-  @Select("SELECT * FROM product ORDER BY id;")
+  @Select("SELECT p.*, b.code FROM product as p LEFT JOIN barcode as b ON p.id = b.productid ORDER BY id;")
   List<Product> getAllProducts();
 
   @Insert("INSERT INTO product(id, name, \"desc\", count, price) VALUES(" +
@@ -21,7 +21,13 @@ public interface IScannerMapper {
       "INSERT INTO barcode(productid, code) VALUES((SELECT max(id) FROM product), #{code});")
   int insertProduct(@Param("value") Product value, @Param("code") String code);
 
-  @Select("SELECT * FROM product WHERE id > 10 ORDER BY id DESC LIMIT 1;")
+  @Insert("INSERT INTO product(id, name, \"desc\", count, price) VALUES(" +
+      "     (SELECT max(id) + 1 FROM product product WHERE id < 100), " +
+      "     #{value.name}, #{value.desc}, #{value.count}, #{value.price});\n" +
+      "INSERT INTO barcode(productid, code) VALUES((SELECT max(id) FROM product WHERE id < 100), '-1');")
+  int insertProductDefault(@Param("value") Product value);
+
+  @Select("SELECT * FROM product WHERE id > 100 ORDER BY id DESC LIMIT 1;")
   Product getLastProduct();
 
   @Delete("DELETE FROM product WHERE id = #{id}; DELETE FROM barcode WHERE productid = #{id};")

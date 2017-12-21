@@ -7,10 +7,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pr.sector51.server.mail.SmtpMailSender;
 import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 import pr.sector51.server.security.ERole;
 import pr.sector51.server.security.services.TokenHandler;
+
+import javax.mail.MessagingException;
 
 @RequestMapping("/api")
 @RestController
@@ -19,6 +22,8 @@ public class RestUserController extends RestCommon {
   private UserDao userDao;
   @Autowired
   private TokenHandler tokenHandler;
+  @Autowired
+  private SmtpMailSender mailSender;
 
   // DELETE ===========================================================================
   @RequestMapping(value = "/delete/userById/{created}", method = RequestMethod.DELETE)
@@ -82,5 +87,15 @@ public class RestUserController extends RestCommon {
   @RequestMapping(value = "/update/user", method = RequestMethod.PUT)
   public ESector51Result updateUser(@RequestBody UserInfo user) {
     return userDao.updateUser(user);
+  }
+
+  @RequestMapping(value = "/sendemail", method = RequestMethod.POST)
+  public ESector51Result sendEmail(@RequestBody MailLetter letter) {
+    try {
+      mailSender.send(letter.getRecipient(), letter.getTitle(), letter.getBody());
+    } catch (MessagingException e) {
+      return ESector51Result.ERROR;
+    }
+    return ESector51Result.OK;
   }
 }

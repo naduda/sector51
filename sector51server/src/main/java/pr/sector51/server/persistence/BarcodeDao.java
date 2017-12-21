@@ -25,7 +25,9 @@ public class BarcodeDao extends CommonDao {
   }
 
   public ESector51Result insertProduct(Product product, String code) {
-    return scanner.insertProduct(product, code) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
+    return code.equals("-1") ?
+        scanner.insertProductDefault(product) == 1 ? ESector51Result.OK : ESector51Result.ERROR :
+        scanner.insertProduct(product, code) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
   public ESector51Result updateProduct(Product product) {

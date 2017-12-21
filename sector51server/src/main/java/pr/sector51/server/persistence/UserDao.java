@@ -20,6 +20,7 @@ import pr.sector51.server.security.ERole;
 @Service
 public class UserDao extends CommonDao implements IUserMapper {
   public final static String TABLE_NAME = "usersecurity";
+  public static final int RESERVED_PRODUCTS_ID = 100;
   public final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
   @Autowired
@@ -37,7 +38,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     if (users.size() == 0) {
       boolean res = runTransaction(() -> {
         insertUser(ERole.OWNER);
-        scannerMapper.insertBarcode(10, 1);
+        scannerMapper.insertBarcode(RESERVED_PRODUCTS_ID, 0);
         insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
       });
       System.out.println("\n\n\tTable users was " + (res ? "" : "not ") + "created\n\n");
@@ -135,7 +136,7 @@ public class UserDao extends CommonDao implements IUserMapper {
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
-      scannerMapper.insertBarcode(10, Long.parseLong(userInfo.getCard()));
+      scannerMapper.insertBarcode(RESERVED_PRODUCTS_ID, 0);
     });
     return result ? ESector51Result.OK : ESector51Result.ERROR;
   }

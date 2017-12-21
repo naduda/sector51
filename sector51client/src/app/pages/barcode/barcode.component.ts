@@ -10,6 +10,7 @@ import { of } from 'rxjs/observable/of';
 import { ModalService } from '../../services/modal.service';
 import { REST_API } from '../../entities/rest-api';
 import { element } from 'protractor';
+import { inspect } from 'util';
 
 @Component({
   selector: 'sector51-product',
@@ -22,10 +23,14 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   public headerClass: string;
   public btOk: string;
   public products: IProduct[];
+  public types: IProduct[];
   public product: IProduct;
-  public newProduct: IProduct;
   public barcode: string;
+  public isBuy: any;
+  public curCount: number;
   public isEdit: boolean;
+  public isExist: boolean;
+  public isVirtual: boolean;
   public focusName: any = {};
   public focusDesc: any = {};
   public focusPrice = {
@@ -35,18 +40,17 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   private keyCodes: number[] = [ 13, 38, 40 ];
 
   constructor(public activeModal: NgbActiveModal, private http: HttpClient, public common: CommonService) {
-    this.newProduct = { id: -1, name: '', desc: '-', count: 0, price: 0 };
+    this.curCount = 1;
+    this.isBuy = false;
   }
 
   ngOnInit(): void {
     this.http.get<IProduct[]>(REST_API.GET.products).catch(e => of(null))
       .do(products => {
-        this.isEdit = this.product !== undefined;
         if (products) {
           this.products = products;
-          this.newProduct = this.product || this.newProduct;
-          this.newProduct.price /= 100;
-          this.product = this.product || products.find(p => p.id === 10);
+          this.types = products.filter(p => p.id === 0 || p.id === RESERVED_PRODUCTS_ID);
+          this.product = this.product || products.find(p => p.id === RESERVED_PRODUCTS_ID);
         } else {
           this.activeModal.close();
           this.common.navigate('login');
@@ -56,13 +60,17 @@ export class BarcodeComponent implements OnInit, IModalWindow {
         params: { productId: this.product.id.toString() }
       }))
       .do((barcode: IBarcode) => {
-        const exist: boolean = barcode.productId > RESERVED_PRODUCTS_ID;
-        const productId = barcode.productId < 0 ? RESERVED_PRODUCTS_ID : barcode.productId;
-        this.headerClass = exist ? 'bg-info' : 'bg-warning';
-        this.btOk = exist ? 'apply' : 'add';
-        this.product = this.products.find(p => p.id === productId);
-        this.header = exist ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
-        if (!this.barcode) this.barcode = exist ? barcode.code : '';
+        const productId = barcode.productId < 0 ? +this.barcode === -1 ? 0 : RESERVED_PRODUCTS_ID : barcode.productId;
+        this.isExist = barcode.productId > 0;
+        this.isBuy = !this.isExist;
+        this.headerClass = this.isExist ? 'bg-info' : 'bg-warning';
+        this.btOk = this.isExist ? 'apply' : 'add';
+        if (!this.isEdit) {
+          this.product = this.products.find(p => p.id === productId);
+        }
+        this.product.price /= 100;
+        this.header = this.isExist || this.isEdit ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
+        if (!this.barcode) this.barcode = this.isExist ? barcode.code : '';
       })
       .flatMap((barcode: IBarcode) => barcode.productId < 0 ?
         of(undefined) : this.http.get<any>(REST_API.GET.userByCard(barcode.code)))
@@ -76,19 +84,22 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   keyEvent(event: KeyboardEvent) {
     const isNumber = (event.target as any).nodeName === 'INPUT' && (event.target as any).type === 'number';
     if (!this.ready || !this.keyCodes.includes(event.keyCode)) return;
-    if (!isNumber && event.keyCode === 38) this.changeType(true);
-    if (!isNumber && event.keyCode === 40) this.changeType(false);
+    if (!isNumber && !this.isExist && event.keyCode === 38) this.changeType(true);
+    if (!isNumber && !this.isExist && event.keyCode === 40) this.changeType(false);
     if (event.keyCode !== 13) return;
-    if (this.newProduct.name.length === 0) {
+    if (this.product.id !== 0) {
+      this.activeModal.close(true);
+    }
+    if (this.product.name.length === 0) {
       this.focusField('name');
       return;
     }
-    if (this.newProduct.desc.length === 0) {
+    if (this.product.desc.length === 0) {
       this.focusField('desc');
       return;
     }
-    if (isNaN(this.newProduct.price)) {
-      this.newProduct.price = 0;
+    if (isNaN(this.product.price)) {
+      this.product.price = 0;
       this.focusField('price');
       return;
     }
@@ -96,11 +107,12 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   }
 
   private changeType(up: boolean) {
-    let index = this.products.indexOf(this.product);
+    let index = this.types.indexOf(this.product);
     index += up ? -1 : 1;
-    if (index < 0) index = this.products.length - 1;
-    if (index > this.products.length - 1) index = 0;
-    this.product = this.products[index];
+    if (index < 0) index = this.types.length - 1;
+    if (index > this.types.length - 1) index = 0;
+    this.product = this.types[index];
+    this.btOk = this.product.id === 0 || this.product.id === RESERVED_PRODUCTS_ID ? 'add' : 'update';
   }
 
   private focusField(name: string) {
@@ -108,45 +120,48 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     if (name === 'desc') this.focusDesc.eventEmitter.emit(true);
   }
 
-  btOkClick(props: any): any {
-    const _instance = props.instance as BarcodeComponent;
-    if (_instance.isEdit) {
-      _instance.newProduct.price = _instance.newProduct.price * 100;
-      _instance.http.put(REST_API.PUT.product, _instance.newProduct, {
+  btOkClick(instance: any): any {
+    instance.product.price *= 100;
+    if (instance.isEdit) {
+      instance.http.put(REST_API.PUT.product, instance.product, {
         params: { code: '', oldProductId: '' }
       }).subscribe((response: IResponse) => {
           if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            _instance.common.newProduct.next(response.message);
+            instance.common.newProduct.next(response.message);
           }
         });
       return;
     }
-    if (_instance.product.id === RESERVED_PRODUCTS_ID) {
-      _instance.common.navigate('registration', { code: props.code });
-    } else if (_instance.product.id === 0) {
-      _instance.newProduct.price = _instance.newProduct.price * 100;
-      _instance.http.post(REST_API.POST.product, _instance.newProduct, { params: { code: props.code } })
+    if (instance.product.id === RESERVED_PRODUCTS_ID) {
+      instance.common.navigate('registration', { code: instance.barcode });
+    } else if (instance.product.id === 0) {
+      instance.http.post(REST_API.POST.product, instance.product, { params: { code: instance.barcode } })
         .subscribe((response: IResponse) => {
           if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            _instance.common.newProduct.observers && _instance.common.newProduct.next(response.message);
-            _instance.common.navigate('products');
+            instance.common.newProduct.observers && instance.common.newProduct.next(response.message);
+            instance.common.navigate('products');
           }
         });
     } else {
-      _instance.http.put(REST_API.PUT.product, _instance.newProduct, {
-        params: { code: props.code, oldProductId: _instance.product.id.toString() }
+      instance.product.count += (instance.isBuy ? 1 : -1) * instance.curCount;
+      instance.product.code = instance.barcode;
+      instance.http.put(REST_API.PUT.product, instance.product, {
+        params: { oldProductId: instance.product.id.toString() }
       }).subscribe((response: IResponse) => {
           if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            _instance.common.newProduct.observers && _instance.common.newProduct.next(response.message);
-            _instance.common.navigate('products');
+            instance.common.newProduct.observers && instance.common.newProduct.next(response.message);
+            instance.common.navigate('products');
           }
         });
     }
   }
 
-  btCancelClick(reason: any) {}
+  btCancelClick(reason: any, instance: any) {
+    instance.product.price *= 100;
+  }
 
   init(props?: any) {
+    this.isEdit = props.product !== undefined;
     if (!props) return;
     this.barcode = props.code || undefined;
     if (props.product) {

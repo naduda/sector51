@@ -18,7 +18,7 @@
         <th class="text-center">{{ idx + 1 }}</th>
         <td>{{ p.name }}</td>
         <td>{{ p.desc }}</td>
-        <td>{{ p.count }}</td>
+        <td [ngClass]="{ 'text-center': p.count === 0, 'text-right': p.count > 0 }">{{ p.count > 0 ? p.count : '-' }}</td>
         <td class="text-right pr-2">{{ p.price/100 | number:'0.2' }}</td>
         <td *ngIf="permissions" class="text-center text-warning" (click)="editProduct(p)">
           <i class="fa fa-edit"></i>

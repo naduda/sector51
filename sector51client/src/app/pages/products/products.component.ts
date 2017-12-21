@@ -36,7 +36,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.translate.get('attention').subscribe(value => this.modalProperties.header = value + '!');
     this.subscription = this.common.newProduct.subscribe(product => {
       this.http.get<IProduct[]>(REST_API.GET.products)
-        .subscribe(products => this.products = products.filter(p => p.id > RESERVED_PRODUCTS_ID));
+        .subscribe(products => this.products = products.filter(p => p.id !== 0 && p.id !== RESERVED_PRODUCTS_ID));
     });
   }
 

@@ -8,3 +8,7 @@ html { font-size: 14px; }
 .bg-faded { background-color: #f7f7f7; }
 
 button:hover { cursor: pointer; }
+
+.w-15 { width: 15% !important; }
+.w-35 { width: 35% !important; }
+.w-85 { width: 85% !important; }

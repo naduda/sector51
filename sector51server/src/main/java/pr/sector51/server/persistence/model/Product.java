@@ -6,6 +6,7 @@ public class Product {
   private String desc;
   private Integer count;
   private Integer price;
+  private String code;
 
   public Product() {}
 
@@ -47,5 +48,13 @@ public class Product {
 
   public void setPrice(Integer price) {
     this.price = price;
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
   }
 }

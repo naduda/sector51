@@ -3,6 +3,7 @@ package pr.sector51.server.web.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pr.sector51.server.persistence.BarcodeDao;
+import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 import pr.sector51.server.web.socket.ScannerService;
 
@@ -27,7 +28,8 @@ public class RestBarcodeController extends RestCommon {
   @ResponseBody
   public Barcode getBarcode(@PathVariable("code") String code, @RequestParam(value="productId") String id) {
     int productId = Integer.parseInt(id);
-    Barcode result = productId > 10 ? barcode.getBarcodeByProductId(productId) : barcode.getBarcodeByCode(code);
+    Barcode result = productId > UserDao.RESERVED_PRODUCTS_ID ?
+        barcode.getBarcodeByProductId(productId) : barcode.getBarcodeByCode(code);
     return result != null ? result : new Barcode();
   }
 
@@ -51,15 +53,14 @@ public class RestBarcodeController extends RestCommon {
     return response;
   }
 
-  // POS =============================================================================
+  // PUT =============================================================================
   @RequestMapping(value = "/update/product", method = RequestMethod.PUT)
   public Sector51Result updateProduct(@RequestBody Product product,
-                                      @RequestParam(value="code") String code,
                                       @RequestParam(value="oldProductId") String oldProductId) {
     ESector51Result result = ESector51Result.ERROR;
-    if (code.length() > 0 && oldProductId.length() > 0) {
+    if (oldProductId.length() > 0 && !oldProductId.equals(String.valueOf(product.getId()))) {
       Barcode oldBarcode = barcode.getBarcodeByProductId(Integer.parseInt(oldProductId));
-      oldBarcode.setCode(code);
+      oldBarcode.setCode(product.getCode());
       result = barcode.updateBarcode(oldBarcode);
     } else {
       result = barcode.updateProduct(product);

@@ -8,6 +8,7 @@ import { MenuComponent } from './menu.component';
 import { CreateUserComponent } from '../pages/create-user/create-user.component';
 import { Profile } from '../entities/profile';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
+import { ModalService } from '../services/modal.service';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -19,6 +20,9 @@ describe('MenuComponent', () => {
         MenuComponent,
         CreateUserComponent,
         TranslatePipeStub
+      ],
+      providers: [
+        { provide: ModalService, useValue: {} },
       ],
       imports: [
         FormsModule,

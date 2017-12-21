@@ -6,7 +6,7 @@ export const REST_API = {
     userById: (id): string => '/api/delete/userById/' + id
   },
   GET: {
-    /** /api/barcode/{code} */
+    /** /api/barcode/{code} { params: productId }*/
     barcodeByCode: (code): string => '/api/barcodeByCode/' + code,
     /** /api/products */
     products: '/api/products',
@@ -30,7 +30,7 @@ export const REST_API = {
     user: '/api/add//user'
   },
   PUT: {
-    /** /api/update/product */
+    /** /api/update/product { params: oldProductId } */
     product: '/api/update/product',
     /** /api/update/user */
     user: '/api/update/user'

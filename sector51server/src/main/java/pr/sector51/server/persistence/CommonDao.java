@@ -8,8 +8,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pr.sector51.server.persistence.mappers.ICommonMapper;
 import pr.sector51.server.persistence.model.Event;
 
-import java.util.List;
-
 public class CommonDao {
   @Autowired
   private ICommonMapper commonMapper;

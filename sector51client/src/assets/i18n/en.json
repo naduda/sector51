@@ -51,5 +51,7 @@
   "name": "name",
   "desc": "description",
   "price": "price",
-  "count": "count"
+  "count": "count",
+  "create": "create",
+  "update": "update"
 }

@@ -24,13 +24,12 @@ export class ModalService {
       instance.ready = undefined;
       if (result === true) {
         const onOK = instance.btOkClick || btOkClick;
-        props.instance = instance;
-        onOK && onOK(props);
+        onOK && onOK(instance);
       }
     }, (reason) => {
       const onCancel = instance.btCancelClick || btCancelClick;
       instance.ready = undefined;
-      onCancel && onCancel(reason);
+      onCancel && onCancel(reason, instance);
     });
   }
 }

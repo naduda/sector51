@@ -1,9 +1,9 @@
 export const STORAGE_NAME = 'sector';
-export const RESERVED_PRODUCTS_ID = 10;
+export const RESERVED_PRODUCTS_ID = 100;
 
 export interface ILocale { name: string; text: string; ico: string; }
 export interface IRole { id: number; name: string; }
-export interface IProduct { id: number; name: string; desc: string; count: number; price: number; }
+export interface IProduct { id: number; name: string; desc: string; count: number; price: number; code: string; }
 export interface IBarcode { productId: number; code: string; }
 export interface IModalProperties {
   header: string;
@@ -14,8 +14,8 @@ export interface IModalProperties {
   btCancel?: string;
 }
 export interface IModalWindow {
-  btOkClick(props: IModalProperties): any;
-  btCancelClick(reason: any): any;
+  btOkClick(instance: any): any;
+  btCancelClick(reason: any, instance: any): any;
   init(props: any): void;
 }
 export interface IResponse { result: string; message: any; }
