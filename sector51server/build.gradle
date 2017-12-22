@@ -38,7 +38,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-websocket')
 	compile('org.postgresql:postgresql')
-	compileOnly('org.projectlombok:lombok')
+	//compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
 	compile group: 'com.google.guava', name: 'guava', version: '22.0'

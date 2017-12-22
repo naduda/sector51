@@ -5,8 +5,8 @@
     <form name="loginForm" (ngSubmit)="f.form.valid && login()" #f="ngForm">
       <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
         <label class="font-weight-bold ml-2" for="username">{{ 'login.login' | translate | titlecase }}</label>
-        <input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel"
-          placeholder="email / phone" required />
+        <input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="email / phone"
+          required />
         <span *ngIf="f.submitted && !username.valid" class="help-block un">Username is required</span>
       </div>
       <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
@@ -15,10 +15,12 @@
         <span *ngIf="f.submitted && !password.valid" class="help-block psw">Password is required</span>
       </div>
       <div class="form-group text-right">
-        <button [disabled]="loading" class="btn btn-primary pl-3" [ngClass]="{'pr-2': error, 'pr-4': !error}" autofocus>
-          <i class="fa fa-fw fa-sign-in pr-4"></i>
-          {{ 'login.button' | translate | titlecase }}
-          <i *ngIf="loading" class="fa fa-spinner fa-spin fa-fw ml-2"></i>
+        <button [disabled]="loading" class="btn btn-primary pl-3 mt-2" [ngClass]="{'pr-2': error, 'pr-4': !error}" autofocus>
+          <div class="d-flex justify-content-between align-items-baseline">
+            <i class="fa fa-fw fa-sign-in pr-4"></i>
+            <span>{{ 'login.button' | translate | titlecase }}</span>
+            <i *ngIf="loading" class="fa fa-spinner fa-spin fa-fw ml-2"></i>
+          </div>
         </button>
       </div>
       <div *ngIf="error" class="alert alert-danger">{{ error | translate }}</div>
