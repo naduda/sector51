@@ -84,9 +84,9 @@ describe('LoginComponent', () => {
     expect(et.ne('span.help-block.psw')).toBeFalsy();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
-    expect(et.ne('button > i.fa.fa-spinner')).toBeDefined();
+    expect(et.ne('button > div > i.fa.fa-spinner')).toBeDefined();
     AuthenticationServiceStub.logout();
     fixture.detectChanges();
-    expect(et.ne('button > i.fa.fa-spinner')).toBeFalsy();
+    expect(et.ne('button > div > i.fa.fa-spinner')).toBeFalsy();
   }));
 });

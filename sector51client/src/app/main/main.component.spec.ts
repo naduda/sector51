@@ -16,6 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { AngularSplitModule } from 'angular-split';
 import { of } from 'rxjs/observable/of';
+import { FormsModule } from '@angular/forms';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -35,6 +36,7 @@ describe('MainComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ MainComponent, TranslatePipeStub ],
       imports: [
+        FormsModule,
         RouterTestingModule.withRoutes([
           { path: 'main', component: MainComponent },
           { path: 'registration/:idUser', component: MainComponent }
