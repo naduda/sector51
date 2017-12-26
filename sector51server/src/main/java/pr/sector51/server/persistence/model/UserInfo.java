@@ -10,13 +10,14 @@ public class UserInfo {
   private String email;
   private String roles;
   private String card;
+  private int balance;
   private boolean sex;
   private  String password;
 
   public UserInfo() {}
 
   public UserInfo(String password, Timestamp id, String name, String surname,
-      String phone, String email, String roles, String card, boolean sex) {
+      String phone, String email, String roles, String card, int balance, boolean sex) {
     this();
     this.password = password;
     this.name = name;
@@ -25,6 +26,7 @@ public class UserInfo {
     this.email = email;
     this.roles = roles;
     this.card = card;
+    this.balance = balance;
     this.created = id;
     this.sex = sex;
   }
@@ -67,6 +69,10 @@ public class UserInfo {
 
   public String getCard() {
     return card;
+  }
+
+  public int getBalance() {
+    return balance;
   }
 
   public boolean isSex() {

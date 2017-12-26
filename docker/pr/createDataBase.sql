@@ -19,6 +19,7 @@ CREATE TABLE userinfo (
 	phone character varying(20) NOT NULL,
 	email character varying(50) NOT NULL,
 	card character varying(15),
+	balance integer NOT NULL DEFAULT 0,
 	sex boolean,
 	CONSTRAINT pk_uniqe_ui UNIQUE (created),
 	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),

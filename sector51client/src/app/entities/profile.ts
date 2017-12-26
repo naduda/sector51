@@ -9,6 +9,7 @@ export class Profile {
   card: string;
   role: ERole;
   sex: ESex | boolean;
+  balance: number;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,
     email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean) {

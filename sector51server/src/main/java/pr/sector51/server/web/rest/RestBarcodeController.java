@@ -55,16 +55,8 @@ public class RestBarcodeController extends RestCommon {
 
   // PUT =============================================================================
   @RequestMapping(value = "/update/product", method = RequestMethod.PUT)
-  public Sector51Result updateProduct(@RequestBody Product product,
-                                      @RequestParam(value="oldProductId") String oldProductId) {
-    ESector51Result result = ESector51Result.ERROR;
-    if (oldProductId.length() > 0 && !oldProductId.equals(String.valueOf(product.getId()))) {
-      Barcode oldBarcode = barcode.getBarcodeByProductId(Integer.parseInt(oldProductId));
-      oldBarcode.setCode(product.getCode());
-      result = barcode.updateBarcode(oldBarcode);
-    } else {
-      result = barcode.updateProduct(product);
-    }
+  public Sector51Result updateProduct(@RequestBody Product product) {
+    ESector51Result result = barcode.updateProduct(product);
     Sector51Result response = new Sector51Result(result);
     response.setMessage(product);
     return response;

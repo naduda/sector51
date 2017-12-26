@@ -26,10 +26,14 @@ export class ElementTools<T> {
 
   click(selector: string) {
     const element = this.ne(selector);
+    this.clickElement(element);
+  }
+
+  clickElement(element: any) {
     if (element) {
       element.click();
     } else {
-     console.error(selector);
+     console.error('element not defined');
     }
     tick();
     this.fixture.detectChanges();

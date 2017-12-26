@@ -57,29 +57,25 @@ describe('LoginComponent', () => {
   it('validate form', fakeAsync(() => {
     et.setInputValue(form.tbLogin, '');
     et.setInputValue(form.tbPassword, '');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeDefined();
     expect(et.ne('span.help-block.psw')).toBeDefined();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
     et.setInputValue(form.tbLogin, 'name');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeFalsy();
     expect(et.ne('span.help-block.psw')).toBeDefined();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
     et.setInputValue(form.tbPassword, 'password');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeFalsy();
     expect(et.ne('span.help-block.psw')).toBeFalsy();
     expect(et.ne('div.alert.alert-danger')).toBeDefined();
 
     et.setInputValue(form.tbPassword, 'name');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeFalsy();
     expect(et.ne('span.help-block.psw')).toBeFalsy();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();

@@ -52,6 +52,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   editProduct(product: IProduct) {
-    this.modalService.open(BarcodeComponent, { product: product });
+    this.modalService.open(BarcodeComponent, { product: Object.assign({}, product) });
   }
 }

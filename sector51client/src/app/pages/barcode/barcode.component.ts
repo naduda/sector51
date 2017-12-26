@@ -11,6 +11,7 @@ import { ModalService } from '../../services/modal.service';
 import { REST_API } from '../../entities/rest-api';
 import { element } from 'protractor';
 import { inspect } from 'util';
+import { Profile } from '../../entities/profile';
 
 @Component({
   selector: 'sector51-product',
@@ -20,8 +21,6 @@ import { inspect } from 'util';
 export class BarcodeComponent implements OnInit, IModalWindow {
   public ready: boolean;
   public header: string;
-  public headerClass: string;
-  public btOk: string;
   public products: IProduct[];
   public types: IProduct[];
   public product: IProduct;
@@ -46,38 +45,13 @@ export class BarcodeComponent implements OnInit, IModalWindow {
 
   ngOnInit(): void {
     this.http.get<IProduct[]>(REST_API.GET.products).catch(e => of(null))
-      .do(products => {
-        if (products) {
-          this.products = products;
-          this.types = products.filter(p => p.id === 0 || p.id === RESERVED_PRODUCTS_ID);
-          this.product = this.product || products.find(p => p.id === RESERVED_PRODUCTS_ID);
-        } else {
-          this.activeModal.close();
-          this.common.navigate('login');
-        }
-      })
-      .flatMap(products => products && this.http.get<IBarcode>(REST_API.GET.barcodeByCode(this.barcode), {
+      .do(products => this.setProducts(products))
+      .flatMap(products => this.http.get<IBarcode>(REST_API.GET.barcodeByCode(this.barcode), {
         params: { productId: this.product.id.toString() }
       }))
-      .do((barcode: IBarcode) => {
-        const productId = barcode.productId < 0 ? +this.barcode === -1 ? 0 : RESERVED_PRODUCTS_ID : barcode.productId;
-        this.isExist = barcode.productId > 0;
-        this.isBuy = !this.isExist;
-        this.headerClass = this.isExist ? 'bg-info' : 'bg-warning';
-        this.btOk = this.isExist ? 'apply' : 'add';
-        if (!this.isEdit) {
-          this.product = this.products.find(p => p.id === productId);
-        }
-        this.product.price /= 100;
-        this.header = this.isExist || this.isEdit ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
-        if (!this.barcode) this.barcode = this.isExist ? barcode.code : '';
-      })
-      .flatMap((barcode: IBarcode) => barcode.productId < 0 ?
-        of(undefined) : this.http.get<any>(REST_API.GET.userByCard(barcode.code)))
-      .subscribe(data => {
-        if (data && data.created) this.header = data.surname + ' ' + data.name;
-        this.ready = true;
-      }, error => console.error(error));
+      .do(barcode => this.checkBarcode(barcode))
+      .flatMap((barcode: IBarcode) => barcode.productId < 0 ? this.http.get<Profile>(REST_API.GET.userByCard(this.barcode)) : of(null))
+      .subscribe(profile => this.onShown(profile), error => console.error(error));
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -112,7 +86,6 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     if (index < 0) index = this.types.length - 1;
     if (index > this.types.length - 1) index = 0;
     this.product = this.types[index];
-    this.btOk = this.product.id === 0 || this.product.id === RESERVED_PRODUCTS_ID ? 'add' : 'update';
   }
 
   private focusField(name: string) {
@@ -120,12 +93,41 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     if (name === 'desc') this.focusDesc.eventEmitter.emit(true);
   }
 
+  private setProducts(products: IProduct[]): void {
+    if (products) {
+      this.products = products;
+      this.types = products.filter(p => p.id === 0 || p.id === RESERVED_PRODUCTS_ID);
+      this.product = this.product || products.find(p => p.id === RESERVED_PRODUCTS_ID);
+    } else {
+      this.activeModal.close();
+      this.common.navigate('login');
+    }
+  }
+
+  private checkBarcode(barcode): void {
+    const productId = barcode.productId < 0 ? +this.barcode === -1 ? 0 : RESERVED_PRODUCTS_ID : barcode.productId;
+    this.isExist = barcode.productId > 0;
+    if (!this.isEdit) this.product = this.products.find(p => p.id === productId);
+  }
+
+  private onShown(profile: Profile) {
+    if (profile && profile['created']) {
+      this.header = profile.surname + ' ' + profile.name;
+      this.isExist = true;
+      this.curCount = profile.balance / 100;
+    } else {
+      this.header = this.isExist || this.isEdit ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
+      this.product.price /= 100;
+    }
+    this.isBuy = !this.isExist;
+    this.ready = true;
+  }
+
   btOkClick(instance: any): any {
     instance.product.price *= 100;
     if (instance.isEdit) {
-      instance.http.put(REST_API.PUT.product, instance.product, {
-        params: { code: '', oldProductId: '' }
-      }).subscribe((response: IResponse) => {
+      instance.http.put(REST_API.PUT.product, instance.product)
+        .subscribe((response: IResponse) => {
           if (response && response.result === ERestResult[ERestResult.OK].toString()) {
             instance.common.newProduct.next(response.message);
           }
@@ -137,17 +139,6 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     } else if (instance.product.id === 0) {
       instance.http.post(REST_API.POST.product, instance.product, { params: { code: instance.barcode } })
         .subscribe((response: IResponse) => {
-          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            instance.common.newProduct.observers && instance.common.newProduct.next(response.message);
-            instance.common.navigate('products');
-          }
-        });
-    } else {
-      instance.product.count += (instance.isBuy ? 1 : -1) * instance.curCount;
-      instance.product.code = instance.barcode;
-      instance.http.put(REST_API.PUT.product, instance.product, {
-        params: { oldProductId: instance.product.id.toString() }
-      }).subscribe((response: IResponse) => {
           if (response && response.result === ERestResult[ERestResult.OK].toString()) {
             instance.common.newProduct.observers && instance.common.newProduct.next(response.message);
             instance.common.navigate('products');

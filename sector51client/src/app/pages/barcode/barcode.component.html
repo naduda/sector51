@@ -1,21 +1,22 @@
-<div class="modal-header rounded-top {{headerClass}}" [hidden]="!ready">
+<div class="modal-header rounded-top" [ngClass]="{'bg-info': isExist, 'bg-warning': !isExist}" [hidden]="!ready">
   <h4 class="modal-title">{{ header | translate | titlecase }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body" *ngIf="ready">
-  <form class="form-inline" [hidden]="isEdit">
+  <form class="form-inline" [hidden]="isEdit || isExist">
     <label for="barcode" class="text-right pr-2 w-15">
       <strong>Type:</strong>
     </label>
     <div ngbDropdown class="d-inline-block mb-2 w-85">
-      <button type="button" class="nav-item nav-link text-right rounded btn bg-faded w-100 pr-4" ngbDropdownToggle *ngIf="product" [disabled]="isExist">
+      <button type="button" class="nav-item nav-link text-right rounded btn bg-faded w-100 pr-4"
+        ngbDropdownToggle *ngIf="product" [disabled]="isExist">
         <span class="text-center w-100">{{ product.name }}</span>
       </button>
       <div ngbDropdownMenu>
         <div class="form-check" *ngFor="let p of types">
-          <label class="form-check-label ml-2 w-100" (click)="product=p">{{ p.name }}</label>
+          <label class="form-check-label ml-2 w-100" (click)="product = p">{{ p.name }}</label>
         </div>
       </div>
     </div>
@@ -53,14 +54,14 @@
     </label>
     <input type="text" class="form-control text-center w-35" name="barcode" [value]="barcode" readonly>
 
-    <div class="justify-content-end w-50" [hidden]="product.id === 100 || isEdit">
+    <div class="justify-content-end w-50" [hidden]="!isExist">
       <input type="number" class="form-control text-center w-35" name="curCount" min="0"
         [max]="isBuy ? 10000 : product.count" [(ngModel)]="curCount">
-      <label class="form-check-label mr-4 ml-2" [hidden]="!isExist">
+      <label class="form-check-label mr-4 ml-2">
         <input class="form-check-input" type="radio" name="options" [value]="true" [(ngModel)]="isBuy">
         <i class="fa fa-plus-square-o text-danger"></i>
       </label>
-      <label class="form-check-label" [hidden]="!isExist">
+      <label class="form-check-label">
         <input class="form-check-input" type="radio" name="options" [value]="false" [(ngModel)]="isBuy">
         <i class="fa fa-minus-square-o text-primary"></i>
       </label>
@@ -69,7 +70,7 @@
 </div>
 <div class="modal-footer" [hidden]="!ready">
   <button type="button" class="btn btn-primary" (click)="activeModal.close(true)">
-    {{ btOk | translate | titlecase }}
+    {{ (isExist ? isEdit ? 'update' : 'apply' : 'add') | translate | titlecase }}
   </button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss(0)">
     {{ 'cancel' | translate | titlecase }}
