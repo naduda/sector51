@@ -1,9 +1,10 @@
-div[ngbdropdown] > i { font-style: normal; }
-
 .dropdown-menu { position: absolute; }
 
+div[ngbdropdown] > i { font-style: normal; }
 div[ngbdropdown] > i:hover,
 div[ngbdropdown] .dropdown-item:hover { cursor: pointer; }
+div[ngbdropdown] .fa { padding: 0.5rem 1.5rem; }
+div[ngbdropdown] .fa::before { margin: 0 0.5rem 0 -1rem; }
 
 .navbar-nav { flex-direction: row; }
 

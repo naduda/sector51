@@ -27,6 +27,7 @@ import { ModalComponent } from './pages/modal/modal.component';
 import { BarcodeComponent } from './pages/barcode/barcode.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { FocusDirective } from './directives/focus.directive';
+import { CartComponent } from './pages/cart/cart.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -43,7 +44,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ModalComponent,
     BarcodeComponent,
     ProductsComponent,
-    FocusDirective
+    FocusDirective,
+    CartComponent
   ],
   imports: [
     BrowserModule,

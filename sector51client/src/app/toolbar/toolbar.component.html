@@ -3,10 +3,10 @@
     <i class="fa fa-fw fa-bars fa-lg" (click)="common.sidenavVisible = !common.sidenavVisible"></i>
     <a href="#/main">Sector</a>
   </div>
-  <div class="d-inline-block" ngbDropdown *ngIf="common.profile">
+  <div ngbDropdown *ngIf="common.profile">
     <a href="javascript: void(0);" ngbDropdownToggle>
       <i class="fa fa-fw fa-user"></i>
-      <span>{{ common.profile.name }}</span>
+      <span class="menu-large">{{ common.profile.name }}</span>
     </a>
     <div ngbDropdownMenu>
       <a [routerLink]="['/registration', common.profile['created']]" class="dropdown-item pl-2 pr-2">

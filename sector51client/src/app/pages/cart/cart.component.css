@@ -1,0 +1,32 @@
+.btn { min-width: 10rem; }
+.btn[disabled]:hover {
+  cursor: default;
+}
+
+#cart-div {
+  min-height: calc(100% - 1rem);
+  height: calc(100% - 1rem);
+  max-height: calc(100% - 1rem);
+  position: relative;
+}
+
+#cart-div > div:first-child {
+  max-height: calc(100% - 16rem);
+  overflow: auto;
+}
+
+form {
+  position: absolute;
+  bottom: 0;
+}
+
+form > table { font-weight: bold; }
+form > table td { vertical-align: middle; }
+form > table td > input { max-width: 6rem; margin-right: -3rem; }
+.visible-sm-down { display: none; }
+
+@media (max-width: 576px) {
+  .hidden-sm-down { display: none; }
+  form > table td > input { max-width: 5rem; margin-right: -1.5rem; }
+  .visible-sm-down { display: table-row; }
+}

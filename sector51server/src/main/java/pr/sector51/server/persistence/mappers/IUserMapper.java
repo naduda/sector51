@@ -28,7 +28,7 @@ public interface IUserMapper {
   void insertUserInfo(UserInfo user);
 
   @Update("UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
-          "email = #{email}, card = #{card}, sex = #{sex} WHERE created = #{created};")
+          "email = #{email}, card = #{card}, sex = #{sex}, balance = #{balance} WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 
   @Select("SELECT * FROM usersecurity;")

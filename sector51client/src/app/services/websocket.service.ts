@@ -31,7 +31,6 @@ export class WebsocketService {
 
     this.ws.onmessage = (evt) => {
       const data = JSON.parse(evt.data);
-      console.log(data);
       if (data.code && !location.href.includes('/#/registration')) {
         this.modalService.open(BarcodeComponent, { code: data.code });
       }

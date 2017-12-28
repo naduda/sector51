@@ -41,7 +41,7 @@ public class RestUserController extends RestCommon {
 
   @RequestMapping(value = "/roles", method = RequestMethod.GET)
   public List<KeyValuePair> getRoles() {
-    return Arrays.asList(ERole.values()).stream()
+    return Arrays.asList(ERole.values()).stream().filter(r -> r != ERole.SCANNER)
         .map(r -> new KeyValuePair(r.value, r.name())).collect(Collectors.toList());
   }
 
@@ -84,11 +84,6 @@ public class RestUserController extends RestCommon {
   }
 
   // POST ============================================================================
-  @RequestMapping(value = "/update/user", method = RequestMethod.PUT)
-  public ESector51Result updateUser(@RequestBody UserInfo user) {
-    return userDao.updateUser(user);
-  }
-
   @RequestMapping(value = "/sendemail", method = RequestMethod.POST)
   public ESector51Result sendEmail(@RequestBody MailLetter letter) {
     try {
@@ -97,5 +92,11 @@ public class RestUserController extends RestCommon {
       return ESector51Result.ERROR;
     }
     return ESector51Result.OK;
+  }
+
+  // PUT =============================================================================
+  @RequestMapping(value = "/update/user", method = RequestMethod.PUT)
+  public Sector51Result updateUser(@RequestBody UserInfo user) {
+    return new Sector51Result(userDao.updateUser(user));
   }
 }

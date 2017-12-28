@@ -62,7 +62,8 @@ describe('BarcodeComponent', () => {
           navigate: (url) => currentUrl = url,
           newProduct: {
             next: (product: IProduct) => of(product)
-          }
+          },
+          cartProducts: []
         }}
       ]
     })

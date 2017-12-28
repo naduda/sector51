@@ -36,6 +36,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     onBlur: (element) => element.value = element.value ? Number(element.value).toFixed(2) : 0
   };
 
+  private profile: Profile;
   private keyCodes: number[] = [ 13, 38, 40 ];
 
   constructor(public activeModal: NgbActiveModal, private http: HttpClient, public common: CommonService) {
@@ -111,31 +112,46 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   }
 
   private onShown(profile: Profile) {
+    this.profile = profile;
     if (profile && profile['created']) {
-      this.header = profile.surname + ' ' + profile.name;
+      this.product.name = profile.name;
+      this.product.desc = profile.surname;
+      this.product.price = profile.balance;
+      this.curCount = 0;
+      this.isBuy = true;
       this.isExist = true;
-      this.curCount = profile.balance / 100;
     } else {
-      this.header = this.isExist || this.isEdit ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
-      this.product.price /= 100;
+      this.isBuy = !this.isExist;
     }
-    this.isBuy = !this.isExist;
+    this.product.price /= 100;
+    this.header = this.isExist || this.isEdit ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
     this.ready = true;
   }
 
   btOkClick(instance: any): any {
     instance.product.price *= 100;
-    if (instance.isEdit) {
-      instance.http.put(REST_API.PUT.product, instance.product)
-        .subscribe((response: IResponse) => {
-          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            instance.common.newProduct.next(response.message);
-          }
-        });
-      return;
-    }
     if (instance.product.id === RESERVED_PRODUCTS_ID) {
-      instance.common.navigate('registration', { code: instance.barcode });
+      if (!instance.isExist) {
+        instance.common.navigate('registration', { code: instance.barcode });
+      } else {
+        if (instance.curCount !== 0) {
+          instance.profile.balance += instance.curCount * 100;
+          instance.http.put(REST_API.PUT.user, instance.profile).subscribe((response: IResponse) => {
+            if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+              alert('OK');
+            } else {
+              alert('Error');
+            }
+          });
+          return;
+        }
+        const user = Object.assign({}, instance.product);
+        const oldUser = instance.common.cartProducts.find(p => p.id === user.id);
+        if (oldUser) {
+          instance.common.cartProducts.splice(instance.common.cartProducts.indexOf(oldUser), 1);
+        }
+        instance.common.cartProducts.push(user);
+      }
     } else if (instance.product.id === 0) {
       instance.http.post(REST_API.POST.product, instance.product, { params: { code: instance.barcode } })
         .subscribe((response: IResponse) => {
@@ -144,6 +160,26 @@ export class BarcodeComponent implements OnInit, IModalWindow {
             instance.common.navigate('products');
           }
         });
+    } else if (instance.isExist) {
+      instance.isEdit = true;
+      if (instance.isBuy) {
+        instance.product.count += instance.curCount;
+      } else {
+        const addProduct = Object.assign({}, instance.product);
+        addProduct.count = instance.curCount;
+        instance.common.cartProducts.push(addProduct);
+        instance.common.navigate('cart');
+      }
+    }
+
+    if (instance.isEdit) {
+      instance.http.put(REST_API.PUT.product, instance.product)
+        .subscribe((response: IResponse) => {
+          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+            instance.common.newProduct.next(response.message);
+          }
+        });
+      return;
     }
   }
 

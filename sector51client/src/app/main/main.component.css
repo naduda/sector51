@@ -25,3 +25,7 @@ div.bg-faded {
   line-height: 1.25;
   text-align: center;
 }
+
+@media (max-width: 750px) {
+  .test { display: none !important; }
+}

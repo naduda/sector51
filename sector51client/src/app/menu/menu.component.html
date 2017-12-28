@@ -1,7 +1,7 @@
 <nav class="navbar navbar-toggleable navbar-light p-1 pl-2 pr-2">
   <div class="collapse navbar-collapse show">
     <div class="navbar-nav">
-      <div ngbDropdown class="d-inline-block mr-4 user">
+      <div ngbDropdown class="d-inline-block mr-4 user" *ngIf="permissions">
         <i class="nav-item nav-link" ngbDropdownToggle>{{ 'account' | translate | uppercase }}</i>
         <div ngbDropdownMenu>
           <a routerLink="/registration" class="dropdown-item">{{ 'addUser' | translate | titlecase }}</a>
@@ -11,9 +11,13 @@
       <div ngbDropdown class="d-inline-block mr-4">
         <i class="nav-item nav-link " ngbDropdownToggle>{{ 'products' | translate | uppercase }}</i>
         <div ngbDropdownMenu>
-          <a routerLink="/products" class="dropdown-item">{{ 'productsList' | translate | titlecase }}</a>
-          <button class="dropdown-item" (click)="createProduct()">{{ 'create' | translate | titlecase }}</button>
-          <button class="dropdown-item">Action - 2.3</button>
+          <a routerLink="/products" class="dropdown-item fa fa-fw fa-list">{{ 'productsList' | translate | titlecase }}</a>
+          <button class="dropdown-item fa fa-fw fa-plus-square" (click)="createProduct()" *ngIf="permissions">
+            {{ 'create' | translate | titlecase }}
+          </button>
+          <a routerLink="/cart" class="dropdown-item fa fa-fw fa-shopping-cart" *ngIf="permissions">
+            {{ 'cart' | translate | titlecase }}
+          </a>
         </div>
       </div>
 

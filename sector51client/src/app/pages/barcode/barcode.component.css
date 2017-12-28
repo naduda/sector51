@@ -32,3 +32,6 @@ button.btn { min-width: 8rem; }
 form.barcode { align-items: center; }
 
 div.justify-content-end { display: flex; }
+
+label { font-size: 0.9rem; }
+input { font-size: 0.8rem; }

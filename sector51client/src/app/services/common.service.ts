@@ -11,8 +11,10 @@ export class CommonService {
   public currentUser: BehaviorSubject<Profile>;
   public newProduct: BehaviorSubject<IProduct>;
   public sidenavVisible: boolean;
+  public cartProducts: IProduct[];
 
   constructor(public router: Router) {
+    this.cartProducts = [];
     this.currentUser = new BehaviorSubject(null);
     this.newProduct = new BehaviorSubject(null);
     router.events.subscribe(val => {

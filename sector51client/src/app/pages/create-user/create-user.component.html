@@ -56,7 +56,7 @@
     <div id="divAuthorities" class="col-6 col-form-label">
       <label class="col-6 col-form-label pl-0">Authorities</label>
       <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link text-right" ngbDropdownToggle>{{ this.user.authorities }}</i>
+        <i class="nav-item nav-link text-right pl-1 pr-1" ngbDropdownToggle>{{ this.user.authorities }}</i>
         <div ngbDropdownMenu>
           <div class="form-check" *ngFor="let r of allRoles">
             <label class="form-check-label ml-2">
