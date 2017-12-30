@@ -29,6 +29,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   public curCount: number;
   public isEdit: boolean;
   public isExist: boolean;
+  public someThingWrong: boolean;
   public isVirtual: boolean;
   public focusName: any = {};
   public focusDesc: any = {};
@@ -117,10 +118,16 @@ export class BarcodeComponent implements OnInit, IModalWindow {
       this.product.name = profile.name;
       this.product.desc = profile.surname;
       this.product.price = profile.balance;
+      this.product.code = profile.card;
+      this.product['created'] = profile['created'];
       this.curCount = 0;
       this.isBuy = true;
       this.isExist = true;
     } else {
+      const existInCart = this.common.cartProducts
+        .filter(p => p.id === this.product.id).reduce((r, c) => r + c.count, 0);
+      this.someThingWrong = this.product.count - existInCart <= 0;
+      this.product.count -= existInCart;
       this.isBuy = !this.isExist;
     }
     this.product.price /= 100;
@@ -138,7 +145,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
           instance.profile.balance += instance.curCount * 100;
           instance.http.put(REST_API.PUT.user, instance.profile).subscribe((response: IResponse) => {
             if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-              alert('OK');
+              instance.common.navigate('main', { user: instance.profile.created });
             } else {
               alert('Error');
             }
@@ -160,15 +167,20 @@ export class BarcodeComponent implements OnInit, IModalWindow {
             instance.common.navigate('products');
           }
         });
-    } else if (instance.isExist) {
+    } else if (instance.isExist && !instance.isEdit) {
       instance.isEdit = true;
       if (instance.isBuy) {
         instance.product.count += instance.curCount;
       } else {
+        if (instance.product.count < instance.curCount) {
+          alert('Max cout is ' + instance.product.count);
+          return;
+        }
         const addProduct = Object.assign({}, instance.product);
         addProduct.count = instance.curCount;
         instance.common.cartProducts.push(addProduct);
         instance.common.navigate('cart');
+        return;
       }
     }
 
@@ -179,7 +191,6 @@ export class BarcodeComponent implements OnInit, IModalWindow {
             instance.common.newProduct.next(response.message);
           }
         });
-      return;
     }
   }
 

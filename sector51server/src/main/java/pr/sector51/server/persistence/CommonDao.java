@@ -14,7 +14,7 @@ public class CommonDao {
   @Autowired
   private DataSourceTransactionManager transactionManager;
 
-  public boolean runTransaction(ICommonDao method) {
+  public boolean runTransaction(Runnable method) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
     def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 

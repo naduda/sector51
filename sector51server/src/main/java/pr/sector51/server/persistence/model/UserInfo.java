@@ -75,6 +75,10 @@ public class UserInfo {
     return balance;
   }
 
+  public void setBalance(int balance) {
+    this.balance = balance;
+  }
+
   public boolean isSex() {
     return sex;
   }

@@ -45,6 +45,12 @@
                 </th>
                 <td>{{ user.email }}</td>
               </tr>
+              <tr>
+                <th scope="row">
+                  <i class="fa fa-fw fa-money text-success"></i>
+                </th>
+                <td>{{ user.balance / 100 | number: '1.2-2' }}</td>
+              </tr>
             </tbody>
           </table>
           <hr>

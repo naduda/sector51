@@ -26,8 +26,10 @@ export const REST_API = {
     login: '/api/login',
     /** /api/add//product */
     product: '/api/add/product',
-    /** /api/add//user */
-    user: '/api/add//user'
+    /** /api/add/user */
+    user: '/api/add/user',
+    /** /api/userPay (body: [user, products, cash])*/
+    userPay: '/api/userPay'
   },
   PUT: {
     /** /api/update/product*/

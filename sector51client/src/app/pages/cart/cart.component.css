@@ -15,11 +15,18 @@
   overflow: auto;
 }
 
+.icon { width: 2.5rem; }
+.icon:hover { cursor: pointer; }
+.count { width: 4rem; }
+.capt { width: calc(50% - 10rem); }
+
 form {
   position: absolute;
   bottom: 0;
 }
+thead { font-size: 0.9rem; }
 
+table { table-layout:fixed; }
 form > table { font-weight: bold; }
 form > table td { vertical-align: middle; }
 form > table td > input { max-width: 6rem; margin-right: -3rem; }

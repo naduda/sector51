@@ -69,7 +69,7 @@
   </form>
 </div>
 <div class="modal-footer" [hidden]="!ready">
-  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)" *ngIf="!someThingWrong || isBuy">
     {{ (isExist ? isEdit ? 'update' : 'apply' : 'add') | translate | titlecase }}
   </button>
   <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss(0)">

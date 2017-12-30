@@ -69,12 +69,12 @@ server.post('/api/login', (req, res) => {
 
 server.post('/api/add/user', (req, res) => {
   userScript.createUser(req.body);
-  res.jsonp('OK');
+  res.jsonp({result: 'OK'});
 });
 
 server.put('/api/update/user', (req, res) => {
   userScript.updateUser(req.body);
-  res.jsonp('OK');
+  res.jsonp({result: 'OK'});
 });
 
 server.use('/api', router);

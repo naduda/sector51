@@ -20,7 +20,6 @@ describe('BarcodeComponent', () => {
   let component: BarcodeComponent;
   let fixture: ComponentFixture<BarcodeComponent>;
   let et: ElementTools<BarcodeComponent>;
-  let buttonOK: any;
   let currentUrl: string;
 
   beforeEach(async(() => {
@@ -74,7 +73,6 @@ describe('BarcodeComponent', () => {
     fixture = TestBed.createComponent(BarcodeComponent);
     component = fixture.componentInstance;
     et = new ElementTools(fixture);
-    buttonOK = et.ne('button.btn-primary');
     currentUrl = '';
   });
 
@@ -93,7 +91,7 @@ describe('BarcodeComponent', () => {
     expect(et.ne('button[ngbDropdownToggle] > span').innerHTML).toEqual('USER');
     expect(et.all('.modal-body form[hidden]').length).toBe(3);
     expect(et.all('.modal-body form:last-child > div[hidden]').length).toBe(1);
-    expect(buttonOK.innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('add'));
+    expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('add'));
     component.btOkClick(component);
     expect(currentUrl).toEqual('registration');
   });
@@ -106,7 +104,7 @@ describe('BarcodeComponent', () => {
     expect(et.ne('.modal-body form:first-child button > span').innerHTML).toEqual('NEW');
     expect(et.all('.modal-body form[hidden]').length).toBe(0);
     expect(et.all('.modal-body form:last-child > div[hidden]').length).toBe(1);
-    expect(buttonOK.innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('add'));
+    expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('add'));
     et.setInputValue('input[name="name"]', 'existProduct');
     et.setInputValue('input[name="desc"]', 'existProductDesc');
     et.setInputValue('input[name="count"]', '12');
@@ -128,7 +126,7 @@ describe('BarcodeComponent', () => {
     expect(et.ne('input[name="count"]').getAttribute('ng-reflect-model')).toBe('12');
     expect(et.ne('input[name="price"]').getAttribute('ng-reflect-is-disabled')).toBeTruthy;
     expect(et.ne('input[name="price"]').getAttribute('ng-reflect-model')).toBe('12.34');
-    expect(buttonOK.innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('apply'));
+    expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('apply'));
   });
 
   it('product edit', fakeAsync(() => {
@@ -141,7 +139,7 @@ describe('BarcodeComponent', () => {
     expect(et.ne('input[name="desc"]').getAttribute('ng-reflect-is-disabled')).toBeFalsy;
     expect(et.ne('input[name="count"]').getAttribute('ng-reflect-is-disabled')).toBeTruthy;
     expect(et.ne('input[name="price"]').getAttribute('ng-reflect-is-disabled')).toBeFalsy;
-    expect(buttonOK.innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('update'));
+    expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('update'));
     et.setInputValue('input[name="name"]', 'test');
     et.setInputValue('input[name="desc"]', 'desc');
     et.setInputValue('input[name="price"]', '43.21');

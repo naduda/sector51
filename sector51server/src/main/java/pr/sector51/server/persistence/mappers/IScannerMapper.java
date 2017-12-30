@@ -42,4 +42,7 @@ public interface IScannerMapper {
 
   @Update("UPDATE barcode set code = #{barcode.code} WHERE productid = #{barcode.productId}")
   int updateBarcode(@Param("barcode") Barcode barcode);
+
+  @Select("SELECT * FROM product WHERE id = #{id}")
+  Product getPrpoductById(@Param("id") int prodId);
 }

@@ -10,7 +10,7 @@ import { CreateUserComponent } from './create-user.component';
 import { ActivatedRoute } from '@angular/router';
 import { Profile } from '../../entities/profile';
 import { Observable } from 'rxjs/Observable';
-import { ERole } from '../../entities/common';
+import { ERole, ERestResult } from '../../entities/common';
 import { By } from '@angular/platform-browser';
 import { ElementTools } from '../../testing/commonTest';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
@@ -41,8 +41,8 @@ describe('CreateUserComponent', () => {
         }},
         { provide: HttpClient, useValue: {
             get: (idUser: string) => of(undefined),
-            post: (url: string, body: any | null, options?: any) => of('OK'),
-            put: (q: string, body: any) => of({})
+            post: (url: string, body: any | null, options?: any) => of({ result: ERestResult[ERestResult.OK] }),
+            put: (q: string, body: any) => of({ result: ERestResult[ERestResult.OK] })
           }
         }
       ],

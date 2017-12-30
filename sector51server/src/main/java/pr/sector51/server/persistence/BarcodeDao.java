@@ -45,4 +45,8 @@ public class BarcodeDao extends CommonDao {
   public ESector51Result updateBarcode(Barcode barcode) {
     return scanner.updateBarcode(barcode) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
   }
+
+  public Product getPrpoductById(int prodId) {
+    return scanner.getPrpoductById(prodId);
+  }
 }

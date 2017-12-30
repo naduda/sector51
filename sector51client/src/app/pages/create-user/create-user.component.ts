@@ -83,11 +83,12 @@ export class CreateUserComponent implements OnInit {
     }
   }
 
-  private onResult(result) {
-    if (ERestResult[ERestResult.OK] === result) {
+  private onResult(response) {
+    if (ERestResult[ERestResult.OK] === response.result) {
       this.location.back();
     } else {
-      alert('Something wrong. Result is ' + result);
+      alert('Something wrong.');
+      console.error(response);
     }
   }
 }
