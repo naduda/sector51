@@ -6,16 +6,20 @@ import { CommonService } from '../../services/common.service';
 import { BarcodeComponent } from './barcode.component';
 import { of } from 'rxjs/observable/of';
 import { FormsModule } from '@angular/forms';
-import { RESERVED_PRODUCTS_ID, IProduct, IBarcode, ERestResult } from '../../entities/common';
+import { RESERVED_PRODUCTS_ID, IProduct, IBarcode, ERestResult, ERole } from '../../entities/common';
 import { REST_API } from '../../entities/rest-api';
 import { FocusDirective } from '../../directives/focus.directive';
 import { ElementTools } from '../../testing/commonTest';
+import { Profile } from '../../entities/profile';
 
-describe('BarcodeComponent', () => {
+fdescribe('BarcodeComponent', () => {
   const products: IProduct[] = [
     { id: 0, name: 'NEW', desc: '-', count: 1, price: 0, code: '' },
     { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user', count: 1, price: 0, code: '0' },
     { id: 101, name: 'existProduct', desc: 'descProduct', count: 12, price: 1234, code: '1234567898765' }
+  ];
+  const users: Profile[] = [
+    new Profile(null, 'Owner', 'Sowner', null, null, '1234567898760', null, null, true)
   ];
   let component: BarcodeComponent;
   let fixture: ComponentFixture<BarcodeComponent>;
@@ -41,19 +45,28 @@ describe('BarcodeComponent', () => {
                 code: product ? product.code : ''
               };
               return of(barcode);
-            } else
+            } else if (url.includes('/api/userByCard/')) {
+              const code = url.substring(url.lastIndexOf('/') + 1);
+              return of(users.find(u => u.card === code));
+            } else {
+              console.log(url)
               return of(null);
+            }
           },
           post: (url: string, product: IProduct) => {
-            product.id = products.length + 99;
-            products.push(product);
+            if (url === '/api/add/product') {
+              product.id = products.length + 99;
+              products.push(product);
+            } else {
+              console.log(url)
+            }
             return of({ result: ERestResult[ERestResult.OK] });
           },
-          put: (url: string, product: IProduct) => {
-            const exist = products.find(p => p.id === product.id);
-            exist.name = product.name;
-            exist.desc = product.desc;
-            exist.price = product.price;
+          put: (url: string, product: any) => {
+            if (url === '/api/update/user') {
+            } else {
+              console.log(url)
+            }
             return of({ result: ERestResult[ERestResult.OK] });
           }
         }},
@@ -127,7 +140,24 @@ describe('BarcodeComponent', () => {
     expect(et.ne('input[name="price"]').getAttribute('ng-reflect-is-disabled')).toBeTruthy;
     expect(et.ne('input[name="price"]').getAttribute('ng-reflect-model')).toBe('12.34');
     expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('apply'));
+    component.btOkClick(component);
   });
+
+  it('change user balance', fakeAsync(() => {
+    component.barcode = '1234567898760';
+    fixture.detectChanges();
+    expect(et.ne('button[ngbDropdownToggle][disabled]')).toBeDefined();
+    expect(et.ne('button[ngbDropdownToggle] > span').innerHTML.toLowerCase()).toEqual('owner');
+    expect(et.ne('.modal-header').getAttribute('class')).toMatch('bg-info');
+    expect(et.ne('.modal-header > h4').innerHTML.toLowerCase()).toEqual('owner sowner');
+    expect(et.all('.modal-body form[hidden]').length).toBe(4);
+    expect(et.all('.modal-body form:last-child > div[hidden]').length).toBe(0);
+    expect(et.ne('input[name="curCount"]').getAttribute('ng-reflect-model')).toBe('0');
+    et.setInputValue('input[name="curCount"]', '50.32');
+    expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('apply'));
+    component.btOkClick(component);
+    expect(users.find(u => u.card === component.barcode).balance).toBe(5032);
+  }));
 
   it('product edit', fakeAsync(() => {
     component.product = products[2];

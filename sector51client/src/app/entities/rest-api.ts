@@ -24,7 +24,7 @@ export const REST_API = {
   POST: {
     /** /api/login */
     login: '/api/login',
-    /** /api/add//product */
+    /** /api/add/product */
     product: '/api/add/product',
     /** /api/add/user */
     user: '/api/add/user',

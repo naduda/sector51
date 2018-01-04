@@ -38,9 +38,9 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   };
 
   private profile: Profile;
-  private keyCodes: number[] = [ 13, 38, 40 ];
+  private keyCodes: number[] = [13, 38, 40];
 
-  constructor(public activeModal: NgbActiveModal, private http: HttpClient, public common: CommonService) {
+  constructor(public activeModal: NgbActiveModal, private http: HttpClient, private common: CommonService) {
     this.curCount = 1;
     this.isBuy = false;
   }
@@ -52,7 +52,8 @@ export class BarcodeComponent implements OnInit, IModalWindow {
         params: { productId: this.product.id.toString() }
       }))
       .do(barcode => this.checkBarcode(barcode))
-      .flatMap((barcode: IBarcode) => barcode.productId < 0 ? this.http.get<Profile>(REST_API.GET.userByCard(this.barcode)) : of(null))
+      .flatMap((barcode: IBarcode) => barcode.productId < 0 ?
+        this.http.get<Profile>(REST_API.GET.userByCard(this.barcode)) : of(null))
       .subscribe(profile => this.onShown(profile), error => console.error(error));
   }
 
@@ -135,62 +136,73 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     this.ready = true;
   }
 
+  private updateUserBalance() {
+    this.profile.balance += this.curCount * 100;
+    this.http.put(REST_API.PUT.user, this.profile).subscribe((response: IResponse) => {
+      if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+        this.common.navigate('main', { user: this.profile['created'] });
+      } else {
+        alert('Error');
+      }
+    });
+  }
+
+  private addProduct2database() {
+    this.http.post(REST_API.POST.product, this.product, { params: { code: this.barcode } })
+      .subscribe((response: IResponse) => {
+        if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+          this.common.newProduct.observers && this.common.newProduct.next(response.message);
+          this.common.navigate('products');
+        }
+      });
+  }
+
+  private addUserCard2cart() {
+    const user = Object.assign({}, this.product);
+    const oldUser = this.common.cartProducts.find(p => p.id === user.id);
+    if (oldUser) {
+      this.common.cartProducts.splice(this.common.cartProducts.indexOf(oldUser), 1);
+    }
+    this.common.cartProducts.push(user);
+  }
+
+  private updateProduct() {
+    this.http.put(REST_API.PUT.product, this.product)
+      .subscribe((response: IResponse) => {
+        if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+          this.common.newProduct.next(response.message);
+        }
+      });
+  }
+
+  private addProduct2cart() {
+    const addProduct = Object.assign({}, this.product);
+    addProduct.count = this.curCount;
+    this.common.cartProducts.push(addProduct);
+    this.common.navigate('cart');
+  }
+
   btOkClick(instance: any): any {
     instance.product.price *= 100;
     if (instance.product.id === RESERVED_PRODUCTS_ID) {
       if (!instance.isExist) {
         instance.common.navigate('registration', { code: instance.barcode });
-      } else {
-        if (instance.curCount !== 0) {
-          instance.profile.balance += instance.curCount * 100;
-          instance.http.put(REST_API.PUT.user, instance.profile).subscribe((response: IResponse) => {
-            if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-              instance.common.navigate('main', { user: instance.profile.created });
-            } else {
-              alert('Error');
-            }
-          });
-          return;
-        }
-        const user = Object.assign({}, instance.product);
-        const oldUser = instance.common.cartProducts.find(p => p.id === user.id);
-        if (oldUser) {
-          instance.common.cartProducts.splice(instance.common.cartProducts.indexOf(oldUser), 1);
-        }
-        instance.common.cartProducts.push(user);
+      } else if (instance.curCount !== 0) {
+        instance.updateUserBalance();
+      } else if (instance.common.router.url === '/cart') {
+        instance.addUserCard2cart();
       }
     } else if (instance.product.id === 0) {
-      instance.http.post(REST_API.POST.product, instance.product, { params: { code: instance.barcode } })
-        .subscribe((response: IResponse) => {
-          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            instance.common.newProduct.observers && instance.common.newProduct.next(response.message);
-            instance.common.navigate('products');
-          }
-        });
+      instance.addProduct2database();
     } else if (instance.isExist && !instance.isEdit) {
-      instance.isEdit = true;
       if (instance.isBuy) {
         instance.product.count += instance.curCount;
+        instance.updateProduct();
+      } else if (instance.product.count < instance.curCount) {
+        alert('Max cout is ' + instance.product.count);
       } else {
-        if (instance.product.count < instance.curCount) {
-          alert('Max cout is ' + instance.product.count);
-          return;
-        }
-        const addProduct = Object.assign({}, instance.product);
-        addProduct.count = instance.curCount;
-        instance.common.cartProducts.push(addProduct);
-        instance.common.navigate('cart');
-        return;
+        instance.addProduct2cart();
       }
-    }
-
-    if (instance.isEdit) {
-      instance.http.put(REST_API.PUT.product, instance.product)
-        .subscribe((response: IResponse) => {
-          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            instance.common.newProduct.next(response.message);
-          }
-        });
     }
   }
 

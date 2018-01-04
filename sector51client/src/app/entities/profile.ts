@@ -12,7 +12,7 @@ export class Profile {
   balance: number;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,
-    email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean) {
+    email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean, balance?: number) {
     this.role = role === undefined ? ERole.USER : role;
     this.authorities = ERole[this.role];
     this.name = name;
@@ -25,5 +25,6 @@ export class Profile {
     if (randomId) {
       this['created'] -= Math.floor(Math.random() * 100);
     }
+    this.balance = balance || 0;
   }
 }
