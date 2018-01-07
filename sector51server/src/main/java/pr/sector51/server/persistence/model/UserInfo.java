@@ -67,6 +67,10 @@ public class UserInfo {
     return roles;
   }
 
+  public void setRoles(String roles) {
+    this.roles = roles;
+  }
+
   public String getCard() {
     return card;
   }

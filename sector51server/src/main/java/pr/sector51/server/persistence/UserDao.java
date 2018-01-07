@@ -38,6 +38,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     UserSecurity userSecurity = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userSecurity.getPassword().equals("owner")) {
       userInfo.setPassword(encoder.encode(userSecurity.getPassword()));
+      userInfo.setRoles(userSecurity.getRoles());
       userMapper.updateUserSecurity(userInfo);
     }
   }
