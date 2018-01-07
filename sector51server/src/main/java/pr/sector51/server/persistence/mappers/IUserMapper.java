@@ -34,9 +34,6 @@ public interface IUserMapper {
   @Select("SELECT * FROM usersecurity;")
   List<UserSecurity> getUsersSecurity();
 
-  @Select("SELECT * FROM usersecurity WHERE username = #{value}")
-  UserSecurity getUserSecurityByName(String value);
-
   @Select("SELECT * FROM usersecurity WHERE created = #{value}")
   UserSecurity getUserSecurityById(Timestamp value);
 

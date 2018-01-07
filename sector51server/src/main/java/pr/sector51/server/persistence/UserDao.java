@@ -32,6 +32,15 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Autowired
   private IScannerMapper scannerMapper;
 
+  @PostConstruct
+  public void init() {
+    UserInfo userInfo = userMapper.getUserInfoByEmail("owner@gmail.com").get(0);
+    UserSecurity userSecurity = userMapper.getUserSecurityById(userInfo.getCreated());
+    if (userSecurity.getPassword().equals("owner")) {
+      userInfo.setPassword(encoder.encode(userSecurity.getPassword()));
+      userMapper.updateUserSecurity(userInfo);
+    }
+  }
 //  @PostConstruct
 //  public void init() {
 //    List<UserInfo> users = userMapper.getUsersInfo();
@@ -159,11 +168,6 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public List<UserSecurity> getUsersSecurity() {
     return userMapper.getUsersSecurity();
-  }
-
-  @Override
-  public UserSecurity getUserSecurityByName(String name) {
-    return userMapper.getUserSecurityByName(name);
   }
 
   @Override

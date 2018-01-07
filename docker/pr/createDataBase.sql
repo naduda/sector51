@@ -28,7 +28,7 @@ CREATE TABLE userinfo (
 );
 INSERT INTO userinfo(created, name, surname, phone, email, card) VALUES(
 	(SELECT created FROM usersecurity LIMIT 1),
-	'NameOwner', 'Surname', '+38(050) 111-11-11', 'owner@qa.team', '1234567898765');
+	'NameOwner', 'Surname', '+38(050) 111-11-11', 'owner@gmail.com', '1234567898765');
 
 CREATE TABLE barcode (
 	productId integer NOT NULL,
