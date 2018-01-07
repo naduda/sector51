@@ -12,7 +12,7 @@ import { FocusDirective } from '../../directives/focus.directive';
 import { ElementTools } from '../../testing/commonTest';
 import { Profile } from '../../entities/profile';
 
-fdescribe('BarcodeComponent', () => {
+describe('BarcodeComponent', () => {
   const products: IProduct[] = [
     { id: 0, name: 'NEW', desc: '-', count: 1, price: 0, code: '' },
     { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user', count: 1, price: 0, code: '0' },
@@ -47,9 +47,9 @@ fdescribe('BarcodeComponent', () => {
               return of(barcode);
             } else if (url.includes('/api/userByCard/')) {
               const code = url.substring(url.lastIndexOf('/') + 1);
-              return of(users.find(u => u.card === code));
+              return of(Object.assign({}, users.find(u => u.card === code)));
             } else {
-              console.log(url)
+              console.log(url);
               return of(null);
             }
           },
@@ -58,14 +58,16 @@ fdescribe('BarcodeComponent', () => {
               product.id = products.length + 99;
               products.push(product);
             } else {
-              console.log(url)
+              console.log(url);
             }
             return of({ result: ERestResult[ERestResult.OK] });
           },
           put: (url: string, product: any) => {
             if (url === '/api/update/user') {
+              const user = users.find(u => u.card === product.card);
+              user.balance = product.balance;
             } else {
-              console.log(url)
+              console.log(url);
             }
             return of({ result: ERestResult[ERestResult.OK] });
           }
