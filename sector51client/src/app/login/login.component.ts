@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../services/authentication.service';
 import { Profile } from '../entities/profile';
 import { environment } from '../../environments/environment.responsive';
+import { REST_API } from '../entities/rest-api';
 
 @Component({
   selector: 'sector51-login',
@@ -13,10 +14,12 @@ export class LoginComponent implements OnInit {
   model: any = {};
   loading = false;
   error: string;
+  usersNotExist: boolean;
 
-  constructor(private auth: AuthenticationService) {}
+  constructor(private auth: AuthenticationService, private http: HttpClient) {}
 
   ngOnInit() {
+    this.http.get<boolean>(REST_API.GET.usersNotExist).subscribe(response => this.usersNotExist = response);
     this.auth.logout();
     if (!environment.production) {
       this.model.username = 'owner@gmail.com';

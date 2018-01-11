@@ -10,6 +10,7 @@ import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ElementTools } from '../testing/commonTest';
 import { of } from 'rxjs/observable/of';
+import { HttpClient } from '@angular/common/http';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -31,7 +32,10 @@ describe('LoginComponent', () => {
       declarations: [ LoginComponent, TranslatePipeStub ],
       imports: [ FormsModule ],
       providers: [
-        { provide: AuthenticationService, useValue: AuthenticationServiceStub }
+        { provide: AuthenticationService, useValue: AuthenticationServiceStub },
+        { provide: HttpClient, useValue: {
+          get: (url, params): Observable<boolean> => of(false)
+        }}
       ]
     })
     .compileComponents();

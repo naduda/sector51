@@ -32,16 +32,16 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Autowired
   private IScannerMapper scannerMapper;
 
-  @PostConstruct
-  public void init() {
-    UserInfo userInfo = userMapper.getUserInfoByEmail("owner@gmail.com").get(0);
-    UserSecurity userSecurity = userMapper.getUserSecurityById(userInfo.getCreated());
-    if (userSecurity.getPassword().equals("owner")) {
-      userInfo.setPassword(encoder.encode(userSecurity.getPassword()));
-      userInfo.setRoles(userSecurity.getRoles());
-      userMapper.updateUserSecurity(userInfo);
-    }
-  }
+//  @PostConstruct
+//  public void init() {
+//    UserInfo userInfo = userMapper.getUserInfoByEmail("owner@gmail.com").get(0);
+//    UserSecurity userSecurity = userMapper.getUserSecurityById(userInfo.getCreated());
+//    if (userSecurity.getPassword().equals("owner")) {
+//      userInfo.setPassword(encoder.encode(userSecurity.getPassword()));
+//      userInfo.setRoles(userSecurity.getRoles());
+//      userMapper.updateUserSecurity(userInfo);
+//    }
+//  }
 //  @PostConstruct
 //  public void init() {
 //    List<UserInfo> users = userMapper.getUsersInfo();
@@ -221,5 +221,10 @@ public class UserDao extends CommonDao implements IUserMapper {
         .replaceAll("\\)", "")
         .replaceAll("-", "");
     return userMapper.getUserInfoByPnone("%" + value);
+  }
+
+  @Override
+  public int getUsersCount() {
+    return userMapper.getUsersCount();
   }
 }

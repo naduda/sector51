@@ -20,11 +20,11 @@ export class CreateUserComponent implements OnInit {
   public created: boolean;
   public user: Profile;
   public cardRedonly: boolean;
+  public usersNotExist: boolean;
   private idUser: number;
 
   constructor(private http: HttpClient, private location: Location,
-              private route: ActivatedRoute, public common: CommonService) {
-  }
+              private route: ActivatedRoute, public common: CommonService) {}
 
   ngOnInit() {
     let code;
@@ -32,7 +32,10 @@ export class CreateUserComponent implements OnInit {
       .do(params => this.idUser = params['idUser'] || -1)
       .flatMap(params => this.route.queryParams)
       .do(queryParams => code = queryParams['code'] || '')
-      .flatMap(params => this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(e => of(null)))
+      .flatMap(params => this.http.get<boolean>(REST_API.GET.usersNotExist))
+      .do(usersNotExist => this.usersNotExist = usersNotExist)
+      .flatMap(usersNotExist => usersNotExist ?
+        of(null) : this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(e => of(null)))
       .do(user => {
         if (!user) {
           user = new Profile();
@@ -45,7 +48,15 @@ export class CreateUserComponent implements OnInit {
         user.card = code || user.card;
         this.cardRedonly = code;
         this.user = user;
-        this.allRoles = this.common.profile['iroles'];
+        this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
+      })
+      .flatMap(user => this.allRoles === null ? this.http.get<any[]>(REST_API.GET.roles) : of(this.allRoles))
+      .do(pairs => {
+        if (this.allRoles === null) {
+          this.user.authorities = ERole[ERole.OWNER];
+          this.allRoles = pairs.map(pair => ({id: +pair['key'], name: pair['value']})).filter(p => p['value'] === this.user.authorities);
+        }
+        return of(this.user);
       })
       .subscribe(user => this.user['password'] = this.user['password2'] = '');
   }
@@ -74,7 +85,11 @@ export class CreateUserComponent implements OnInit {
     if (this.user['password'].length === 0) {
       delete this.user['password'];
     }
-    if (this.idUser < 0) {
+
+    if (this.idUser < 0 && this.usersNotExist) {
+      this.http.post(REST_API.POST.firstUser, this.user)
+        .subscribe(result => this.onResult(result));
+    } else if (this.idUser < 0 && !this.usersNotExist) {
       this.http.post(REST_API.POST.user, this.user)
         .subscribe(result => this.onResult(result));
     } else {

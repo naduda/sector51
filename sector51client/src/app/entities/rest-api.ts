@@ -6,14 +6,16 @@ export const REST_API = {
     userById: (id): string => '/api/delete/userById/' + id
   },
   GET: {
+    /** /api/public/usersNotExist*/
+    usersNotExist: '/api/public/usersNotExist',
     /** /api/barcodeByCode/{code} { params: productId }*/
     barcodeByCode: (code): string => '/api/barcodeByCode/' + code,
     /** /api/products */
     products: '/api/products',
     /** /api/profileByName/{name} */
     profileByName: (name): string => '/api/profileByName/' + name,
-    /** /api/roles */
-    roles: '/api/roles',
+    /** /api/public/roles */
+    roles: '/api/public/roles',
     /** /api/userByCard/{card} */
     userByCard: (card): string => '/api/userByCard/' + card,
     /** /api/userById/{id} */
@@ -23,11 +25,13 @@ export const REST_API = {
   },
   POST: {
     /** /api/login */
-    login: '/api/login',
+    login: '/api/public/login',
     /** /api/add/product */
     product: '/api/add/product',
     /** /api/add/user */
     user: '/api/add/user',
+    /** /api/public/add/firstUser */
+    firstUser: '/api/public/add/firstUser',
     /** /api/userPay (body: [user, products, cash])*/
     userPay: '/api/userPay'
   },

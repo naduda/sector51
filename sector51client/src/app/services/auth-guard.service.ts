@@ -9,13 +9,13 @@ import { IRole, ERole } from '../entities/common';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/catch';
 import { REST_API } from '../entities/rest-api';
+import { exists } from 'fs';
 
 @Injectable()
 export class CanActivateAuthGuard implements CanActivate {
   private iroles: IRole[];
 
-  constructor(private router: Router,
-              private auth: AuthenticationService,
+  constructor(private auth: AuthenticationService,
               private http: HttpClient,
               private common: CommonService) {}
 
@@ -27,7 +27,7 @@ export class CanActivateAuthGuard implements CanActivate {
           return true;
         }
         if (!this.common.profile['permited']) {
-          this.router.navigate(['/']);
+          this.common.router.navigate(['/']);
         }
         return this.common.profile['permited'];
       }
@@ -41,16 +41,18 @@ export class CanActivateAuthGuard implements CanActivate {
           this.common.profile = user;
           this.common.profile['iroles'] = this.iroles;
           if (!user['permited']) {
-            this.router.navigate(['/']);
+            this.common.router.navigate(['/']);
           }
           return user['permited'];
         })
         .catch(ex => {
-          this.router.navigate(['/login']);
+          this.common.router.navigate(['/login']);
           return of(false);
         });
+    } else if (location.href.endsWith('/registration')) {
+      return this.http.get<boolean>(REST_API.GET.usersNotExist).catch(e => of(false));
     }
-    this.router.navigate(['/login']);
+    this.common.router.navigate(['/login']);
     return false;
   }
 

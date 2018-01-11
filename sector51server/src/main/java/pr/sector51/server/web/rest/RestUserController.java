@@ -33,13 +33,12 @@ public class RestUserController extends RestCommon {
 
   // GET ==============================================================================
   @RequestMapping("/profileByName/{name}")
-  @ResponseBody
   public UserInfo profile(@PathVariable("name") String login) {
     UserInfo userInfo = getUserInfoByLogin(login);
     return userDao.getUserInfoById(userInfo.getCreated());
   }
 
-  @RequestMapping(value = "/roles", method = RequestMethod.GET)
+  @RequestMapping(value = "/public/roles", method = RequestMethod.GET)
   public List<KeyValuePair> getRoles() {
     return Arrays.asList(ERole.values()).stream().filter(r -> r != ERole.SCANNER)
         .map(r -> new KeyValuePair(r.value, r.name())).collect(Collectors.toList());
@@ -51,7 +50,6 @@ public class RestUserController extends RestCommon {
   }
 
   @RequestMapping("/userById/{id}")
-  @ResponseBody
   public UserInfo getUserById(@PathVariable("id") long id) {
     Timestamp created = new Timestamp(id);
     return userDao.getUserInfoById(created);
@@ -62,8 +60,13 @@ public class RestUserController extends RestCommon {
     return userDao.getUsersInfo();
   }
 
+  @RequestMapping(value = "/public/usersNotExist", method = RequestMethod.GET)
+  public boolean usersNotExist() {
+    return userDao.getUsersCount() == 0;
+  }
+
   // POST =============================================================================
-  @RequestMapping(value = "/login", method = RequestMethod.POST)
+  @RequestMapping(value = "/public/login", method = RequestMethod.POST)
   public String getToken(@RequestBody UserSecurity user) {
     String token = "";
     UserInfo userInfo = getUserInfoByLogin(user.getUsername());
@@ -79,8 +82,13 @@ public class RestUserController extends RestCommon {
   }
 
   @RequestMapping(value = "/add/user", method = RequestMethod.POST)
-  public ESector51Result createUser(@RequestBody UserInfo user) {
-    return userDao.insertUser(user);
+  public Sector51Result createUser(@RequestBody UserInfo user) {
+    return new Sector51Result(userDao.insertUser(user));
+  }
+
+  @RequestMapping(value = "/public/add/firstUser", method = RequestMethod.POST)
+  public Sector51Result createFirstUser(@RequestBody UserInfo user) {
+    return usersNotExist() ? new Sector51Result(userDao.insertUser(user)) : new Sector51Result(ESector51Result.ERROR);
   }
 
   // POST ============================================================================

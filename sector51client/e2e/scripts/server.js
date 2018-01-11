@@ -6,7 +6,7 @@ const userScript = require('./user.js');
 const roleScript = require('./role.js');
 
 const isAuthorized = (req) => {
-  if (req.url === '/api/login') {
+  if (req.url.includes('/api/public/')) {
     return true;
   }
   const token = req.headers['x-auth-token'];
@@ -43,6 +43,11 @@ server.use((req, res, next) => {
       res.jsonp(userScript.getUserById(+id));
       return;
     }
+    if (req.url.includes('/api/public/usersNotExist')) {
+      const users = router.db.get('usersecurity').value();
+      res.jsonp(!users || users.length === 0);
+      return;
+    }
   } else if (req.method === 'DELETE') {
     if (req.url.includes('/api/delete/userById/')) {
       const id = req.url.substring(req.url.lastIndexOf('/') + 1);
@@ -54,10 +59,10 @@ server.use((req, res, next) => {
   next()
 });
 
-server.get('/api/roles', (req, res) => res.jsonp(roleScript.roles()));
+server.get('/api/public/roles', (req, res) => res.jsonp(roleScript.roles()));
 server.get('/api/users', (req, res) => res.jsonp(userScript.users()));
 
-server.post('/api/login', (req, res) => {
+server.post('/api/public/login', (req, res) => {
   const data = req.body;
   const userInfo = router.db.get('userinfo').filter({ name: data.username }).value();
   const user = userInfo.length != 1 ? undefined :

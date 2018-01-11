@@ -11,7 +11,6 @@ CREATE TABLE usersecurity (
 	CONSTRAINT pk_uniqe_us UNIQUE (created),
 	CONSTRAINT pk_user_security PRIMARY KEY (created)
 );
-INSERT INTO usersecurity(password, roles) VALUES('owner', 'OWNER');
 
 CREATE TABLE userinfo (
 	created timestamp without time zone NOT NULL DEFAULT now(),
@@ -26,9 +25,6 @@ CREATE TABLE userinfo (
 	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
-INSERT INTO userinfo(created, name, surname, phone, email, card) VALUES(
-	(SELECT created FROM usersecurity LIMIT 1),
-	'NameOwner', 'Surname', '+38(050) 111-11-11', 'owner@gmail.com', '1234567898765');
 
 CREATE TABLE barcode (
 	productId integer NOT NULL,
@@ -36,7 +32,6 @@ CREATE TABLE barcode (
 	CONSTRAINT pk_uniqe_barcode UNIQUE (code),
 	CONSTRAINT pk_barcode PRIMARY KEY (code)
 );
-INSERT INTO barcode(productId, code) VALUES(100, '1234567898765');
 
 CREATE TABLE product
 (

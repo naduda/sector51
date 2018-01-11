@@ -54,4 +54,7 @@ public interface IUserMapper {
 
   @Select("SELECT * FROM userinfo WHERE phone like #{value};")
   List<UserInfo> getUserInfoByPnone(String value);
+
+  @Select("SELECT count(*) FROM usersecurity;")
+  int getUsersCount();
 }
