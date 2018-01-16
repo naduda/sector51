@@ -29,6 +29,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   public curCount: number;
   public isEdit: boolean;
   public isExist: boolean;
+  public isUser: boolean;
   public someThingWrong: boolean;
   public isVirtual: boolean;
   public focusName: any = {};
@@ -127,11 +128,12 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     } else {
       const existInCart = this.common.cartProducts
         .filter(p => p.id === this.product.id).reduce((r, c) => r + c.count, 0);
-      this.someThingWrong = this.product.count - existInCart <= 0;
+      this.someThingWrong = this.product.id > RESERVED_PRODUCTS_ID && this.product.count - existInCart <= 0;
       this.product.count -= existInCart;
       this.isBuy = !this.isExist;
     }
     this.product.price /= 100;
+    if (this.product.id === RESERVED_PRODUCTS_ID) this.activeModal.close(true);
     this.header = this.isExist || this.isEdit ? this.product.name + ' ' + this.product.desc : 'unknownBarcode';
     this.ready = true;
   }
@@ -140,6 +142,8 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     this.profile.balance += this.curCount * 100;
     this.http.put(REST_API.PUT.user, this.profile).subscribe((response: IResponse) => {
       if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+        const user = this.common.users.find(u => this.profile.card === u.card);
+        if (user) user.balance = this.profile.balance;
         this.common.navigate('main', { user: this.profile['created'] });
       } else {
         alert('Error');
@@ -183,20 +187,18 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   }
 
   btOkClick(instance: any): any {
+    instance.isUser = instance.product.id === RESERVED_PRODUCTS_ID;
     instance.product.price *= 100;
-    if (instance.product.id === RESERVED_PRODUCTS_ID) {
-      if (!instance.isExist) {
-        instance.common.navigate('registration', { code: instance.barcode });
-      } else if (instance.curCount !== 0) {
-        instance.updateUserBalance();
-      } else if (instance.common.router.url === '/cart') {
-        instance.addUserCard2cart();
-      }
+    if (instance.isUser) {
+      instance.common.navigate(instance.isExist ? 'boxes' : 'registration', {
+        code: instance.isExist ? instance.profile.card : instance.barcode
+      });
     } else if (instance.product.id === 0) {
       instance.addProduct2database();
-    } else if (instance.isExist && !instance.isEdit) {
-      if (instance.isBuy) {
+    } else if (instance.isExist) {
+      if (instance.isBuy || instance.isEdit) {
         instance.product.count += instance.curCount;
+        if (instance.product.id < RESERVED_PRODUCTS_ID) instance.product.count = 0;
         instance.updateProduct();
       } else if (instance.product.count < instance.curCount) {
         alert('Max cout is ' + instance.product.count);

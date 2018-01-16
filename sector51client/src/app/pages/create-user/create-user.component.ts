@@ -100,6 +100,7 @@ export class CreateUserComponent implements OnInit {
 
   private onResult(response) {
     if (ERestResult[ERestResult.OK] === response.result) {
+      this.common.users = null;
       this.location.back();
     } else {
       alert('Something wrong.');

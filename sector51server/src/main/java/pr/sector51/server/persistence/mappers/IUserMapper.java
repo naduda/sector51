@@ -37,8 +37,8 @@ public interface IUserMapper {
   @Select("SELECT * FROM usersecurity WHERE created = #{value}")
   UserSecurity getUserSecurityById(Timestamp value);
 
-  @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui " +
-          "WHERE us.created = ui.created")
+  @Select("SELECT ui.*, us.roles, box.number, box.time FROM usersecurity AS us, userinfo AS ui " +
+      "LEFT JOIN box ON ui.card = box.card WHERE us.created = ui.created;")
   List<UserInfo> getUsersInfo();
 
   @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "

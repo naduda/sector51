@@ -28,6 +28,8 @@ import { BarcodeComponent } from './pages/barcode/barcode.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { FocusDirective } from './directives/focus.directive';
 import { CartComponent } from './pages/cart/cart.component';
+import { BoxesComponent } from './pages/boxes/boxes.component';
+import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -45,7 +47,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     BarcodeComponent,
     ProductsComponent,
     FocusDirective,
-    CartComponent
+    CartComponent,
+    BoxesComponent,
+    BoxtypeComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +66,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AngularSplitModule,
     Sector51RoutingModule
   ],
-  entryComponents: [ModalComponent, BarcodeComponent],
+  entryComponents: [ModalComponent, BarcodeComponent, BoxtypeComponent],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

@@ -17,7 +17,7 @@
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
-          <li class="list-group-item p-2" *ngFor="let u of users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" [hidden]="!showAll && !u.active"
+          <li class="list-group-item p-2" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" [hidden]="!showAll && !u.active"
             (click)="changeQueryParam('user', u['created'])" [title]="u.card">
             <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
               {{ u.surname + ' ' + u.name }}

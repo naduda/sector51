@@ -91,7 +91,6 @@ public class RestUserController extends RestCommon {
     return usersNotExist() ? new Sector51Result(userDao.insertUser(user)) : new Sector51Result(ESector51Result.ERROR);
   }
 
-  // POST ============================================================================
   @RequestMapping(value = "/sendemail", method = RequestMethod.POST)
   public ESector51Result sendEmail(@RequestBody MailLetter letter) {
     try {

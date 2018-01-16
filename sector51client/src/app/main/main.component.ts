@@ -20,7 +20,6 @@ import { REST_API } from '../entities/rest-api';
 export class MainComponent implements OnInit {
   public selectedUserId: number;
   public user: Profile;
-  public users: Profile[];
   public showAll: boolean;
   public permissions: boolean;
   public wWidth: number;
@@ -49,14 +48,14 @@ export class MainComponent implements OnInit {
       this.showAll = params['all'] === 'true';
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
-    .flatMap(params => this.users ? of(this.users) : this.http.get<Profile[]>(REST_API.GET.users))
+    .flatMap(params => this.common.users ? of(this.common.users) : this.http.get<Profile[]>(REST_API.GET.users))
     .do(users => {
-      this.users = users;
+      this.common.users = users;
       users.find(u => u['created'] === this.common.profile['created'])['active'] = true;
       const spliter = this.common.fromStorage('spliter');
       this.sizeValue = spliter ? spliter.size : [ 25, 75 ];
     })
-    .subscribe(users => this.user = users.find(u => u['created'] === this.selectedUserId));
+    .subscribe(users => this.user = this.common.users.find(u => u['created'] === this.selectedUserId));
   }
 
   onDragEnd(columnindex: number, e: {gutterNum: number, sizes: Array<number>}) {
@@ -74,18 +73,18 @@ export class MainComponent implements OnInit {
 
   removeUser(idUser) {
     const props = {
-      header: '',
+      header: 'attention',
+      headerParam: { end: '!' },
       headerClass: 'alert alert-danger',
       body: 'prompt.RemoveUserQuestion',
       btOK: 'apply',
       btCancel: 'cancel'
     };
-    this.translate.get('attention').subscribe(value => props.header = value + '!');
     this.modalService.open(ModalComponent, props, (result) =>
       this.http.delete(REST_API.DELETE.userById(idUser))
         .subscribe((response: any) => {
           if (response === 'OK') {
-            this.users.splice(this.users.indexOf(this.user), 1);
+            this.common.users.splice(this.common.users.indexOf(this.user), 1);
             this.user = undefined;
           }
         })

@@ -1,5 +1,5 @@
 <div class="modal-header {{headerClass}} rounded-top">
-  <h4 class="modal-title">{{ header | translate | titlecase }}!</h4>
+  <h4 class="modal-title ml-4">{{ header | translate:headerParam | titlecase }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
     <span aria-hidden="true">&times;</span>
   </button>

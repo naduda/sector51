@@ -13,11 +13,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
 })
 export class ModalComponent implements OnInit {
   @Input() header;
-  @Input() body;
+  @Input() headerParam;
   @Input() btOK;
   @Input() btCancel;
   @Input() headerClass;
   @Input() bodyClass;
+  @Input() body;
   private ready: boolean;
 
   constructor(public activeModal: NgbActiveModal) {}

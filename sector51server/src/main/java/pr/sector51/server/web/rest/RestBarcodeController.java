@@ -30,7 +30,7 @@ public class RestBarcodeController extends RestCommon {
   @ResponseBody
   public Barcode getBarcode(@PathVariable("code") String code, @RequestParam(value="productId") String id) {
     int productId = Integer.parseInt(id);
-    Barcode result = productId > UserDao.RESERVED_PRODUCTS_ID ?
+    Barcode result = productId != UserDao.RESERVED_PRODUCTS_ID ?
         barcode.getBarcodeByProductId(productId) : barcode.getBarcodeByCode(code);
     return result != null ? result : new Barcode();
   }
@@ -55,7 +55,7 @@ public class RestBarcodeController extends RestCommon {
     return response;
   }
 
-  @RequestMapping(value = "/userPay", method = RequestMethod.POST)
+  @RequestMapping(value = "/add/userPay", method = RequestMethod.POST)
   public Sector51Result userPay(@RequestBody List<Object> body) {
     try {
       String userId = body.get(0).toString();

@@ -61,8 +61,8 @@ describe('MainComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
-    component.users = USERS_MOCK;
-    component.users[1]['active'] = true;
+    component.common.users = USERS_MOCK;
+    component.common.users[1]['active'] = true;
     et = new ElementTools(fixture);
   });
 
@@ -76,7 +76,7 @@ describe('MainComponent', () => {
     const users = et.all(selector);
     expect(users.length).toBe(7, 'all users should be 7');
     expect(et.all(selector + '[hidden]').length).toBe(5, 'not active users should be 5');
-    component.users[5]['active'] = true;
+    component.common.users[5]['active'] = true;
     fixture.detectChanges();
     expect(et.all(selector + '[hidden]').length).toBe(4, 'not active users should be 4');
     et.click('div.mt-3 > label > input[type="checkbox"]');

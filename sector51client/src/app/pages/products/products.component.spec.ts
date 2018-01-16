@@ -27,8 +27,7 @@ describe('ProductsComponent', () => {
           profile: { role: ERole.ADMIN },
           newProduct: new BehaviorSubject(null)
         }},
-        { provide: ModalService, useValue: { open: () => {} } },
-        { provide: TranslateService, useValue: { get: (key) => of(key + '!') } }
+        { provide: ModalService, useValue: { open: () => {} } }
       ]
     })
     .compileComponents();

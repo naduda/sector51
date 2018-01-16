@@ -33,6 +33,10 @@ export class WebsocketService {
       const data = JSON.parse(evt.data);
       if (data.code && !location.href.includes('/#/registration')) {
         this.modalService.open(BarcodeComponent, { code: data.code });
+      } else if (data.code && location.href.includes('/#/registration')) {
+        // const input: any = document.querySelector('input[name="card"]');
+        // input.value = data.code;
+        // alert('Card was changed.');
       }
     };
 

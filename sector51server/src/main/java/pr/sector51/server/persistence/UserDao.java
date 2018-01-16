@@ -1,21 +1,15 @@
 package pr.sector51.server.persistence;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pr.sector51.server.persistence.mappers.IScannerMapper;
 import pr.sector51.server.persistence.mappers.ISqlMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
 import pr.sector51.server.persistence.model.*;
-import pr.sector51.server.security.ERole;
 
 @Service
 public class UserDao extends CommonDao implements IUserMapper {
@@ -31,54 +25,6 @@ public class UserDao extends CommonDao implements IUserMapper {
 
   @Autowired
   private IScannerMapper scannerMapper;
-
-//  @PostConstruct
-//  public void init() {
-//    UserInfo userInfo = userMapper.getUserInfoByEmail("owner@gmail.com").get(0);
-//    UserSecurity userSecurity = userMapper.getUserSecurityById(userInfo.getCreated());
-//    if (userSecurity.getPassword().equals("owner")) {
-//      userInfo.setPassword(encoder.encode(userSecurity.getPassword()));
-//      userInfo.setRoles(userSecurity.getRoles());
-//      userMapper.updateUserSecurity(userInfo);
-//    }
-//  }
-//  @PostConstruct
-//  public void init() {
-//    List<UserInfo> users = userMapper.getUsersInfo();
-//    if (users.size() == 0) {
-//      boolean res = runTransaction(() -> {
-//        insertUser(ERole.OWNER);
-//        scannerMapper.insertBarcode(RESERVED_PRODUCTS_ID, "0");
-//        insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
-//      });
-//      System.out.println("\n\n\tTable users was " + (res ? "" : "not ") + "created\n\n");
-//    }
-//    if (isTableExist(TABLE_NAME)) {
-//      return;
-//    }
-//    Resource resource = new ClassPathResource("createDataBase.sql");
-//    StringBuilder sqlBuilder = new StringBuilder("");
-//    try(BufferedInputStream inputStream = new BufferedInputStream(resource.getInputStream())) {
-//      byte[] contents = new byte[1024];
-//
-//      int bytesRead;
-//
-//      while((bytesRead = inputStream.read(contents)) != -1) {
-//        sqlBuilder.append(new String(contents, 0, bytesRead));
-//      }
-//    } catch (IOException ex) {
-//      System.out.println(ex);
-//    }
-//
-//    boolean res = runTransaction(() -> {
-//      if (sqlBuilder.toString().length() > 0) {
-//        sqlMapper.execute(sqlBuilder.toString());
-//      }
-//      insertUser(ERole.OWNER);
-//      insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
-//    });
-//    System.out.println("Table users was " + (res ? "" : "not ") + "created");
-//  }
 
   @Override
   public void insertUserSecurity(UserSecurity user) {
@@ -113,25 +59,6 @@ public class UserDao extends CommonDao implements IUserMapper {
   public void updateUserInfo(UserInfo user) {
     userMapper.updateUserInfo(user);
   }
-
-//  private void insertUser(ERole role) {
-//    UserSecurity user = new UserSecurityBuilder()
-//        .setUsername(role.name().toLowerCase())
-//        .setPassword(role.name().toLowerCase())
-//        .setRoles(role.name())
-//        .build();
-//    insertUserSecurity(user);
-//    UserInfo userInfo = new UserInfoBuilder()
-//        .setLogin(role.name().toLowerCase())
-//        .setCreated(user.getCreated())
-//        .setName("Name" + role.name())
-//        .setSurname("Surname" + role.name())
-//        .setEmail(role.name().toLowerCase() + "@gmail.com")
-//        .setPhone("+380501234567")
-//        .setCard("1")
-//        .setRoles(user.getRoles()).build();
-//    insertUserInfo(userInfo);
-//  }
 
   public ESector51Result insertUser(UserInfo userInfo) {
     UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());

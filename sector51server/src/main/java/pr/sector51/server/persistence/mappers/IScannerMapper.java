@@ -24,7 +24,8 @@ public interface IScannerMapper {
   @Insert("INSERT INTO product(id, name, \"desc\", count, price) VALUES(" +
       "     (SELECT max(id) + 1 FROM product product WHERE id < 100), " +
       "     #{value.name}, #{value.desc}, #{value.count}, #{value.price});\n" +
-      "INSERT INTO barcode(productid, code) VALUES((SELECT max(id) FROM product WHERE id < 100), '-1');")
+      "INSERT INTO barcode(productid, code) VALUES(" +
+      "     (SELECT max(id) FROM product WHERE id < 100), (SELECT FLOOR(extract(epoch from now()) * 1000) as text));")
   int insertProductDefault(@Param("value") Product value);
 
   @Select("SELECT * FROM product WHERE id > 100 ORDER BY id DESC LIMIT 1;")

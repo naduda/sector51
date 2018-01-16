@@ -3,20 +3,23 @@ import { Router, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Profile } from '../entities/profile';
-import { STORAGE_NAME, IProduct } from '../entities/common';
+import { STORAGE_NAME, IProduct, IRole } from '../entities/common';
 
 @Injectable()
 export class CommonService {
-  public profile: Profile;
-  public currentUser: BehaviorSubject<Profile>;
-  public newProduct: BehaviorSubject<IProduct>;
-  public sidenavVisible: boolean;
-  public cartProducts: IProduct[];
+  users: Profile[];
+  profile: Profile;
+  currentUser: BehaviorSubject<Profile>;
+  newProduct: BehaviorSubject<IProduct>;
+  newBoxtype: BehaviorSubject<IRole>;
+  sidenavVisible: boolean;
+  cartProducts: IProduct[];
 
   constructor(public router: Router) {
     this.cartProducts = [];
     this.currentUser = new BehaviorSubject(null);
     this.newProduct = new BehaviorSubject(null);
+    this.newBoxtype = new BehaviorSubject(null);
     router.events.subscribe(val => {
       if (val instanceof NavigationStart) {
         this.sidenavVisible = false;

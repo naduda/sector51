@@ -18,6 +18,9 @@
           <a routerLink="/cart" class="dropdown-item fa fa-fw fa-shopping-cart" *ngIf="permissions">
             {{ 'cart' | translate | titlecase }}
           </a>
+          <a routerLink="/boxes" class="dropdown-item fa fa-fw fa-inbox" *ngIf="permissions">
+            {{ 'boxes' | translate | titlecase }}
+          </a>
         </div>
       </div>
 

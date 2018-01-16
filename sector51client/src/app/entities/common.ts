@@ -7,6 +7,7 @@ export interface IProduct { id: number; name: string; desc: string; count: numbe
 export interface IBarcode { productId: number; code: string; }
 export interface IModalProperties {
   header: string;
+  headerParam: any;
   headerClass?: string;
   body: string;
   bodyClass?: string;
@@ -18,6 +19,7 @@ export interface IModalWindow {
   btCancelClick(reason: any, instance: any): any;
   init(props: any): void;
 }
+export interface IBox { idtype: number; number: number; card?: string; time?: any; }
 export interface IResponse { result: string; message: any; }
 
 export enum ERole { OWNER = 0, ADMIN = 10, USER = 100 }

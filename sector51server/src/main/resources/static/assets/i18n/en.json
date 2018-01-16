@@ -41,7 +41,7 @@
   },
   "apply": "apply",
   "cancel": "cancel",
-  "attention": "attention",
+  "attention": "attention{{end}}",
   "properties": "properties",
   "delete": "delete",
   "unknownBarcode": "unknown barcode",
@@ -56,5 +56,6 @@
   "update": "update",
   "cart": "cart",
   "clear": "clear",
-  "pay": "pay"
+  "pay": "pay",
+  "key": "key"
 }

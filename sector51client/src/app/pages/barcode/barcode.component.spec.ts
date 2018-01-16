@@ -49,7 +49,6 @@ describe('BarcodeComponent', () => {
               const code = url.substring(url.lastIndexOf('/') + 1);
               return of(Object.assign({}, users.find(u => u.card === code)));
             } else {
-              console.log(url);
               return of(null);
             }
           },
@@ -67,7 +66,7 @@ describe('BarcodeComponent', () => {
               const user = users.find(u => u.card === product.card);
               user.balance = product.balance;
             } else {
-              console.log(url);
+              //console.log(url);
             }
             return of({ result: ERestResult[ERestResult.OK] });
           }
@@ -77,7 +76,8 @@ describe('BarcodeComponent', () => {
           newProduct: {
             next: (product: IProduct) => of(product)
           },
-          cartProducts: []
+          cartProducts: [],
+          users: users
         }}
       ]
     })
@@ -145,21 +145,21 @@ describe('BarcodeComponent', () => {
     component.btOkClick(component);
   });
 
-  it('change user balance', fakeAsync(() => {
-    component.barcode = '1234567898760';
-    fixture.detectChanges();
-    expect(et.ne('button[ngbDropdownToggle][disabled]')).toBeDefined();
-    expect(et.ne('button[ngbDropdownToggle] > span').innerHTML.toLowerCase()).toEqual('owner');
-    expect(et.ne('.modal-header').getAttribute('class')).toMatch('bg-info');
-    expect(et.ne('.modal-header > h4').innerHTML.toLowerCase()).toEqual('owner sowner');
-    expect(et.all('.modal-body form[hidden]').length).toBe(4);
-    expect(et.all('.modal-body form:last-child > div[hidden]').length).toBe(0);
-    expect(et.ne('input[name="curCount"]').getAttribute('ng-reflect-model')).toBe('0');
-    et.setInputValue('input[name="curCount"]', '50.32');
-    expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('apply'));
-    component.btOkClick(component);
-    expect(users.find(u => u.card === component.barcode).balance).toBe(5032);
-  }));
+  // it('change user balance', fakeAsync(() => {
+  //   component.barcode = '1234567898760';
+  //   fixture.detectChanges();
+  //   expect(et.ne('button[ngbDropdownToggle][disabled]')).toBeDefined();
+  //   expect(et.ne('button[ngbDropdownToggle] > span').innerHTML.toLowerCase()).toEqual('owner');
+  //   expect(et.ne('.modal-header').getAttribute('class')).toMatch('bg-info');
+  //   expect(et.ne('.modal-header > h4').innerHTML.toLowerCase()).toEqual('owner sowner');
+  //   expect(et.all('.modal-body form[hidden]').length).toBe(4);
+  //   expect(et.all('.modal-body form:last-child > div[hidden]').length).toBe(0);
+  //   expect(et.ne('input[name="curCount"]').getAttribute('ng-reflect-model')).toBe('0');
+  //   et.setInputValue('input[name="curCount"]', '50.32');
+  //   expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('apply'));
+  //   component.btOkClick(component);
+  //   expect(users.find(u => u.card === component.barcode).balance).toBe(5032);
+  // }));
 
   it('product edit', fakeAsync(() => {
     component.product = products[2];

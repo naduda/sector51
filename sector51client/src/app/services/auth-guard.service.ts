@@ -9,7 +9,6 @@ import { IRole, ERole } from '../entities/common';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/catch';
 import { REST_API } from '../entities/rest-api';
-import { exists } from 'fs';
 
 @Injectable()
 export class CanActivateAuthGuard implements CanActivate {
@@ -23,9 +22,6 @@ export class CanActivateAuthGuard implements CanActivate {
     if (this.auth.token.length > 0) {
       if (this.common.profile && this.common.profile['permited'] !== undefined) {
         this.setPermissions(route, state, this.common.profile);
-        if (state.url === '/' || state.url === '/main') {
-          return true;
-        }
         if (!this.common.profile['permited']) {
           this.common.router.navigate(['/']);
         }
@@ -33,7 +29,7 @@ export class CanActivateAuthGuard implements CanActivate {
       }
       return this.common.currentUser
         .flatMap(user => this.http.get<any[]>(REST_API.GET.roles))
-        .do(pairs => this.iroles = pairs.map(pair => ({id: +pair['key'], name: pair['value']})))
+        .do(pairs => this.iroles = pairs.map(pair => ({ id: +pair['key'], name: pair['value'] })))
         .flatMap(pairs => this.http.get<Profile>(REST_API.GET.profileByName(this.auth.username.replace('.', ','))))
         .do(user => of(this.setPermissions(route, state, user)))
         .map(user => {
