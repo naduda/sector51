@@ -52,9 +52,8 @@ export class BarcodeComponent implements OnInit, IModalWindow {
       .flatMap(products => this.http.get<IBarcode>(REST_API.GET.barcodeByCode(this.barcode), {
         params: { productId: this.product.id.toString() }
       }))
-      .do(barcode => this.checkBarcode(barcode))
       .flatMap((barcode: IBarcode) => barcode.productId < 0 ?
-        this.http.get<Profile>(REST_API.GET.userByCard(this.barcode)) : of(null))
+        this.http.get<Profile>(REST_API.GET.userByCard(this.barcode)) : of(this.products.find(p => p.id === barcode.productId)))
       .subscribe(profile => this.onShown(profile), error => console.error(error));
   }
 
@@ -101,22 +100,16 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     if (products) {
       this.products = products;
       this.types = products.filter(p => p.id === 0 || p.id === RESERVED_PRODUCTS_ID);
-      this.product = this.product || products.find(p => p.id === RESERVED_PRODUCTS_ID);
+      this.product = this.product || products.find(p => p.code === this.barcode) || products.find(p => p.id === 0);
     } else {
       this.activeModal.close();
       this.common.navigate('login');
     }
   }
 
-  private checkBarcode(barcode): void {
-    const productId = barcode.productId < 0 ? +this.barcode === -1 ? 0 : RESERVED_PRODUCTS_ID : barcode.productId;
-    this.isExist = barcode.productId > 0;
-    if (!this.isEdit) this.product = this.products.find(p => p.id === productId);
-  }
-
-  private onShown(profile: Profile) {
-    this.profile = profile;
-    if (profile && profile['created']) {
+  private onShown(profile: any) {
+    if (profile['created']) {
+      this.profile = profile;
       this.product.name = profile.name;
       this.product.desc = profile.surname;
       this.product.price = profile.balance;
@@ -126,6 +119,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
       this.isBuy = true;
       this.isExist = true;
     } else {
+      this.isExist = profile.id > 0;
       const existInCart = this.common.cartProducts
         .filter(p => p.id === this.product.id).reduce((r, c) => r + c.count, 0);
       this.someThingWrong = this.product.id > RESERVED_PRODUCTS_ID && this.product.count - existInCart <= 0;

@@ -66,7 +66,7 @@ describe('BarcodeComponent', () => {
               const user = users.find(u => u.card === product.card);
               user.balance = product.balance;
             } else {
-              //console.log(url);
+              // console.log(url);
             }
             return of({ result: ERestResult[ERestResult.OK] });
           }
@@ -95,12 +95,13 @@ describe('BarcodeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('product not exist (USER)', () => {
+  it('product not exist (USER)', fakeAsync(() => {
     component.barcode = '1234567898764';
     fixture.detectChanges();
-    expect(et.ne('.modal-body form:first-child button > span').innerHTML).toEqual('USER');
-    expect(component.header).toEqual('unknownBarcode');
     expect(et.ne('.modal-header').getAttribute('class')).toMatch('bg-warning');
+    expect(component.header).toEqual('unknownBarcode');
+    et.click('div[ngbdropdownmenu] > div:last-child > label');
+    expect(et.ne('.modal-body form:first-child button > span').innerHTML).toEqual('USER');
     expect(component.types.length).toBe(2);
     expect(et.ne('button[ngbDropdownToggle]').getAttribute('disabled')).toBeNull;
     expect(et.ne('button[ngbDropdownToggle] > span').innerHTML).toEqual('USER');
@@ -109,7 +110,7 @@ describe('BarcodeComponent', () => {
     expect(et.ne('button.btn-primary').innerHTML.trim().toLowerCase()).toEqual(TranslatePipeStub.translate('add'));
     component.btOkClick(component);
     expect(currentUrl).toEqual('registration');
-  });
+  }));
 
   it('product not exist (NEW)', fakeAsync(() => {
     component.barcode = '1234567898764';
