@@ -21,6 +21,7 @@ export class CreateUserComponent implements OnInit {
   public user: Profile;
   public cardRedonly: boolean;
   public usersNotExist: boolean;
+  public buttonText: string;
   private idUser: number;
 
   constructor(private http: HttpClient, private location: Location,
@@ -56,9 +57,11 @@ export class CreateUserComponent implements OnInit {
           this.user.authorities = ERole[ERole.OWNER];
           this.allRoles = pairs.map(pair => ({id: +pair['key'], name: pair['value']})).filter(p => p['value'] === this.user.authorities);
         }
-        return of(this.user);
       })
-      .subscribe(user => this.user['password'] = this.user['password2'] = '');
+      .subscribe(pairs => {
+        this.buttonText = this.user.card ? 'update' : 'create';
+        this.user['password'] = this.user['password2'] = ''
+      });
   }
 
   get genders() {

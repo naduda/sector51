@@ -50,7 +50,9 @@ describe('MainComponent', () => {
             location = 'modal';
           }}
         },
-        { provide: HttpClient, useValue: {} },
+        { provide: HttpClient, useValue: {
+          get: (url) => of([])
+        }},
         { provide: TranslateService, useValue: { get: (key) => of(key) } },
         { provide: CommonService, useClass: CommonServiceStub }
       ]

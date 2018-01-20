@@ -72,6 +72,7 @@ describe('BarcodeComponent', () => {
           }
         }},
         { provide: CommonService, useValue: {
+          router: { },
           navigate: (url) => currentUrl = url,
           newProduct: {
             next: (product: IProduct) => of(product)

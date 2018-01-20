@@ -46,7 +46,7 @@ export class BoxesComponent implements OnInit, OnDestroy {
     .flatMap(user => this.http.get<IRole[]>(REST_API.GET.boxtypes))
     .do(boxtypes => {
       this.types = boxtypes;
-      if (!this.user) {
+      if (!this.user.card) {
         this.type = boxtypes[0];
       } else {
         this.type = boxtypes.find(t => this.user['sex'] ? t.id === 1 : t.id === 2);
@@ -55,17 +55,26 @@ export class BoxesComponent implements OnInit, OnDestroy {
     })
     .flatMap(boxtypes => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
     .subscribe(boxnumbers => {
-      this.boxes = boxnumbers.filter(b => b.idtype === this.type.id).map(b => {
-        b.time = b.card && b.time ? new Date(b.time) : undefined;
-        return b;
-      });
       this.boxNumbers = boxnumbers;
-      this.boxes.sort((a, b) => a.number - b.number);
+      this.refreshBoxes();
     });
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  private refreshBoxes() {
+    this.boxes = this.boxNumbers.filter(b => b.idtype === this.type.id).map(b => {
+      b.time = b.card && b.time ? new Date(b.time) : undefined;
+      return b;
+    });
+    this.boxes.sort((a, b) => a.number - b.number);
+  }
+
+  changeType(type: IRole) {
+    this.type = type;
+    this.refreshBoxes();
   }
 
   insertOrEditBoxType(insert: boolean) {
@@ -110,11 +119,7 @@ export class BoxesComponent implements OnInit, OnDestroy {
               const bNumber = this.boxNumbers.find(b => b.idtype === removed.idtype && b.number === removed.number);
               this.boxNumbers.splice(this.boxNumbers.indexOf(bNumber), 1);
             }
-            this.boxes = this.boxNumbers.filter(b => b.idtype === this.type.id).map(b => {
-              b.time = b.card && b.time ? new Date(b.time) : undefined;
-              return b;
-            });
-            this.boxes.sort((a, b) => a.number - b.number);
+            this.refreshBoxes();
           } else {
             alert('Error');
           }

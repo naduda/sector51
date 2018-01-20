@@ -20,6 +20,8 @@ CREATE TABLE userinfo (
 	card character varying(15),
 	balance integer NOT NULL DEFAULT 0,
 	sex boolean,
+	dtbeg timestamp without time zone,
+	dtend timestamp without time zone,
 	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
@@ -62,12 +64,14 @@ INSERT INTO product(id, name, "desc") VALUES(100, 'USER', 'Відвідувач'
 CREATE TABLE event (
 	id integer NOT NULL,
 	name character varying(50),
-	description character varying(50)
+	"desc" character varying(50)
 );
+INSERT INTO event VALUES(0, 'IN', 'Somebody in ...');
+INSERT INTO event VALUES(1, 'OUT', 'Somebody out ...');
 
 CREATE TABLE history (
-	id integer NOT NULL,
+	id SERIAL,
 	idEvent integer NOT NULL,
 	time timestamp without time zone NOT NULL DEFAULT now(),
-	description character varying(50)
+	"desc" character varying(50)
 );

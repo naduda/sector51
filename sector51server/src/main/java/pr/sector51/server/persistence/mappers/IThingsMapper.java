@@ -1,9 +1,6 @@
 package pr.sector51.server.persistence.mappers;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import pr.sector51.server.persistence.model.BoxNumber;
 import pr.sector51.server.persistence.model.BoxType;
 
@@ -34,4 +31,10 @@ public interface IThingsMapper {
   @Select("UPDATE box set card = #{card}, time = now() WHERE idtype = #{idtype} AND number = #{number} " +
       "RETURNING extract(epoch from now()) * 1000;")
   long updateBox(BoxNumber boxNumber);
+
+  @Insert("INSERT INTO history(idevent, \"desc\") VALUES(#{idevent}, #{desc});")
+  void insert2history(@Param("idevent") int idEvent, @Param("desc") String desc);
+
+  @Select("SELECT * FROM box WHERE idtype = #{idtype} and \"number\" = #{number};")
+  BoxNumber getBoxNumber(int idtype, int number);
 }

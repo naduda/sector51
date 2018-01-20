@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Service
-public class ThingsDao {
+public class ThingsDao extends CommonDao {
   @Autowired
   private IThingsMapper mapper;
 
@@ -57,13 +57,25 @@ public class ThingsDao {
   public Sector51Result updateBox(BoxNumber boxNumber) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
-      long time = mapper.updateBox(boxNumber);
-      boxNumber.setTime(new Timestamp(time));
-      result.setMessage(boxNumber);
+      boolean res = runTransaction(() -> {
+        if (boxNumber.getCard() != null) {
+          mapper.insert2history(0, boxNumber.getCard());
+        } else {
+          BoxNumber old = mapper.getBoxNumber(boxNumber.getIdtype(), boxNumber.getNumber());
+          mapper.insert2history(1, old.getCard());
+        }
+        long time = mapper.updateBox(boxNumber);
+        boxNumber.setTime(new Timestamp(time));
+        result.setMessage(boxNumber);
+      });
     } catch (Exception ex) {
       result.setResult(ESector51Result.ERROR);
       result.setMessage(ex.getMessage());
     }
     return result;
+  }
+
+  public void insert2history(int idEvent, String desc) {
+    mapper.insert2history(idEvent, desc);
   }
 }

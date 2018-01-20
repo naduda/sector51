@@ -51,6 +51,10 @@
                 </th>
                 <td>{{ user.balance / 100 | number: '1.2-2' }}</td>
               </tr>
+              <tr *ngIf="user['box']">
+                <th>Box:</th>
+                <td>{{ user['box'] }} ({{ user['time'] | date:'HH:mm' }})</td>
+              </tr>
             </tbody>
           </table>
           <hr>

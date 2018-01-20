@@ -50,15 +50,13 @@
           <td>{{ user.desc }}</td>
           <td>{{ user.name }}</td>
           <td class="hidden-sm-down">
-            <input type="number" class="form-control" [hidden]="enaughtMony && cash === 0"
-              name="cash" [(ngModel)]="cash" min="0">
+            <input type="number" class="form-control" name="cash" [(ngModel)]="cash" min="0">
           </td>
           <td class="text-right pr-2 hidden-sm-down" *ngIf="sum > 0">{{ payFormula }}</td>
         </tr>
         <tr class="visible-sm-down">
           <td>
-            <input type="number" class="form-control" [hidden]="enaughtMony && cash === 0"
-              name="cash" [(ngModel)]="cash" min="0">
+            <input type="number" class="form-control" name="cash" [(ngModel)]="cash" min="0">
           </td>
           <td class="text-right pr-2" colspan="2" *ngIf="sum > 0">{{ payFormula }}</td>
         </tr>

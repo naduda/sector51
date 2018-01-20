@@ -27,7 +27,8 @@ public interface IUserMapper {
       + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex});")
   void insertUserInfo(UserInfo user);
 
-  @Update("UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
+  @Update("UPDATE barcode SET code = #{card} WHERE code = (SELECT card FROM userinfo WHERE created = #{created});" +
+          "UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
           "email = #{email}, card = #{card}, sex = #{sex}, balance = #{balance} WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 

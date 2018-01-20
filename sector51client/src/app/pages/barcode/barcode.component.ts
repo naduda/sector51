@@ -52,7 +52,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
       .flatMap(products => this.http.get<IBarcode>(REST_API.GET.barcodeByCode(this.barcode), {
         params: { productId: this.product.id.toString() }
       }))
-      .flatMap((barcode: IBarcode) => barcode.productId < 0 ?
+      .flatMap((barcode: IBarcode) => barcode.productId === RESERVED_PRODUCTS_ID ?
         this.http.get<Profile>(REST_API.GET.userByCard(this.barcode)) : of(this.products.find(p => p.id === barcode.productId)))
       .subscribe(profile => this.onShown(profile), error => console.error(error));
   }
@@ -108,7 +108,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   }
 
   private onShown(profile: any) {
-    if (profile['created']) {
+    if (profile && profile['created']) {
       this.profile = profile;
       this.product.name = profile.name;
       this.product.desc = profile.surname;
@@ -119,7 +119,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
       this.isBuy = true;
       this.isExist = true;
     } else {
-      this.isExist = profile.id > 0;
+      this.isExist = profile && profile.id > 0;
       const existInCart = this.common.cartProducts
         .filter(p => p.id === this.product.id).reduce((r, c) => r + c.count, 0);
       this.someThingWrong = this.product.id > RESERVED_PRODUCTS_ID && this.product.count - existInCart <= 0;
@@ -183,10 +183,10 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   btOkClick(instance: any): any {
     instance.isUser = instance.product.id === RESERVED_PRODUCTS_ID;
     instance.product.price *= 100;
-    if (instance.isUser) {
-      instance.common.navigate(instance.isExist ? 'boxes' : 'registration', {
-        code: instance.isExist ? instance.profile.card : instance.barcode
-      });
+    if (instance.isUser && instance.common.router.url === '/cart') {
+      instance.addUserCard2cart();
+    } else if (instance.isUser) {
+      instance.common.navigate(instance.isExist ? 'boxes' : 'registration', { code: instance.barcode });
     } else if (instance.product.id === 0) {
       instance.addProduct2database();
     } else if (instance.isExist) {

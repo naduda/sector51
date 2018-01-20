@@ -5,7 +5,7 @@ import { CommonService } from '../services/common.service';
 import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
-import { ERole } from '../entities/common';
+import { ERole, IBox } from '../entities/common';
 import { TranslateService } from '@ngx-translate/core';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
@@ -25,6 +25,7 @@ export class MainComponent implements OnInit {
   public wWidth: number;
   public sizeValue: number[];
   public letter: any;
+  private boxes: IBox[];
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
               private modalService: ModalService, public common: CommonService,
@@ -48,8 +49,18 @@ export class MainComponent implements OnInit {
       this.showAll = params['all'] === 'true';
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
-    .flatMap(params => this.common.users ? of(this.common.users) : this.http.get<Profile[]>(REST_API.GET.users))
+    .flatMap(params => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
+    .do(boxes => this.boxes = boxes)
+    .flatMap(boxes => this.http.get<Profile[]>(REST_API.GET.users))
     .do(users => {
+      users.forEach(u => {
+        const box = this.boxes.find(b => b.card === u.card);
+        console.log(new Date(u.dtbeg))  
+        if (box) {
+          u['box'] = box.number;
+          u['time'] = new Date(box.time);
+        }
+      });
       this.common.users = users;
       users.find(u => u['created'] === this.common.profile['created'])['active'] = true;
       const spliter = this.common.fromStorage('spliter');

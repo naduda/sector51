@@ -9,7 +9,7 @@
       </button>
       <div ngbDropdownMenu *ngIf="type">
         <div class="form-check" *ngFor="let p of types">
-          <label class="form-check-label ml-2 w-100" (click)="type = p">{{ p.name }}</label>
+          <label class="form-check-label ml-2 w-100" (click)="changeType(p)">{{ p.name }}</label>
         </div>
       </div>
     </div>

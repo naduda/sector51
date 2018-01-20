@@ -62,10 +62,10 @@ public class RestBarcodeController extends RestCommon {
       String[] products = body.get(1).toString().split("_");
       int cash = (int)body.get(2);
       UserInfo user = userDao.getUserInfoByCard(userId);
-      System.out.println(user.getName());
       boolean success = barcode.runTransaction(() -> {
         user.setBalance(user.getBalance() + cash);
         for(String prod : products) {
+          if (prod.length() == 0) continue;
           int prodId = Integer.parseInt(prod.split(":")[0]);
           int count = Integer.parseInt(prod.split(":")[1]);
           Product product = barcode.getPrpoductById(prodId);
