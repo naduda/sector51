@@ -37,4 +37,8 @@ public class CommonDao {
   public void insertEvent(Event event) {
     commonMapper.insertEvent(event);
   }
+
+  public void insert2history(int idEvent, String desc) {
+    commonMapper.insert2history(idEvent, desc);
+  }
 }

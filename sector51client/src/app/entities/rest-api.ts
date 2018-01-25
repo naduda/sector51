@@ -42,10 +42,12 @@ export const REST_API = {
     firstUser: '/api/public/add/firstUser',
     /** /api/add/userPay { body: [user, products, cash] }*/
     userPay: '/api/add/userPay',
-    /** /api/boxType { body: name }*/
+    /** /api/add/boxType { body: name }*/
     boxtype: '/api/add/boxType',
-    /** /api/boxNumber { body: name }*/
-    boxnumber: '/api/add/boxNumber'
+    /** /api/add/boxNumber { body: name }*/
+    boxnumber: '/api/add/boxNumber',
+    /** /api/add/history { idevent: id, desc: value }*/
+    history: '/api/add/history'
   },
   PUT: {
     /** /api/update/product*/

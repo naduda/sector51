@@ -12,6 +12,7 @@ import { REST_API } from '../../entities/rest-api';
 import { element } from 'protractor';
 import { inspect } from 'util';
 import { Profile } from '../../entities/profile';
+import { AbonementComponent } from '../modal/abonement/abonement.component';
 
 @Component({
   selector: 'sector51-product',
@@ -41,7 +42,10 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   private profile: Profile;
   private keyCodes: number[] = [13, 38, 40];
 
-  constructor(public activeModal: NgbActiveModal, private http: HttpClient, private common: CommonService) {
+  constructor(public activeModal: NgbActiveModal,
+              private modalService: ModalService,
+              private http: HttpClient,
+              private common: CommonService) {
     this.curCount = 1;
     this.isBuy = false;
   }
@@ -180,12 +184,31 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     this.common.navigate('cart');
   }
 
+  private openAbonement() {
+    const props = {
+      header: this.profile.surname + ' ' + this.profile.name,
+      btOK: 'apply',
+      btCancel: 'cancel',
+      profile: this.profile
+    };
+    this.modalService.open(AbonementComponent, props);
+  }
+
   btOkClick(instance: any): any {
     instance.isUser = instance.product.id === RESERVED_PRODUCTS_ID;
     instance.product.price *= 100;
     if (instance.isUser && instance.common.router.url === '/cart') {
       instance.addUserCard2cart();
     } else if (instance.isUser) {
+      if (instance.isExist) {
+        const dtBeg = new Date(instance.profile.dtBeg || 0);
+        const dtEnd = new Date(instance.profile.dtEnd || 0);
+        const now = new Date();
+        if (dtBeg > now || now > dtEnd) {
+          instance.openAbonement();
+          return;
+        }
+      }
       instance.common.navigate(instance.isExist ? 'boxes' : 'registration', { code: instance.barcode });
     } else if (instance.product.id === 0) {
       instance.addProduct2database();

@@ -1,0 +1,28 @@
+<div class="modal-header rounded-top bg-info">
+  <h4 class="modal-title">{{ header | titlecase }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form class="form-inline justify-content align-items-baseline" (ngSubmit)="f.form.valid && activeModal.close(true)" #f="ngForm">
+    <label for="dtBeg" class="text-right pr-4 w-20 justify-content-end">
+      <strong>{{ 'Since' | translate | titlecase }}:</strong>
+    </label>
+    <input type="date" class="form-control mb-2 w-80" [(ngModel)]="dtBeg" name="dtBeg" required>
+    <label for="dtEnd" class="text-right pr-4 w-20 justify-content-end">
+      <strong>{{ 'Till' | translate | titlecase }}:</strong>
+    </label>
+    <input type="date" class="form-control mb-2 w-80" [(ngModel)]="dtEnd" name="dtEnd" required>
+    <label for="cash" class="text-right pr-4 w-20 justify-content-end">
+      <strong>{{ 'Cash' | translate | titlecase }}:</strong>
+    </label>
+    <input type="number" class="form-control mb-2 w-80" [(ngModel)]="cash" name="cash" required>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="submit" class="btn btn-primary" (click)="activeModal.close(true)">
+    {{ 'apply' | translate | titlecase }}
+  </button>
+  <button type="button" class="btn btn-secondary" (click)="activeModal.close(false)">{{ 'cancel' | translate | titlecase }}</button>
+</div>

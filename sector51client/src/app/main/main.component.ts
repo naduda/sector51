@@ -53,20 +53,28 @@ export class MainComponent implements OnInit {
     .do(boxes => this.boxes = boxes)
     .flatMap(boxes => this.http.get<Profile[]>(REST_API.GET.users))
     .do(users => {
+      this.common.users = [];
       users.forEach(u => {
-        const box = this.boxes.find(b => b.card === u.card);
-        console.log(new Date(u.dtbeg))  
-        if (box) {
-          u['box'] = box.number;
-          u['time'] = new Date(box.time);
+        const exist = this.common.users.find(i => i['created'] === u['created']);
+        const boxes = this.boxes.filter(b => b.card === u.card);
+        if (boxes) {
+          u['box'] = boxes.map(b => b.number).join('_');
+          u['time'] = new Date(Math.max.apply(Math, boxes.map(b => +b.time)));
         }
+        u['active'] = boxes.length > 0;
+        if (!exist) this.common.users.push(u);
       });
-      this.common.users = users;
       users.find(u => u['created'] === this.common.profile['created'])['active'] = true;
       const spliter = this.common.fromStorage('spliter');
       this.sizeValue = spliter ? spliter.size : [ 25, 75 ];
     })
-    .subscribe(users => this.user = this.common.users.find(u => u['created'] === this.selectedUserId));
+    .subscribe(users => {
+      this.user = users.find(u => u['created'] === this.selectedUserId);
+      // if (!this.user['active']) {
+      //   this.user = users.find(u => u['created'] === this.common.profile['created']);
+      //   this.selectedUserId = this.user['created'];
+      // }
+    });
   }
 
   onDragEnd(columnindex: number, e: {gutterNum: number, sizes: Array<number>}) {

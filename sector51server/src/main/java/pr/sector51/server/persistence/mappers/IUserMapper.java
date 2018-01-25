@@ -29,7 +29,8 @@ public interface IUserMapper {
 
   @Update("UPDATE barcode SET code = #{card} WHERE code = (SELECT card FROM userinfo WHERE created = #{created});" +
           "UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
-          "email = #{email}, card = #{card}, sex = #{sex}, balance = #{balance} WHERE created = #{created};")
+          "email = #{email}, card = #{card}, sex = #{sex}, balance = #{balance}, dtbeg = #{dtBeg}, dtend = #{dtEnd} " +
+          "WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 
   @Select("SELECT * FROM usersecurity;")

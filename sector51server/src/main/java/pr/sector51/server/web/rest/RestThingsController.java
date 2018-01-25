@@ -1,13 +1,9 @@
 package pr.sector51.server.web.rest;
 
-import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pr.sector51.server.persistence.ThingsDao;
-import pr.sector51.server.persistence.model.BoxNumber;
-import pr.sector51.server.persistence.model.BoxType;
-import pr.sector51.server.persistence.model.ESector51Result;
-import pr.sector51.server.persistence.model.Sector51Result;
+import pr.sector51.server.persistence.model.*;
 
 import java.util.List;
 
@@ -55,6 +51,18 @@ public class RestThingsController extends RestCommon {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     int id = thingsDao.insertBoxNumber(boxNumber);
     result.setMessage(id);
+    return result;
+  }
+
+  @RequestMapping(value = "/add/history", method = RequestMethod.POST)
+  public Sector51Result addHistory(@RequestBody Event event) {
+    Sector51Result result = new Sector51Result(ESector51Result.ERROR);
+    try {
+      thingsDao.insert2history(event.getId(), event.getDesc());
+      result.setResult(ESector51Result.OK);
+    } catch (Exception ex) {
+      result.setMessage(ex.getMessage());
+    }
     return result;
   }
 

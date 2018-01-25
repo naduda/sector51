@@ -11,6 +11,7 @@ import { REST_API } from '../../entities/rest-api';
 import { FocusDirective } from '../../directives/focus.directive';
 import { ElementTools } from '../../testing/commonTest';
 import { Profile } from '../../entities/profile';
+import { ModalService } from '../../services/modal.service';
 
 describe('BarcodeComponent', () => {
   const products: IProduct[] = [
@@ -32,6 +33,9 @@ describe('BarcodeComponent', () => {
       imports: [ FormsModule ],
       providers: [
         NgbActiveModal,
+        { provide: ModalService, useValue: {
+          open: () => {}
+        }},
         { provide: HttpClient, useValue: {
           get: (url: string, params) => {
             if (url === REST_API.GET.products)

@@ -3,10 +3,7 @@ package pr.sector51.server.persistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pr.sector51.server.persistence.mappers.IThingsMapper;
-import pr.sector51.server.persistence.model.BoxNumber;
-import pr.sector51.server.persistence.model.BoxType;
-import pr.sector51.server.persistence.model.ESector51Result;
-import pr.sector51.server.persistence.model.Sector51Result;
+import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -15,6 +12,8 @@ import java.util.List;
 public class ThingsDao extends CommonDao {
   @Autowired
   private IThingsMapper mapper;
+  @Autowired
+  private UserDao userDao;
 
   public Sector51Result removeBoxType(int id) {
     return new Sector51Result(mapper.removeBoxType(id) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
@@ -58,16 +57,19 @@ public class ThingsDao extends CommonDao {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
       boolean res = runTransaction(() -> {
+        UserInfo userInfo = null;
         if (boxNumber.getCard() != null) {
-          mapper.insert2history(0, boxNumber.getCard());
+          userInfo = userDao.getUserInfoByCard(boxNumber.getCard());
         } else {
           BoxNumber old = mapper.getBoxNumber(boxNumber.getIdtype(), boxNumber.getNumber());
-          mapper.insert2history(1, old.getCard());
+          userInfo = userDao.getUserInfoByCard(old.getCard());
         }
+        insert2history(boxNumber.getCard() != null ? 0 : 1, String.valueOf(userInfo.getCreated().getTime()));
         long time = mapper.updateBox(boxNumber);
         boxNumber.setTime(new Timestamp(time));
         result.setMessage(boxNumber);
       });
+      result.setResult(res ? ESector51Result.OK : ESector51Result.ERROR);
     } catch (Exception ex) {
       result.setResult(ESector51Result.ERROR);
       result.setMessage(ex.getMessage());
@@ -76,6 +78,6 @@ public class ThingsDao extends CommonDao {
   }
 
   public void insert2history(int idEvent, String desc) {
-    mapper.insert2history(idEvent, desc);
+    super.insert2history(idEvent, desc);
   }
 }

@@ -61,6 +61,7 @@ server.use((req, res, next) => {
 
 server.get('/api/public/roles', (req, res) => res.jsonp(roleScript.roles()));
 server.get('/api/users', (req, res) => res.jsonp(userScript.users()));
+server.get('/api/boxnumbers', (req, res) => res.jsonp([]));
 
 server.post('/api/public/login', (req, res) => {
   const data = req.body;

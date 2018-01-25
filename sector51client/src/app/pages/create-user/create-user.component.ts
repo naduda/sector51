@@ -60,7 +60,7 @@ export class CreateUserComponent implements OnInit {
       })
       .subscribe(pairs => {
         this.buttonText = this.user.card ? 'update' : 'create';
-        this.user['password'] = this.user['password2'] = ''
+        this.user['password'] = this.user['password2'] = '';
       });
   }
 

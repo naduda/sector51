@@ -68,6 +68,7 @@ CREATE TABLE event (
 );
 INSERT INTO event VALUES(0, 'IN', 'Somebody in ...');
 INSERT INTO event VALUES(1, 'OUT', 'Somebody out ...');
+INSERT INTO event VALUES(2, 'ABONEMENT', 'Somebody out ...');
 
 CREATE TABLE history (
 	id SERIAL,

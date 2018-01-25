@@ -3,7 +3,7 @@ package pr.sector51.server.persistence.model;
 public class Event {
     private int id;
     private String name;
-    private String description;
+    private String desc;
 
     public Event(){}
 
@@ -15,7 +15,7 @@ public class Event {
 
     public Event(int id, String text, String description){
         this(id, text);
-        this.description = description;
+        this.desc = description;
     }
 
     public int getId() {
@@ -34,11 +34,11 @@ public class Event {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

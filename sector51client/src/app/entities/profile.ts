@@ -10,8 +10,8 @@ export class Profile {
   role: ERole;
   sex: ESex | boolean;
   balance: number;
-  dtbeg: any;
-  dtend: any;
+  dtbeg: number;
+  dtend: number;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,
     email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean, balance?: number) {

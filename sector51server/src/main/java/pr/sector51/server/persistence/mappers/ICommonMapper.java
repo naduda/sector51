@@ -13,4 +13,7 @@ public interface ICommonMapper {
 
   @Insert("INSERT INTO event (id, name, description) VALUES(#{id}, #{name}, #{description});")
   void insertEvent(Event event);
+
+  @Insert("INSERT INTO history(idevent, \"desc\") VALUES(#{idevent}, #{desc});")
+  void insert2history(@Param("idevent") int idEvent, @Param("desc") String desc);
 }

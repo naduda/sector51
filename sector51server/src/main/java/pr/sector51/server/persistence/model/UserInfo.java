@@ -13,8 +13,8 @@ public class UserInfo {
   private int balance;
   private boolean sex;
   private  String password;
-  private Timestamp dtbeg;
-  private Timestamp dtend;
+  private Timestamp dtBeg;
+  private Timestamp dtEnd;
 
   public UserInfo() {}
 
@@ -89,19 +89,19 @@ public class UserInfo {
     return sex;
   }
 
-  public Timestamp getDtbeg() {
-    return dtbeg;
+  public Timestamp getDtBeg() {
+    return dtBeg;
   }
 
-  public void setDtbeg(Timestamp dtbeg) {
-    this.dtbeg = dtbeg;
+  public void setDtBeg(Timestamp dtBeg) {
+    this.dtBeg = dtBeg;
   }
 
-  public Timestamp getDtend() {
-    return dtend;
+  public Timestamp getDtEnd() {
+    return dtEnd;
   }
 
-  public void setDtend(Timestamp dtend) {
-    this.dtend = dtend;
+  public void setDtEnd(Timestamp dtEnd) {
+    this.dtEnd = dtEnd;
   }
 }

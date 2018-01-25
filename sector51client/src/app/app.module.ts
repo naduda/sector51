@@ -30,6 +30,7 @@ import { FocusDirective } from './directives/focus.directive';
 import { CartComponent } from './pages/cart/cart.component';
 import { BoxesComponent } from './pages/boxes/boxes.component';
 import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
+import { AbonementComponent } from './pages/modal/abonement/abonement.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -49,7 +50,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     FocusDirective,
     CartComponent,
     BoxesComponent,
-    BoxtypeComponent
+    BoxtypeComponent,
+    AbonementComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +68,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     AngularSplitModule,
     Sector51RoutingModule
   ],
-  entryComponents: [ModalComponent, BarcodeComponent, BoxtypeComponent],
+  entryComponents: [
+    ModalComponent,
+    AbonementComponent,
+    BarcodeComponent,
+    BoxtypeComponent,
+  ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

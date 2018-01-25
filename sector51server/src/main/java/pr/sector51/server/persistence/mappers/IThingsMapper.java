@@ -32,9 +32,6 @@ public interface IThingsMapper {
       "RETURNING extract(epoch from now()) * 1000;")
   long updateBox(BoxNumber boxNumber);
 
-  @Insert("INSERT INTO history(idevent, \"desc\") VALUES(#{idevent}, #{desc});")
-  void insert2history(@Param("idevent") int idEvent, @Param("desc") String desc);
-
   @Select("SELECT * FROM box WHERE idtype = #{idtype} and \"number\" = #{number};")
-  BoxNumber getBoxNumber(int idtype, int number);
+  BoxNumber getBoxNumber(@Param("idtype") int idtype, @Param("number") int number);
 }
