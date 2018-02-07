@@ -15,6 +15,7 @@ import { By } from '@angular/platform-browser';
 import { ElementTools } from '../../testing/commonTest';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 import { of } from 'rxjs/observable/of';
+import { REST_API } from '../../entities/rest-api';
 
 describe('CreateUserComponent', () => {
   let component: CreateUserComponent;
@@ -40,7 +41,10 @@ describe('CreateUserComponent', () => {
           queryParams: of({ })
         }},
         { provide: HttpClient, useValue: {
-            get: (idUser: string) => of(undefined),
+            get: (url: string) => {
+              if (url === REST_API.GET.users) return of([]);
+              return of(undefined);
+            },
             post: (url: string, body: any | null, options?: any) => of({ result: ERestResult[ERestResult.OK] }),
             put: (q: string, body: any) => of({ result: ERestResult[ERestResult.OK] })
           }

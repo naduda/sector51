@@ -7,6 +7,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pr.sector51.server.persistence.mappers.ICommonMapper;
 import pr.sector51.server.persistence.model.Event;
+import pr.sector51.server.persistence.model.History;
 
 public class CommonDao {
   @Autowired
@@ -38,7 +39,7 @@ public class CommonDao {
     commonMapper.insertEvent(event);
   }
 
-  public void insert2history(int idEvent, String desc) {
-    commonMapper.insert2history(idEvent, desc);
+  public void insert2history(History history) {
+    commonMapper.insert2history(history);
   }
 }

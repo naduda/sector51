@@ -23,14 +23,14 @@ public interface IUserMapper {
           "DELETE FROM userinfo WHERE created = #{created};")
   int deleteUser(@Param("created") Timestamp created);
 
-  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex) "
-      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex});")
+  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex, trainer, birthday) "
+      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{trainer}, #{birthday});")
   void insertUserInfo(UserInfo user);
 
   @Update("UPDATE barcode SET code = #{card} WHERE code = (SELECT card FROM userinfo WHERE created = #{created});" +
-          "UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
-          "email = #{email}, card = #{card}, sex = #{sex}, balance = #{balance}, dtbeg = #{dtBeg}, dtend = #{dtEnd} " +
-          "WHERE created = #{created};")
+          "UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}, balance = #{balance}, " +
+          "email = #{email}, card = #{card}, sex = #{sex}, trainer = #{trainer}, " +
+          "birthday = #{birthday} WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 
   @Select("SELECT * FROM usersecurity;")
@@ -40,7 +40,7 @@ public interface IUserMapper {
   UserSecurity getUserSecurityById(Timestamp value);
 
   @Select("SELECT ui.*, us.roles, box.number, box.time FROM usersecurity AS us, userinfo AS ui " +
-      "LEFT JOIN box ON ui.card = box.card WHERE us.created = ui.created;")
+          "LEFT JOIN box ON ui.card = box.card WHERE us.created = ui.created;")
   List<UserInfo> getUsersInfo();
 
   @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "

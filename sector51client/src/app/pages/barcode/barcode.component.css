@@ -13,13 +13,16 @@ div[ngbdropdown] > i {
   background-color: rgb(236, 238, 239);
   border: 1px solid rgba(0, 0, 0, 0.15);
   height: 2.5rem;
-  display: flex;
-  align-items: center;
 }
 
 div.form-check:hover { background-color: rgb(236, 238, 239); }
 div.form-check > label:hover,
 div[ngbdropdown] > i:hover { cursor: pointer; }
+
+div.dropdown-menu {
+  overflow: hidden;
+  width: 75%;
+}
 
 button.nav-item > span {
   font-style: normal;

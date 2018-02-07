@@ -5,17 +5,17 @@ public class Event {
     private String name;
     private String desc;
 
-    public Event(){}
+    public Event() {}
 
-    public Event(int id, String name){
+    public Event(int id, String name) {
         this();
         this.id = id;
         this.name = name;
     }
 
-    public Event(int id, String text, String description){
-        this(id, text);
-        this.desc = description;
+    public Event(int id, String name, String desc) {
+        this(id, name);
+        this.desc = desc;
     }
 
     public int getId() {
@@ -30,7 +30,7 @@ public class Event {
         return name;
     }
 
-    public void setName(String text) {
+    public void setName(String name) {
         this.name = name;
     }
 

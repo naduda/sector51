@@ -5,7 +5,7 @@ import { CommonService } from './common.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Profile } from '../entities/profile';
-import { IRole, ERole } from '../entities/common';
+import { IRole, ERole, IService, IEvent } from '../entities/common';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/catch';
 import { REST_API } from '../entities/rest-api';
@@ -28,9 +28,15 @@ export class CanActivateAuthGuard implements CanActivate {
         return this.common.profile['permited'];
       }
       return this.common.currentUser
-        .flatMap(user => this.http.get<any[]>(REST_API.GET.roles))
+        .flatMap(user => this.http.get<IEvent[]>(REST_API.GET.events))
+        .do(events => this.common.events = events)
+        .flatMap(events => this.http.get<any[]>(REST_API.GET.roles))
         .do(pairs => this.iroles = pairs.map(pair => ({ id: +pair['key'], name: pair['value'] })))
-        .flatMap(pairs => this.http.get<Profile>(REST_API.GET.profileByName(this.auth.username.replace('.', ','))))
+        .flatMap(pairs => this.http.get<Profile[]>(REST_API.GET.users))
+        .do(users => this.common.users = users)
+        .flatMap(users => this.http.get<IService[]>(REST_API.GET.services))
+        .do(services => this.common.services = services)
+        .flatMap(services => this.http.get<Profile>(REST_API.GET.profileByName(this.auth.username.replace('.', ','))))
         .do(user => of(this.setPermissions(route, state, user)))
         .map(user => {
           this.auth.initWebsocket(this.auth.token);

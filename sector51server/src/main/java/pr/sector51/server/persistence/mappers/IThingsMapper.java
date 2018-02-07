@@ -1,9 +1,9 @@
 package pr.sector51.server.persistence.mappers;
 
 import org.apache.ibatis.annotations.*;
-import pr.sector51.server.persistence.model.BoxNumber;
-import pr.sector51.server.persistence.model.BoxType;
+import pr.sector51.server.persistence.model.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface IThingsMapper {
@@ -12,6 +12,9 @@ public interface IThingsMapper {
 
   @Select("SELECT * FROM box;")
   List<BoxNumber> getBoxNumbers();
+
+  @Select("SELECT * FROM history ORDER BY time;")
+  List<History> getHistory();
 
   @Delete("DELETE FROM boxtype WHERE id = #{id}; DELETE FROM box WHERE idtype = #{id};")
   int removeBoxType(@Param("id") int id);
@@ -34,4 +37,27 @@ public interface IThingsMapper {
 
   @Select("SELECT * FROM box WHERE idtype = #{idtype} and \"number\" = #{number};")
   BoxNumber getBoxNumber(@Param("idtype") int idtype, @Param("number") int number);
+
+  @Select("SELECT * FROM service ORDER BY name;")
+  List<Service51> getServices();
+
+  @Select("SELECT us.*, s.name as \"desc\" FROM user_service AS us LEFT JOIN service AS s ON s.id = us.idservice " +
+          "WHERE us.idUser = #{idUser};")
+  List<UserServise51> getUserServices(@Param("idUser") Timestamp idUser);
+
+  @Select("INSERT INTO user_service VALUES(#{idService}, #{idUser}, #{dtBeg}, #{dtEnd}) RETURNING *;")
+  UserServise51 insertUserService(UserServise51 userServise);
+
+  @Update("UPDATE user_service set dtbeg = #{dtBeg}, dtend = #{dtEnd} " +
+          "WHERE iduser = #{idUser} and idservice = #{idService};")
+  int updateUserService(UserServise51 userServise51);
+
+  @Delete("DELETE FROM user_service WHERE iduser = #{idUser} AND idservice = #{idService};")
+  int removeUserService(@Param("idUser") Timestamp idUser, @Param("idService") int idService);
+
+  @Update("UPDATE service SET name = #{name}, \"desc\" = #{desc}, price = #{price} WHERE id = #{id};")
+  int updateService(Service51 servise);
+
+  @Select("SELECT * FROM event;")
+  List<Event> getEvents();
 }

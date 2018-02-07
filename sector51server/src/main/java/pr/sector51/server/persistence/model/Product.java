@@ -10,6 +10,20 @@ public class Product {
 
   public Product() {}
 
+  public Product(int id, String name, String desc, Integer count, Integer price, String code) {
+    this.id = id;
+    this.name = name;
+    this.desc = desc;
+    this.count = count;
+    this.price = price;
+    this.code = code;
+  }
+
+  @Override
+  public Product clone() {
+    return new Product(id, name, desc, count, price, code);
+  }
+
   public int getId() {
     return id;
   }

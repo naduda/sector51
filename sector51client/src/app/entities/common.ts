@@ -15,13 +15,17 @@ export interface IModalProperties {
   btCancel?: string;
 }
 export interface IModalWindow {
-  btOkClick(instance: any): any;
+  btOkClick(instance: any, onSuccess?: any): any;
   btCancelClick(reason: any, instance: any): any;
   init(props: any): void;
 }
 export interface IBox { idtype: number; number: number; card?: string; time?: any; }
 export interface IResponse { result: string; message: any; }
+export interface IService { id: number; name: string; desc: string; price: number; }
+export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: number; dtEnd: number; }
+export interface IHistory { id: number; idEvent: number; idUser: number; time: number; desc: string; price: number; }
+export interface IEvent { id: number; name: string; desc: string; }
 
-export enum ERole { OWNER = 0, ADMIN = 10, USER = 100 }
+export enum ERole { OWNER = 0, ADMIN = 10, USER = 100, SELDER = 125, TRAINER = 150 }
 export enum ESex { MAN = 1, WOMAN = 0 }
 export enum ERestResult { OK, ERROR, NOT_DENIED, USER_ALREADY_EXIST }

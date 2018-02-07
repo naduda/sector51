@@ -31,6 +31,8 @@ import { CartComponent } from './pages/cart/cart.component';
 import { BoxesComponent } from './pages/boxes/boxes.component';
 import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
 import { AbonementComponent } from './pages/modal/abonement/abonement.component';
+import { ServicesComponent } from './pages/services/services.component';
+import { MainReportComponent } from './pages/report/main-report/main-report.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -51,7 +53,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     CartComponent,
     BoxesComponent,
     BoxtypeComponent,
-    AbonementComponent
+    AbonementComponent,
+    ServicesComponent,
+    MainReportComponent
   ],
   imports: [
     BrowserModule,

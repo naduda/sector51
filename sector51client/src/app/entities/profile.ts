@@ -10,8 +10,8 @@ export class Profile {
   role: ERole;
   sex: ESex | boolean;
   balance: number;
-  dtbeg: number;
-  dtend: number;
+  trainer: number;
+  birthday: Date;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,
     email?: string, card?: string, role?: ERole, sex?: ESex, randomId?: boolean, balance?: number) {
@@ -24,9 +24,7 @@ export class Profile {
     this.card = card;
     this.sex = sex;
     this['created'] = new Date().getMilliseconds();
-    if (randomId) {
-      this['created'] -= Math.floor(Math.random() * 100);
-    }
+    if (randomId) this['created'] -= Math.floor(Math.random() * 100);
     this.balance = balance || 0;
   }
 }

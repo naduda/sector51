@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import pr.sector51.server.persistence.model.Event;
+import pr.sector51.server.persistence.model.History;
 
 public interface ICommonMapper {
   @Select("SELECT EXISTS("
@@ -14,6 +15,6 @@ public interface ICommonMapper {
   @Insert("INSERT INTO event (id, name, description) VALUES(#{id}, #{name}, #{description});")
   void insertEvent(Event event);
 
-  @Insert("INSERT INTO history(idevent, \"desc\") VALUES(#{idevent}, #{desc});")
-  void insert2history(@Param("idevent") int idEvent, @Param("desc") String desc);
+  @Insert("INSERT INTO history(idevent, iduser, \"desc\") VALUES(#{idEvent}, #{idUser}, #{desc});")
+  void insert2history(History history);
 }

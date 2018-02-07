@@ -3,12 +3,14 @@ import { Router, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Profile } from '../entities/profile';
-import { STORAGE_NAME, IProduct, IRole } from '../entities/common';
+import { STORAGE_NAME, IProduct, IRole, IService, IEvent } from '../entities/common';
 
 @Injectable()
 export class CommonService {
   users: Profile[];
   profile: Profile;
+  services: IService[];
+  events: IEvent[];
   currentUser: BehaviorSubject<Profile>;
   newProduct: BehaviorSubject<IProduct>;
   newBoxtype: BehaviorSubject<IRole>;

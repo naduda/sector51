@@ -1,0 +1,11 @@
+<div id="history-div" class="mt-2 p-2">
+  <h5 class="text-center">{{ 'history' | translate | uppercase }}</h5>
+  <hr>
+  <div class="bg-faded d-flex align-items-center" *ngFor="let h of history; let idx = index;">
+    <div class="w-rem-2-5 border p-2 text-right d-inline-flex">{{ idx + 1 }}</div>
+    <div class="w-rem-10 border p-2 d-inline-flex">{{ h.time | date:'dd.MM.yyyy HH:mm:ss' }}</div>
+    <div class="w-rem-20 border p-2 d-inline-flex">{{ h['event'] }}</div>
+    <div class="w-rem-20 border p-2 d-inline-flex">{{ h['user'] }}</div>
+    <div class="w-rem-10 border p-2 d-inline-flex">{{ h.desc }}</div>
+  </div>
+</div>

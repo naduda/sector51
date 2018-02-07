@@ -1,5 +1,5 @@
-<div class="modal-header rounded-top bg-info">
-  <h4 class="modal-title">{{ header | titlecase }}</h4>
+<div class="modal-header rounded-top bg-info" *ngIf="service">
+  <h4 class="modal-title">{{ service.name | titlecase }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -9,15 +9,22 @@
     <label for="dtBeg" class="text-right pr-4 w-20 justify-content-end">
       <strong>{{ 'Since' | translate | titlecase }}:</strong>
     </label>
-    <input type="date" class="form-control mb-2 w-80" [(ngModel)]="dtBeg" name="dtBeg" required>
+    <input type="date" class="form-control mb-2 w-80" name="dtBeg" [value]="dtBeg | date:'yyyy-MM-dd'"
+            (input)="dtBeg=parseDate($event.target.value)">
     <label for="dtEnd" class="text-right pr-4 w-20 justify-content-end">
       <strong>{{ 'Till' | translate | titlecase }}:</strong>
     </label>
-    <input type="date" class="form-control mb-2 w-80" [(ngModel)]="dtEnd" name="dtEnd" required>
+    <input type="date" class="form-control mb-2 w-80" name="dtEnd" [value]="dtEnd | date:'yyyy-MM-dd'"
+            (input)="dtEnd=parseDate($event.target.value)">
     <label for="cash" class="text-right pr-4 w-20 justify-content-end">
       <strong>{{ 'Cash' | translate | titlecase }}:</strong>
     </label>
     <input type="number" class="form-control mb-2 w-80" [(ngModel)]="cash" name="cash" required>
+    <div class="w-100 text-right">
+      <button class="btn btn-danger mt-3" *ngIf="isUpdate" (click)="removeUserService();">
+        {{ 'delete' | translate | uppercase }}
+      </button>
+    </div>
   </form>
 </div>
 <div class="modal-footer">

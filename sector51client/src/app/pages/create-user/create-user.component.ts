@@ -6,9 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { CommonService } from '../../services/common.service';
 import { Profile } from '../../entities/profile';
-import { IRole, ERole, ESex, ERestResult } from '../../entities/common';
+import { IRole, ERole, ESex, ERestResult, IService, IUserService, IResponse } from '../../entities/common';
 import { of } from 'rxjs/observable/of';
 import { REST_API } from '../../entities/rest-api';
+import { ModalService } from '../../services/modal.service';
+import { AbonementComponent } from '../modal/abonement/abonement.component';
 
 @Component({
   selector: 'sector51-create-user',
@@ -16,16 +18,24 @@ import { REST_API } from '../../entities/rest-api';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
-  public allRoles: IRole[];
-  public created: boolean;
-  public user: Profile;
-  public cardRedonly: boolean;
-  public usersNotExist: boolean;
-  public buttonText: string;
+  allRoles: IRole[];
+  created: boolean;
+  user: Profile;
+  trainer: Profile;
+  trainers: Profile[];
+  service: IService;
+  userServices: IUserService[];
+  cardRedonly: boolean;
+  usersNotExist: boolean;
+  buttonText: string;
   private idUser: number;
 
   constructor(private http: HttpClient, private location: Location,
-              private route: ActivatedRoute, public common: CommonService) {}
+              private route: ActivatedRoute, public common: CommonService,
+              private modalService: ModalService) {
+    this.service = this.common.services[0];
+    this.userServices = [];
+  }
 
   ngOnInit() {
     let code;
@@ -37,7 +47,7 @@ export class CreateUserComponent implements OnInit {
       .do(usersNotExist => this.usersNotExist = usersNotExist)
       .flatMap(usersNotExist => usersNotExist ?
         of(null) : this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(e => of(null)))
-      .do(user => {
+      .do((user: Profile) => {
         if (!user) {
           user = new Profile();
           this.created = true;
@@ -55,13 +65,45 @@ export class CreateUserComponent implements OnInit {
       .do(pairs => {
         if (this.allRoles === null) {
           this.user.authorities = ERole[ERole.OWNER];
-          this.allRoles = pairs.map(pair => ({id: +pair['key'], name: pair['value']})).filter(p => p['value'] === this.user.authorities);
+          this.allRoles = pairs.map(pair => ({
+            id: +pair['key'],
+            name: pair['value']
+          })).filter(p => p['value'] === this.user.authorities);
         }
       })
-      .subscribe(pairs => {
+      .flatMap(pairs => this.http.get<IResponse>(REST_API.GET.userServices(this.idUser)))
+      .do((response: IResponse) => {
+        if (ERestResult[ERestResult.OK] === response.result) {
+          this.userServices = response.message;
+        }
+      })
+      .flatMap(services => this.http.get<Profile[]>(REST_API.GET.users))
+      .subscribe(users => {
+        this.trainers = users.filter(u => u['roles'] === ERole[ERole.TRAINER]);
+        this.trainers.unshift(new Profile(null, '-', ''));
+        this.trainers[0]['created'] = undefined;
+        this.trainer = this.trainers.find(t => t['created'] === (this.user.trainer || 0));
+        this.trainer = this.trainer || this.trainers[0];
         this.buttonText = this.user.card ? 'update' : 'create';
         this.user['password'] = this.user['password2'] = '';
       });
+  }
+
+  parseDate(dateString: string): Date {
+    return dateString ? new Date(dateString) : null;
+  }
+
+  get existTrainerService(): boolean {
+    return this.userServices.find(us => us.desc.toLowerCase().includes('trainer')) !== undefined;
+  }
+
+  get isTrainer() {
+    return this.user.authorities !== ERole[ERole.TRAINER];
+  }
+
+  get showPassword() {
+    const auth = this.user.authorities;
+    return auth === ERole[ERole.OWNER] || auth === ERole[ERole.ADMIN];
   }
 
   get genders() {
@@ -85,7 +127,7 @@ export class CreateUserComponent implements OnInit {
 
   onSubmit() {
     this.user['roles'] = this.user.authorities;
-    if (this.user['password'].length === 0) {
+    if (this.user['password'] && this.user['password'].length === 0) {
       delete this.user['password'];
     }
 
@@ -93,9 +135,13 @@ export class CreateUserComponent implements OnInit {
       this.http.post(REST_API.POST.firstUser, this.user)
         .subscribe(result => this.onResult(result));
     } else if (this.idUser < 0 && !this.usersNotExist) {
+      this.user.card = this.user.card || ERole[ERole.TRAINER];
+      this.user.trainer = +this.trainer['created'];
+      if (!this.showPassword) this.user['password'] = this.user.card;
       this.http.post(REST_API.POST.user, this.user)
         .subscribe(result => this.onResult(result));
     } else {
+      this.user.trainer = +this.trainer['created'];
       this.http.put(REST_API.PUT.user, this.user)
         .subscribe(result => this.onResult(result));
     }
@@ -109,5 +155,32 @@ export class CreateUserComponent implements OnInit {
       alert('Something wrong.');
       console.error(response);
     }
+  }
+
+  addService() {
+    this.modalService.open(AbonementComponent, {
+      service: this.service, idUser: this.user['created']
+    }, (userService: IUserService) => {
+      userService.desc = this.common.services.find(s => s.id === userService.idService).name;
+      this.userServices.push(userService);
+    });
+  }
+
+  editService(uService: IUserService) {
+    this.modalService.open(AbonementComponent, {
+      service: uService, idUser: this.user['created'], isUpdate: true
+    }, (userService: IUserService) => {
+      if (!userService.dtBeg) {
+        const idx = this.userServices.indexOf(uService);
+        this.userServices.splice(idx, 1);
+      } else {
+        this.userServices.forEach(us => {
+          if (us.idService === userService.idService) {
+            us.dtBeg = userService.dtBeg;
+            us.dtEnd = userService.dtEnd;
+          }
+        });
+      }
+    });
   }
 }

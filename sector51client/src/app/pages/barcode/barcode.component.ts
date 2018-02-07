@@ -3,14 +3,15 @@ import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../../services/common.service';
-import { IProduct, IBarcode, IModalWindow, IModalProperties, ERestResult, IResponse, RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { IProduct, IBarcode, IModalWindow, IModalProperties, ERestResult } from '../../entities/common';
+import { IResponse, RESERVED_PRODUCTS_ID, ERole, IUserService } from '../../entities/common';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { of } from 'rxjs/observable/of';
 import { ModalService } from '../../services/modal.service';
 import { REST_API } from '../../entities/rest-api';
 import { element } from 'protractor';
-import { inspect } from 'util';
+import { inspect, isUndefined } from 'util';
 import { Profile } from '../../entities/profile';
 import { AbonementComponent } from '../modal/abonement/abonement.component';
 
@@ -20,22 +21,24 @@ import { AbonementComponent } from '../modal/abonement/abonement.component';
   styleUrls: ['./barcode.component.css']
 })
 export class BarcodeComponent implements OnInit, IModalWindow {
-  public ready: boolean;
-  public header: string;
-  public products: IProduct[];
-  public types: IProduct[];
-  public product: IProduct;
-  public barcode: string;
-  public isBuy: any;
-  public curCount: number;
-  public isEdit: boolean;
-  public isExist: boolean;
-  public isUser: boolean;
-  public someThingWrong: boolean;
-  public isVirtual: boolean;
-  public focusName: any = {};
-  public focusDesc: any = {};
-  public focusPrice = {
+  ready: boolean;
+  header: string;
+  products: IProduct[];
+  types: IProduct[];
+  product: IProduct;
+  selders: Profile[];
+  selder: Profile;
+  barcode: string;
+  isBuy: any;
+  curCount: number;
+  isEdit: boolean;
+  isExist: boolean;
+  isUser: boolean;
+  someThingWrong: boolean;
+  isVirtual: boolean;
+  focusName: any = {};
+  focusDesc: any = {};
+  focusPrice = {
     onBlur: (element) => element.value = element.value ? Number(element.value).toFixed(2) : 0
   };
 
@@ -45,9 +48,13 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   constructor(public activeModal: NgbActiveModal,
               private modalService: ModalService,
               private http: HttpClient,
-              private common: CommonService) {
+              public common: CommonService) {
     this.curCount = 1;
     this.isBuy = false;
+    this.selder = new Profile(null, '-', '');
+    this.selder['created'] = -1;
+    this.selders = this.common.users.filter(u => u['roles'] === ERole[ERole.SELDER]);
+    this.selders.unshift(this.selder);
   }
 
   ngOnInit(): void {
@@ -103,7 +110,8 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   private setProducts(products: IProduct[]): void {
     if (products) {
       this.products = products;
-      this.types = products.filter(p => p.id === 0 || p.id === RESERVED_PRODUCTS_ID);
+      this.types = products.filter(p => p.id === 0);
+      this.types.push(products.find(p => p.id === RESERVED_PRODUCTS_ID));
       this.product = this.product || products.find(p => p.code === this.barcode) || products.find(p => p.id === 0);
     } else {
       this.activeModal.close();
@@ -128,6 +136,11 @@ export class BarcodeComponent implements OnInit, IModalWindow {
         .filter(p => p.id === this.product.id).reduce((r, c) => r + c.count, 0);
       this.someThingWrong = this.product.id > RESERVED_PRODUCTS_ID && this.product.count - existInCart <= 0;
       this.product.count -= existInCart;
+      if (this.product.desc && this.product.desc !== '-') {
+        const names = this.product.desc.split(' ');
+        this.selder = this.selders.find(s => s.surname === names[0] && s.name === names[1]);
+      }
+      if (!this.selder) this.selder = this.selders[0];
       this.isBuy = !this.isExist;
     }
     this.product.price /= 100;
@@ -150,6 +163,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   }
 
   private addProduct2database() {
+    this.product.desc = this.selder['created'];
     this.http.post(REST_API.POST.product, this.product, { params: { code: this.barcode } })
       .subscribe((response: IResponse) => {
         if (response && response.result === ERestResult[ERestResult.OK].toString()) {
@@ -169,6 +183,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   }
 
   private updateProduct() {
+    this.product.desc = this.selder['created'];
     this.http.put(REST_API.PUT.product, this.product)
       .subscribe((response: IResponse) => {
         if (response && response.result === ERestResult[ERestResult.OK].toString()) {
@@ -179,17 +194,22 @@ export class BarcodeComponent implements OnInit, IModalWindow {
 
   private addProduct2cart() {
     const addProduct = Object.assign({}, this.product);
+    this.selder = this.selders.find(s => s['created'] === +this.product.desc);
+    if (!this.selder) this.selder = this.selders[0];
+    addProduct.desc = this.selder.surname + ' ' + this.selder.name;
     addProduct.count = this.curCount;
     this.common.cartProducts.push(addProduct);
     this.common.navigate('cart');
   }
 
-  private openAbonement() {
+  private openAbonement(userService: IUserService) {
     const props = {
+      service: userService || this.common.services.find(s => s.id === 0),
       header: this.profile.surname + ' ' + this.profile.name,
       btOK: 'apply',
       btCancel: 'cancel',
-      profile: this.profile
+      idUser: this.profile['created'],
+      isUpdate: userService !== undefined
     };
     this.modalService.open(AbonementComponent, props);
   }
@@ -201,15 +221,21 @@ export class BarcodeComponent implements OnInit, IModalWindow {
       instance.addUserCard2cart();
     } else if (instance.isUser) {
       if (instance.isExist) {
-        const dtBeg = new Date(instance.profile.dtBeg || 0);
-        const dtEnd = new Date(instance.profile.dtEnd || 0);
-        const now = new Date();
-        if (dtBeg > now || now > dtEnd) {
-          instance.openAbonement();
-          return;
-        }
-      }
-      instance.common.navigate(instance.isExist ? 'boxes' : 'registration', { code: instance.barcode });
+        const url = REST_API.GET.userServices(instance.profile['created']);
+        instance.http.get(url).subscribe((response: IResponse) => {
+          const services = response.message;
+          const abonementService = services.find(s => s.idService === 0);
+          const dtBeg = abonementService ? abonementService.dtBeg : 0;
+          const dtEnd = abonementService ? abonementService.dtEnd : 0;
+          const now = new Date().getTime();
+          if (dtBeg > now || now > dtEnd) {
+            instance.openAbonement(abonementService);
+          } else {
+            instance.common.navigate('boxes', { code: instance.barcode });
+          }
+        });
+      } else
+        instance.common.navigate('registration', { code: instance.barcode });
     } else if (instance.product.id === 0) {
       instance.addProduct2database();
     } else if (instance.isExist) {
@@ -233,9 +259,10 @@ export class BarcodeComponent implements OnInit, IModalWindow {
     this.isEdit = props.product !== undefined;
     if (!props) return;
     this.barcode = props.code || undefined;
-    if (props.product) {
+    if (this.isEdit) {
       this.product = props.product;
       this.barcode = props.barcode;
+      this.curCount = 0;
     }
   }
 }

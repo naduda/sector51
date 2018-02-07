@@ -1,3 +1,5 @@
+import { IUserService } from './common';
+
 export const REST_API = {
   DELETE: {
     /** /api/delete/productById/{id} */
@@ -7,7 +9,9 @@ export const REST_API = {
     /** /api/delete/boxType/{id} */
     boxtype: (id): string => '/api/delete/boxType/' + id,
     /** /api/delete/boxNumber/{idtype_number} */
-    boxnumber: (idtype, num) => '/api/delete/boxNumber/' + idtype + '_' + num
+    boxnumber: (idtype, num) => '/api/delete/boxNumber/' + idtype + '_' + num,
+    /** /api/delete/userservice */
+    userService: (us: IUserService) => '/api/delete/userservice/' + us.idUser + '_' + us.idService
   },
   GET: {
     /** /api/public/usersNotExist*/
@@ -29,7 +33,15 @@ export const REST_API = {
     /** /api/boxtypes */
     boxtypes: '/api/boxtypes',
     /** /api/boxnumbers */
-    boxnumbers: '/api/boxnumbers'
+    boxnumbers: '/api/boxnumbers',
+    /** /api/services */
+    services: '/api/services',
+    /** /api/userservices/{idUser: Timestamp} */
+    userServices: (idUser: number) => '/api/userservices/' + idUser,
+    /** /api/history */
+    history: '/api/history',
+    /** /api/events */
+    events: '/api/events'
   },
   POST: {
     /** /api/login { body: UserSecurity }*/
@@ -46,8 +58,8 @@ export const REST_API = {
     boxtype: '/api/add/boxType',
     /** /api/add/boxNumber { body: name }*/
     boxnumber: '/api/add/boxNumber',
-    /** /api/add/history { idevent: id, desc: value }*/
-    history: '/api/add/history'
+    /** /api/add/userservice { userService: value }*/
+    userService: '/api/add/userservice'
   },
   PUT: {
     /** /api/update/product*/
@@ -57,6 +69,10 @@ export const REST_API = {
     /** /api/update/boxType */
     boxtype: '/api/update/boxType',
     /** /api/update/boxNumber */
-    boxnumber: '/api/update/boxNumber'
+    boxnumber: '/api/update/boxNumber',
+    /** /api/update/userservice */
+    userService: '/api/update/userservice',
+    /** /api/update/service */
+    service: '/api/update/service'
   }
 };

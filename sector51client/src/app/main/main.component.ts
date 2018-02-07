@@ -50,31 +50,37 @@ export class MainComponent implements OnInit {
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
     .flatMap(params => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
-    .do(boxes => this.boxes = boxes)
-    .flatMap(boxes => this.http.get<Profile[]>(REST_API.GET.users))
-    .do(users => {
-      this.common.users = [];
-      users.forEach(u => {
-        const exist = this.common.users.find(i => i['created'] === u['created']);
+    .do(boxes => {
+      this.boxes = boxes;
+      this.common.users.forEach(u => {
         const boxes = this.boxes.filter(b => b.card === u.card);
         if (boxes) {
-          u['box'] = boxes.map(b => b.number).join('_');
+          u['box'] = boxes.map(b => b.number).join(', ');
           u['time'] = new Date(Math.max.apply(Math, boxes.map(b => +b.time)));
+          u['active'] = boxes.length > 0;
         }
-        u['active'] = boxes.length > 0;
-        if (!exist) this.common.users.push(u);
       });
-      users.find(u => u['created'] === this.common.profile['created'])['active'] = true;
       const spliter = this.common.fromStorage('spliter');
       this.sizeValue = spliter ? spliter.size : [ 25, 75 ];
     })
     .subscribe(users => {
-      this.user = users.find(u => u['created'] === this.selectedUserId);
-      // if (!this.user['active']) {
-      //   this.user = users.find(u => u['created'] === this.common.profile['created']);
-      //   this.selectedUserId = this.user['created'];
-      // }
+      this.user = this.common.users.find(u => u['created'] === this.selectedUserId);
     });
+  }
+
+  private formatDate(v: number): string {
+    const d = new Date(v);
+    const day = (d.getDate() < 10 ? '0' : '') + d.getDate();
+    const month = (d.getMonth() < 9 ? '0' : '') + (d.getMonth() + 1);
+    return day + '.' + month + '.' + d.getFullYear();
+  }
+
+  get activeUsers(): Profile[] {
+    return this.common.users.filter(u => u['active'] === true);
+  }
+
+  get userTrainer(): Profile {
+    return this.common.users.find(u => u['created'] === this.user.trainer);
   }
 
   onDragEnd(columnindex: number, e: {gutterNum: number, sizes: Array<number>}) {

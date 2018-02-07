@@ -30,7 +30,7 @@
   },
   "password": "password",
   "showAll": "show All",
-  "account": "account",
+  "account": "client",
   "addUser": "add user",
   "deleteUser": "delete user",
   "profile": "profile",
@@ -57,5 +57,8 @@
   "cart": "cart",
   "clear": "clear",
   "pay": "pay",
-  "key": "key"
+  "key": "key",
+  "settings": "settings",
+  "services": "services",
+  "reports": "reports"
 }

@@ -33,8 +33,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.permissions = this.common.profile.role < ERole.USER;
     this.subscription = this.common.newProduct.subscribe(product => {
-      this.http.get<IProduct[]>(REST_API.GET.products)
-        .subscribe(products => this.products = products.filter(p => p.id !== 0 && p.id !== RESERVED_PRODUCTS_ID));
+      this.http.get<IProduct[]>(REST_API.GET.products).subscribe(products =>
+        this.products = products.filter(p => p.id !== 0 && p.id !== RESERVED_PRODUCTS_ID)
+          .map(p => {
+            const user = this.common.users.find(u => u['created'] === +p.desc);
+            p.desc = user ? user.surname + ' ' + user.name : '-';
+            return p;
+          })
+      );
     });
   }
 

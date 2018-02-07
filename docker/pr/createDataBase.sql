@@ -8,6 +8,7 @@ CREATE TABLE usersecurity (
 	attempts integer NOT NULL DEFAULT 0,
 	lastmodified timestamp without time zone NOT NULL DEFAULT now(),
 	created timestamp without time zone NOT NULL DEFAULT now(),
+	trainer timestamp without time zone,
 	CONSTRAINT pk_user_security PRIMARY KEY (created)
 );
 
@@ -20,8 +21,7 @@ CREATE TABLE userinfo (
 	card character varying(15),
 	balance integer NOT NULL DEFAULT 0,
 	sex boolean,
-	dtbeg timestamp without time zone,
-	dtend timestamp without time zone,
+	birthday timestamp without time zone,
 	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
 );
@@ -64,15 +64,40 @@ INSERT INTO product(id, name, "desc") VALUES(100, 'USER', 'Відвідувач'
 CREATE TABLE event (
 	id integer NOT NULL,
 	name character varying(50),
-	"desc" character varying(50)
+	"desc" character varying(50),
+	CONSTRAINT pk_event PRIMARY KEY (id)
 );
 INSERT INTO event VALUES(0, 'IN', 'Somebody in ...');
 INSERT INTO event VALUES(1, 'OUT', 'Somebody out ...');
-INSERT INTO event VALUES(2, 'ABONEMENT', 'Somebody out ...');
+INSERT INTO event VALUES(2, 'SERVICE', 'Somobody buy...');
+INSERT INTO event VALUES(3, 'SERVICE', 'Updated');
+INSERT INTO event VALUES(4, 'BUY', 'Product to stock');
+INSERT INTO event VALUES(5, 'SELD', 'Seld product');
 
 CREATE TABLE history (
 	id SERIAL,
 	idEvent integer NOT NULL,
+	idUser timestamp without time zone,
 	time timestamp without time zone NOT NULL DEFAULT now(),
-	"desc" character varying(50)
+	"desc" character varying(50),
+	CONSTRAINT pk_history PRIMARY KEY (id)
+);
+
+CREATE TABLE service (
+	id integer NOT NULL,
+	name character varying(15),
+	"desc" character varying(50),
+	price integer NOT NULL DEFAULT 0,
+	CONSTRAINT pk_service PRIMARY KEY (id)
+);
+INSERT INTO service VALUES(0, 'ABONEMENT', '-', 0);
+INSERT INTO service VALUES(1, 'TRAINER', '-', 0);
+INSERT INTO service VALUES(2, 'BOX', '-', 50);
+
+CREATE TABLE user_service (
+	idService integer NOT NULL,
+	idUser timestamp without time zone,
+	dtBeg timestamp without time zone,
+	dtEnd timestamp without time zone,
+	CONSTRAINT pk_user_service PRIMARY KEY (idService, idUser)
 );

@@ -68,9 +68,9 @@ public class RestBarcodeController extends RestCommon {
           if (prod.length() == 0) continue;
           int prodId = Integer.parseInt(prod.split(":")[0]);
           int count = Integer.parseInt(prod.split(":")[1]);
-          Product product = barcode.getPrpoductById(prodId);
+          Product product = barcode.getPrpoductById(prodId).clone();
           product.setCount(product.getCount() - count);
-          barcode.updateProduct(product);
+          barcode.updateProduct(product, user.getCreated());
           user.setBalance(user.getBalance() - product.getPrice() * count);
         }
         userDao.updateUser(user);
@@ -84,8 +84,7 @@ public class RestBarcodeController extends RestCommon {
   // PUT =============================================================================
   @RequestMapping(value = "/update/product", method = RequestMethod.PUT)
   public Sector51Result updateProduct(@RequestBody Product product) {
-    ESector51Result result = barcode.updateProduct(product);
-    Sector51Result response = new Sector51Result(result);
+    Sector51Result response = new Sector51Result(barcode.updateProduct(product, null));
     response.setMessage(product);
     return response;
   }

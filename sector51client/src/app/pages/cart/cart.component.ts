@@ -77,4 +77,8 @@ export class CartComponent implements OnInit {
     const balance = this.user ? this.user.price / 100 : 0;
     return balance + this.cash >= this.sum;
   }
+
+  removeProduct(p: IProduct) {
+    this.common.cartProducts = this.common.cartProducts.filter(e => e.id !== p.id);
+  }
 }

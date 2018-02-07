@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pr.sector51.server.persistence.mappers.IScannerMapper;
 import pr.sector51.server.persistence.model.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -30,8 +31,15 @@ public class BarcodeDao extends CommonDao {
         scanner.insertProduct(product, code) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
-  public ESector51Result updateProduct(Product product) {
-    return scanner.updateProduct(product) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
+  public ESector51Result updateProduct(Product product, Timestamp idUser) {
+    boolean trResult = runTransaction(() -> {
+      Product oldProduct = scanner.getPrpoductById(product.getId());
+      int count = product.getCount() - oldProduct.getCount();
+      scanner.updateProduct(product);
+      History history = new History(count > 0 ? 4 : 5, idUser, product.getId() + "_" + Math.abs(count));
+      insert2history(history);
+    });
+    return trResult ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
   public ESector51Result removeProduct(int id) {

@@ -10,7 +10,6 @@
         <th class="text-center count">{{ 'count' | translate | uppercase }}</th>
         <th class="text-center count">{{ 'price' | translate | uppercase }}</th>
         <th class="text-center icon"></th>
-        <th class="text-center icon"></th>
       </tr>
     </thead>
   </table>
@@ -25,8 +24,9 @@
             {{ p.count > 0 ? p.count : '-' }}
           </td>
           <td class="text-right count pr-2">{{ p.count * p.price / 100 | number:'1.2-2' }}</td>
-          <td class="text-center icon"><i class="fa fa-fw fa-edit text-warning"></i></td>
-          <td class="text-center icon"><i class="fa fa-fw fa-trash text-danger"></i></td>
+          <td class="text-center icon" (click)="removeProduct(p)">
+            <i class="fa fa-fw fa-trash text-danger"></i>
+          </td>
         </tr>
       </tbody>
     </table>

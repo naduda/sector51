@@ -24,7 +24,7 @@ export class ModalService {
       instance.ready = undefined;
       if (result === true) {
         const onOK = instance.btOkClick || btOkClick;
-        onOK && onOK(instance);
+        onOK && onOK(instance, btOkClick);
       }
     }, (reason) => {
       const onCancel = instance.btCancelClick || btCancelClick;

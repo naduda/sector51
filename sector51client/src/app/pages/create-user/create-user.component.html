@@ -1,90 +1,154 @@
-<form class="mt-3 mx-auto p-2 rounded"
-  *ngIf="allRoles" #userForm="ngForm" (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
-  <div class="form-group row">
-    <label for="name" class="col-3 col-form-label">Name</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="name" [(ngModel)]="user.name"
-        pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="surname" class="col-3 col-form-label">SurName</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="search" name="surname" [(ngModel)]="user.surname"
-        pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="phone" class="col-3 col-form-label">Telephone</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="tel" name="phone" placeholder="+38(050) 662-25-56"
-        pattern="\+38[\(,\s]*[0-9]{3}[\),\s]{0,2}[0-9]{3}[-,\s]*[0-9]{2}[-,\s]*[0-9]{2}" [(ngModel)]="user.phone" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="email" class="col-3 col-form-label">Email</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="email" name="email" [(ngModel)]="user.email"
-        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="password" class="col-3 col-form-label">Password</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="password" name="password" [(ngModel)]="user['password']"
-        #psw="ngModel" [required]="created">
-    </div>
-  </div>
-  <div class="form-group row" [hidden]="!created">
-    <label for="password2" class="col-3 col-form-label">Password2</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" type="password" name="password2" [(ngModel)]="user['password2']"
-        #psw2="ngModel" [required]="created">
-    </div>
-    <div class="col-9" [hidden]="psw.untouched || psw2.untouched || (psw.value === psw2.value)">
-      <small class="text-danger">{{ 'frmProfile.difPasswords' | translate }}</small>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="card" class="col-3 col-form-label">Card</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="card" [(ngModel)]="user.card"
-        pattern="[0-9]{1,15}" [readOnly]="cardRedonly" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <div id="divAuthorities" class="col-6 col-form-label">
-      <label class="col-6 col-form-label pl-0">Authorities</label>
-      <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link text-right pl-1 pr-1" ngbDropdownToggle>{{ this.user.authorities }}</i>
-        <div ngbDropdownMenu>
-          <div class="form-check" *ngFor="let r of allRoles">
-            <label class="form-check-label ml-2">
-              <input class="form-check-input" type="radio" [checked]="this.user.authorities.indexOf(r.name) != -1" (change)="this.user.authorities = r.name"
-                [value]="r.name">
-              <span class="mt-2">{{ r.name | uppercase }}</span>
-            </label>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <form class="mt-3 mx-auto p-2 rounded" *ngIf="allRoles" #userForm="ngForm" (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
+      <div class="form-group row">
+        <label for="name" class="col-3 col-form-label">Name</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="name" [(ngModel)]="user.name"
+            pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="surname" class="col-3 col-form-label">SurName</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="search" name="surname" [(ngModel)]="user.surname"
+            pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="phone" class="col-3 col-form-label">Telephone</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="tel" name="phone" placeholder="+38(050) 662-25-56"
+            pattern="\+38[\(,\s]*[0-9]{3}[\),\s]{0,2}[0-9]{3}[-,\s]*[0-9]{2}[-,\s]*[0-9]{2}" [(ngModel)]="user.phone" required>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="email" class="col-3 col-form-label">Email</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="email" name="email" [(ngModel)]="user.email"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+        </div>
+      </div>
+      <div class="form-group row" *ngIf="showPassword">
+        <label for="password" class="col-3 col-form-label">Password</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="password" name="password" [(ngModel)]="user['password']"
+            #psw="ngModel" [required]="created">
+        </div>
+      </div>
+      <div class="form-group row" [hidden]="!created" *ngIf="showPassword">
+        <label for="password2" class="col-3 col-form-label">Password2</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" type="password" name="password2" [(ngModel)]="user['password2']"
+            #psw2="ngModel" [required]="created">
+        </div>
+        <div class="col-9" [hidden]="(psw !== undefined && psw.untouched) || psw2.untouched || (user['password'] === user['password2'])">
+          <small class="text-danger">{{ 'frmProfile.difPasswords' | translate }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="card" class="col-3 col-form-label">Card</label>
+        <div class="col-9">
+          <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="card" [(ngModel)]="user.card"
+            pattern="[0-9]{1,15}" [readOnly]="cardRedonly" [required]="isTrainer">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="birthday" class="col-3 col-form-label">Birthday</label>
+        <div class="col-9">
+          <input type="date" class="form-control mb-2" name="birthday" [value]="user.birthday | date:'yyyy-MM-dd'"
+            (input)="user.birthday=parseDate($event.target.value)">
+        </div>
+      </div>
+      <div class="form-group row" *ngIf="trainers && trainers.length > 1 && existTrainerService">
+        <label class="col-3 col-form-label">Trainer</label>
+        <div ngbDropdown class="d-inline-block col-9">
+          <i class="form-control d-flex justify-content-between align-items-baseline" ngbDropdownToggle>
+            {{ trainer.surname + ' ' + trainer.name }}
+          </i>
+          <div ngbDropdownMenu>
+            <div class="form-check" *ngFor="let r of trainers; let idx = index;">
+              <label class="form-check-label ml-2">
+                <input class="form-check-input" type="radio" [checked]="trainers[idx] === trainer" (change)="trainer = r" [value]="r.name">
+                <span class="mt-2">{{ r.surname + ' ' + r.name | uppercase }}</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div id="divGender" class="col-6 col-form-label">
-      <label class="col-6 col-form-label pl-0">Gender</label>
-      <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link text-right" ngbDropdownToggle>{{ genderText(this.user.sex) }}</i>
-        <div ngbDropdownMenu>
-          <div class="form-check" *ngFor="let g of genders">
-            <label class="form-check-label ml-2">
-              <input class="form-check-input" type="radio" [checked]="this.user['sex'] === g" (change)="this.user.sex = g" [value]="genderText(g)">
-              <span class="mt-2">{{ genderText(g) | uppercase }}</span>
-            </label>
+      <div class="form-group row">
+        <div id="divAuthorities" class="col-6 col-form-label">
+          <label class="col-6 col-form-label pl-0">Authorities</label>
+          <div ngbDropdown class="d-inline-block">
+            <i class="nav-item nav-link text-right pl-1 pr-1" ngbDropdownToggle>{{ user.authorities }}</i>
+            <div ngbDropdownMenu>
+              <div class="form-check" *ngFor="let r of allRoles">
+                <label class="form-check-label ml-2 w-90">
+                  <input class="form-check-input" type="radio" [checked]="user.authorities.indexOf(r.name) != -1" (change)="user.authorities = r.name"
+                    [value]="r.name">
+                  <span class="mt-2">{{ r.name | uppercase }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="divGender" class="col-6 col-form-label">
+          <label class="col-6 col-form-label pl-0">Gender</label>
+          <div ngbDropdown class="d-inline-block">
+            <i class="nav-item nav-link text-right" ngbDropdownToggle>{{ genderText(user.sex) }}</i>
+            <div ngbDropdownMenu>
+              <div class="form-check" *ngFor="let g of genders">
+                <label class="form-check-label ml-2 w-90">
+                  <input class="form-check-input" type="radio" [checked]="user['sex'] === g" (change)="user.sex = g" [value]="genderText(g)">
+                  <span class="mt-2">{{ genderText(g) | uppercase }}</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <hr>
+      <div class="form-group row justify-content-end mb-0" [hidden]="!usersNotExist && !common.profile['permited']">
+        <button class="btn btn-primary mr-3" type="submit">{{ buttonText | translate | titlecase }}</button>
+      </div>
+    </form>
   </div>
-  <hr>
-  <div class="form-group row buttons mb-0" [hidden]="!usersNotExist && !common.profile['permited']">
-    <button class="btn btn-primary mr-3" type="submit">{{ buttonText | translate | titlecase }}</button>
+
+  <div class="col-12 col-md-6">
+    <form class="mt-3 mx-auto p-2 rounded row" *ngIf="allRoles" #userForm="ngForm"
+      (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
+
+      <div class="d-flex jusrify-content-between w-100 align-items-baseline pr-5">
+        <label class="text-right pr-2 col-4">
+          <strong>{{ 'services' | translate | titlecase }}:</strong>
+        </label>
+        <div ngbDropdown class="mb-2 col-8 form-control">
+          <i class="d-flex justify-content-between align-items-center pl-2 pr-2" ngbDropdownToggle>
+            {{ service.name }}
+          </i>
+          <div ngbDropdownMenu>
+            <div class="form-check justify-content-start" *ngFor="let s of common.services" (click)="service = s">
+              <label class="form-check-label ml-2 mt-2">
+                <input class="form-check-input pr-1" type="radio" [checked]="service === s" [value]="s.name">
+                <span>{{ s.name }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="d-inline position-relative">
+          <i class="fa fa-fw fa-plus-square fa-2x ml-2 text-success position-absolute" (click)="addService();"></i>
+        </div>
+      </div>
+      <div class="col-12"><hr></div>
+
+      <div class="d-flex jusrify-content-between w-100 align-items-baseline pr-5" *ngFor="let us of userServices">
+        <label class="text-right col-4 mb-4"><strong>{{ us.desc | titlecase }}:</strong></label>
+        <label class="col-4"><strong>{{ us.dtBeg | date:'dd.MM.yyyy' }}</strong></label>
+        <label class="col-4"><strong>{{ us.dtEnd | date:'dd.MM.yyyy' }}</strong></label>
+        <div class="d-inline position-relative">
+          <i class="fa fa-fw fa-edit fa-2x ml-2 text-warning position-absolute" (click)="editService(us);"></i>
+        </div>
+      </div>
+    </form>
   </div>
-</form>
+</div>

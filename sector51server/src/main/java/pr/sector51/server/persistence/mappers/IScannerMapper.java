@@ -13,12 +13,13 @@ public interface IScannerMapper {
   @Select("SELECT * FROM barcode WHERE productid = #{id};")
   Barcode getBarcodeByProductId(@Param("id") int id);
 
-  @Select("SELECT p.*, b.code FROM product as p LEFT JOIN barcode as b ON p.id = b.productid ORDER BY id;")
+  @Select("SELECT p.*, b.code FROM product as p " +
+          "LEFT JOIN barcode as b ON p.id = b.productid ORDER BY id;")
   List<Product> getAllProducts();
 
   @Insert("INSERT INTO product(id, name, \"desc\", count, price) VALUES(" +
-      "      (SELECT max(id) + 1 FROM product), #{value.name}, #{value.desc}, #{value.count}, #{value.price});\n" +
-      "INSERT INTO barcode(productid, code) VALUES((SELECT max(id) FROM product), #{code});")
+          "(SELECT max(id) + 1 FROM product), #{value.name}, #{value.desc}, #{value.count}, #{value.price});\n" +
+          "INSERT INTO barcode(productid, code) VALUES((SELECT max(id) FROM product), #{code});")
   int insertProduct(@Param("value") Product value, @Param("code") String code);
 
   @Insert("INSERT INTO product(id, name, \"desc\", count, price) VALUES(" +

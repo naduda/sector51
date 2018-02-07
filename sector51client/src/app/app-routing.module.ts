@@ -7,6 +7,8 @@ import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { BoxesComponent } from './pages/boxes/boxes.component';
+import { ServicesComponent } from './pages/services/services.component';
+import { MainReportComponent } from './pages/report/main-report/main-report.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full' },
@@ -16,7 +18,9 @@ const routes: Routes = [
   { path: 'registration/:idUser', component: CreateUserComponent, canActivate: [CanActivateAuthGuard] },
   { path: 'products', component: ProductsComponent, canActivate: [CanActivateAuthGuard] },
   { path: 'cart', component: CartComponent, canActivate: [CanActivateAuthGuard] },
-  { path: 'boxes', component: BoxesComponent, canActivate: [CanActivateAuthGuard] }
+  { path: 'boxes', component: BoxesComponent, canActivate: [CanActivateAuthGuard] },
+  { path: 'services', component: ServicesComponent, canActivate: [CanActivateAuthGuard] },
+  { path: 'main-report', component: MainReportComponent, canActivate: [CanActivateAuthGuard] }
 ];
 
 @NgModule({

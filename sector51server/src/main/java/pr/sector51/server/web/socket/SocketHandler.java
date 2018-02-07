@@ -30,7 +30,6 @@ public class SocketHandler extends TextWebSocketHandler {
 
   @Override
   public void afterConnectionEstablished(WebSocketSession session) {
-    System.out.println("Connection established");
     String token = session.getUri().getQuery();
     if (token != null) {
       token = token.substring(token.indexOf("=") + 1);
@@ -70,6 +69,5 @@ public class SocketHandler extends TextWebSocketHandler {
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     scannerService.unsubscribe(session);
-    System.out.println("Connection was CLOSED! " + scannerService.subscribers().size());
   }
 }

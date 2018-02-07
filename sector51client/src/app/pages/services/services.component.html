@@ -1,0 +1,26 @@
+<div id="services-div" class="p-2">
+  <h5 class="mt-2 text-center">{{ 'services' | translate | uppercase }}</h5>
+  <hr>
+
+  <div class="d-flex align-items-center" *ngFor="let s of services; let idx = index;">
+    <div class="d-inline-flex border justify-content-center w-rem-2-5">{{ idx + 1 }}</div>
+    <div class="d-inline-flex border p-1">
+        <input type="text" class="pl-2 rounded w-rem-20" [value]="s.name" (input)="s.name = $event.target.value">
+    </div>
+    <div class="d-inline-flex border p-1">
+        <input type="text" class="pl-2 rounded w-rem-20" [value]="s.desc" (input)="s.desc = $event.target.value">
+    </div>
+    <div class="d-inline-flex border p-1">
+      <input type="number" class="pl-2 rounded w-rem-4" [value]="s.price" (input)="s.price = $event.target.value">
+    </div>
+    <div class="d-inline-flex border w-rem-2-5 p-1">
+      <i class="fa fa-fw fa-2x fa-save text-success pointer" (click)="saveService(s)"></i>
+    </div>
+    <div class="d-inline-flex w-rem-2-5 p-1" *ngIf="s['success'] && s['done']">
+      <i class="fa fa-fw fa-2x fa-check text-success pointer"></i>
+    </div>
+    <div class="d-inline-flex w-rem-2-5 p-1" *ngIf="!s['success'] && s['done']">
+      <i class="fa fa-fw fa-2x fa-exclamation-triangle text-success pointer"></i>
+    </div>
+  </div>
+</div>

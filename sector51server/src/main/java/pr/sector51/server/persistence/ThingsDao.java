@@ -57,14 +57,18 @@ public class ThingsDao extends CommonDao {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
       boolean res = runTransaction(() -> {
-        UserInfo userInfo = null;
+        UserInfo user = null;
+        int number = 0;
         if (boxNumber.getCard() != null) {
-          userInfo = userDao.getUserInfoByCard(boxNumber.getCard());
+          user = userDao.getUserInfoByCard(boxNumber.getCard());
+          number = boxNumber.getNumber();
         } else {
           BoxNumber old = mapper.getBoxNumber(boxNumber.getIdtype(), boxNumber.getNumber());
-          userInfo = userDao.getUserInfoByCard(old.getCard());
+          user = userDao.getUserInfoByCard(old.getCard());
+          number = old.getNumber();
         }
-        insert2history(boxNumber.getCard() != null ? 0 : 1, String.valueOf(userInfo.getCreated().getTime()));
+        History history = new History(boxNumber.getCard() != null ? 0 : 1, user.getCreated(), String.valueOf(number));
+        insert2history(history);
         long time = mapper.updateBox(boxNumber);
         boxNumber.setTime(new Timestamp(time));
         result.setMessage(boxNumber);
@@ -77,7 +81,42 @@ public class ThingsDao extends CommonDao {
     return result;
   }
 
-  public void insert2history(int idEvent, String desc) {
-    super.insert2history(idEvent, desc);
+  public List<Service51> getServices() {
+    return mapper.getServices();
+  }
+
+  public List<UserServise51> getUserServices(Timestamp idUser) {
+    return mapper.getUserServices(idUser);
+  }
+
+  public UserServise51 insertUserService(UserServise51 userServise) {
+    return mapper.insertUserService(userServise);
+  }
+
+  public int updateUserService(UserServise51 userServise51) {
+    return mapper.updateUserService(userServise51);
+  }
+
+  public int removeUserService(long idUser, int idService) {
+    return mapper.removeUserService(new Timestamp(idUser), idService);
+  }
+
+  public Sector51Result updateService(Service51 servise) {
+    Sector51Result result = new Sector51Result(ESector51Result.OK);
+    try {
+      result.setResult(mapper.updateService(servise) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
+    } catch (Exception ex) {
+      result.setMessage(ex.getMessage());
+      result.setResult(ESector51Result.ERROR);
+    }
+    return result;
+  }
+
+  public List<History> getHistory() {
+    return mapper.getHistory();
+  }
+
+  public List<Event> getEvents() {
+    return mapper.getEvents();
   }
 }
