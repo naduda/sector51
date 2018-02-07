@@ -33,8 +33,9 @@ export class CreateUserComponent implements OnInit {
   constructor(private http: HttpClient, private location: Location,
               private route: ActivatedRoute, public common: CommonService,
               private modalService: ModalService) {
-    this.service = this.common.services[0];
+    this.service = this.common.services ? this.common.services[0] : undefined;
     this.userServices = [];
+    this.buttonText = 'create';
   }
 
   ngOnInit() {
@@ -84,7 +85,7 @@ export class CreateUserComponent implements OnInit {
         this.trainers[0]['created'] = undefined;
         this.trainer = this.trainers.find(t => t['created'] === (this.user.trainer || 0));
         this.trainer = this.trainer || this.trainers[0];
-        this.buttonText = this.user.card ? 'update' : 'create';
+        this.buttonText = this.user.name ? 'update' : 'create';
         this.user['password'] = this.user['password2'] = '';
       });
   }
@@ -149,7 +150,7 @@ export class CreateUserComponent implements OnInit {
 
   private onResult(response) {
     if (ERestResult[ERestResult.OK] === response.result) {
-      this.common.users = null;
+      this.common.profile = null;
       this.location.back();
     } else {
       alert('Something wrong.');

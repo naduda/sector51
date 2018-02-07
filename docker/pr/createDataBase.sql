@@ -8,7 +8,6 @@ CREATE TABLE usersecurity (
 	attempts integer NOT NULL DEFAULT 0,
 	lastmodified timestamp without time zone NOT NULL DEFAULT now(),
 	created timestamp without time zone NOT NULL DEFAULT now(),
-	trainer timestamp without time zone,
 	CONSTRAINT pk_user_security PRIMARY KEY (created)
 );
 
@@ -21,6 +20,7 @@ CREATE TABLE userinfo (
 	card character varying(15),
 	balance integer NOT NULL DEFAULT 0,
 	sex boolean,
+	trainer timestamp without time zone,
 	birthday timestamp without time zone,
 	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
@@ -51,12 +51,12 @@ CREATE TABLE box (
 
 CREATE TABLE product
 (
-  id integer NOT NULL,
-  name character varying(25) NOT NULL,
-  "desc" character varying(100) NOT NULL,
-  count integer NOT NULL DEFAULT 0,
-  price integer NOT NULL DEFAULT 0,
-  CONSTRAINT pk_product PRIMARY KEY (id)
+	id integer NOT NULL,
+	name character varying(25) NOT NULL,
+	"desc" character varying(100) NOT NULL,
+	count integer NOT NULL DEFAULT 0,
+	price integer NOT NULL DEFAULT 0,
+	CONSTRAINT pk_product PRIMARY KEY (id)
 );
 INSERT INTO product(id, name, "desc") VALUES(0, 'NEW', '-');
 INSERT INTO product(id, name, "desc") VALUES(100, 'USER', 'Відвідувач');
