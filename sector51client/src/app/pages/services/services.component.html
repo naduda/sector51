@@ -2,25 +2,57 @@
   <h5 class="mt-2 text-center">{{ 'services' | translate | uppercase }}</h5>
   <hr>
 
-  <div class="d-flex align-items-center" *ngFor="let s of services; let idx = index;">
-    <div class="d-inline-flex border justify-content-center w-rem-2-5">{{ idx + 1 }}</div>
-    <div class="d-inline-flex border p-1">
-        <input type="text" class="pl-2 rounded w-rem-20" [value]="s.name" (input)="s.name = $event.target.value">
-    </div>
-    <div class="d-inline-flex border p-1">
-        <input type="text" class="pl-2 rounded w-rem-20" [value]="s.desc" (input)="s.desc = $event.target.value">
-    </div>
-    <div class="d-inline-flex border p-1">
-      <input type="number" class="pl-2 rounded w-rem-4" [value]="s.price" (input)="s.price = $event.target.value">
-    </div>
-    <div class="d-inline-flex border w-rem-2-5 p-1">
-      <i class="fa fa-fw fa-2x fa-save text-success pointer" (click)="saveService(s)"></i>
-    </div>
-    <div class="d-inline-flex w-rem-2-5 p-1" *ngIf="s['success'] && s['done']">
-      <i class="fa fa-fw fa-2x fa-check text-success pointer"></i>
-    </div>
-    <div class="d-inline-flex w-rem-2-5 p-1" *ngIf="!s['success'] && s['done']">
-      <i class="fa fa-fw fa-2x fa-exclamation-triangle text-success pointer"></i>
-    </div>
-  </div>
+  <p-table [value]="services" [resizableColumns]="true" selectionMode="single" sortMode="multiple">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-center" width="50">№</th>
+        <th [pSortableColumn]="'name'" pResizableColumn>
+          {{ 'name' | translate | uppercase }}
+          <p-sortIcon [field]="'name'"></p-sortIcon>
+        </th>
+        <th class="text-center" [pSortableColumn]="'desc'" pResizableColumn>
+          {{ 'desc' | translate | uppercase }}
+          <p-sortIcon [field]="'desc'"></p-sortIcon>
+        </th>
+        <th class="text-center" [pSortableColumn]="'price'" width="80">
+          {{ 'price' | translate | uppercase }}
+          <p-sortIcon [field]="'price'"></p-sortIcon>
+        </th>
+        <th width="50">{{ 'save' | translate | uppercase }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-s let-rowIndex="rowIndex">
+      <tr [pSelectableRow]="s">
+        <td class="text-right">{{ rowIndex + 1 }}</td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" class="text-right" [(ngModel)]="s.name" required>
+            </ng-template>
+            <ng-template pTemplate="output">{{ s.name }}</ng-template>
+          </p-cellEditor>
+        </td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" class="text-right" [(ngModel)]="s.desc" required>
+            </ng-template>
+            <ng-template pTemplate="output">{{ s.desc }}</ng-template>
+          </p-cellEditor>
+        </td>
+        <td class="text-right" pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="number" class="text-right" [(ngModel)]="s.price" required>
+            </ng-template>
+            <ng-template pTemplate="output">{{ s.price }}</ng-template>
+          </p-cellEditor>
+        </td>
+        <td class="text-center">
+          <i class="fa fa-fw fa-save text-primary pointer" (click)="saveService(s)"
+            [ngClass]="{'text-success': s['success'] && s['done'], 'text-danger': !s['success'] && s['done']}"></i>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

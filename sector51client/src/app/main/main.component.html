@@ -21,8 +21,7 @@
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
-          <li class="list-group-item p-2" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}"
-            (click)="changeQueryParam('user', u['created'])">
+          <li class="list-group-item p-2" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" (click)="changeQueryParam('user', u['created'])">
             <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
               {{ u.surname + ' ' + u.name }}
             </a>
@@ -32,26 +31,40 @@
     </split-area>
 
     <split-area [size]="sizeValue[1]" [ngClass]="{ 'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth <= 540 }">
-      <table class="table table-sm table-striped table-bordered">
-          <thead>
-            <tr>
-              <th class="text-center">#</th>
-              <th class="text-center">{{ 'surname' | translate | uppercase }}</th>
-              <th class="text-center">{{ 'name' | translate | uppercase }}</th>
-              <th class="text-center">{{ 'box' | translate | uppercase }}</th>
-              <th class="text-center">{{ 'time' | translate | uppercase }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let u of activeUsers; let idx = index;">
-              <th class="text-center">{{ idx + 1 }}</th>
-              <td>{{ u.surname }}</td>
-              <td>{{ u.name }}</td>
-              <td>{{ u['box'] }}</td>
-              <td>{{ u['time'] | date:'HH:mm' }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <p-tabView [activeIndex]="0">
+        <p-tabPanel header="Main">
+          <div>
+            <p-table [value]="activeUsers" [resizableColumns]="true" selectionMode="single"
+              [(selection)]="activeUsers[selectedUserId]" sortMode="multiple">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-center" width="50">№</th>
+                  <th class="text-center" [pSortableColumn]="'time'" width="75">
+                    {{ 'time' | translate | uppercase }}
+                    <p-sortIcon [field]="'time'"></p-sortIcon>
+                  </th>
+                  <th class="text-center" pResizableColumn>{{ 'surname' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn>{{ 'name' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn width="50">{{ 'box' | translate | uppercase }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-u let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="u">
+                  <td class="text-right">{{ rowIndex + 1 }}</td>
+                  <td class="text-center">{{ u['time'] | date:'HH:mm' }}</td>
+                  <td>{{ u.surname }}</td>
+                  <td>{{ u.name }}</td>
+                  <td class="text-right">{{ u['box'] }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel [header]="'services' | translate | titlecase">
+          <sector51-user-services [user]="user"></sector51-user-services>
+        </p-tabPanel>
+      </p-tabView>
+
     </split-area>
   </split>
 </div>

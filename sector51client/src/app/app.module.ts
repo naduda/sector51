@@ -9,6 +9,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
+import { TableModule } from 'primeng/table';
+import { TabViewModule } from 'primeng/tabview';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -33,6 +36,7 @@ import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
 import { AbonementComponent } from './pages/modal/abonement/abonement.component';
 import { ServicesComponent } from './pages/services/services.component';
 import { MainReportComponent } from './pages/report/main-report/main-report.component';
+import { UserServicesComponent } from './components/user-services/user-services.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -55,7 +59,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     BoxtypeComponent,
     AbonementComponent,
     ServicesComponent,
-    MainReportComponent
+    MainReportComponent,
+    UserServicesComponent
   ],
   imports: [
     BrowserModule,
@@ -70,6 +75,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     NgbModule.forRoot(),
     AngularSplitModule,
+    TableModule,
+    TabViewModule,
+    TooltipModule,
     Sector51RoutingModule
   ],
   entryComponents: [

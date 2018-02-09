@@ -23,14 +23,13 @@ public interface IUserMapper {
           "DELETE FROM userinfo WHERE created = #{created};")
   int deleteUser(@Param("created") Timestamp created);
 
-  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex, trainer, birthday) "
-      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{trainer}, #{birthday});")
+  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday) "
+      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{birthday});")
   void insertUserInfo(UserInfo user);
 
   @Update("UPDATE barcode SET code = #{card} WHERE code = (SELECT card FROM userinfo WHERE created = #{created});" +
           "UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}, balance = #{balance}, " +
-          "email = #{email}, card = #{card}, sex = #{sex}, trainer = #{trainer}, " +
-          "birthday = #{birthday} WHERE created = #{created};")
+          "email = #{email}, card = #{card}, sex = #{sex}, birthday = #{birthday} WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 
   @Select("SELECT * FROM usersecurity;")

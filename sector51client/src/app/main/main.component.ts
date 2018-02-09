@@ -79,10 +79,6 @@ export class MainComponent implements OnInit {
     return this.common.users.filter(u => u['active'] === true);
   }
 
-  get userTrainer(): Profile {
-    return this.common.users.find(u => u['created'] === this.user.trainer);
-  }
-
   onDragEnd(columnindex: number, e: {gutterNum: number, sizes: Array<number>}) {
     this.common.toStorage('spliter', { size: e.sizes });
   }

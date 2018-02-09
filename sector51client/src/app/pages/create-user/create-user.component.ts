@@ -21,8 +21,6 @@ export class CreateUserComponent implements OnInit {
   allRoles: IRole[];
   created: boolean;
   user: Profile;
-  trainer: Profile;
-  trainers: Profile[];
   service: IService;
   userServices: IUserService[];
   cardRedonly: boolean;
@@ -80,11 +78,6 @@ export class CreateUserComponent implements OnInit {
       })
       .flatMap(services => this.http.get<Profile[]>(REST_API.GET.users))
       .subscribe(users => {
-        this.trainers = users.filter(u => u['roles'] === ERole[ERole.TRAINER]);
-        this.trainers.unshift(new Profile(null, '-', ''));
-        this.trainers[0]['created'] = undefined;
-        this.trainer = this.trainers.find(t => t['created'] === (this.user.trainer || 0));
-        this.trainer = this.trainer || this.trainers[0];
         this.buttonText = this.user.name ? 'update' : 'create';
         this.user['password'] = this.user['password2'] = '';
       });
@@ -92,10 +85,6 @@ export class CreateUserComponent implements OnInit {
 
   parseDate(dateString: string): Date {
     return dateString ? new Date(dateString) : null;
-  }
-
-  get existTrainerService(): boolean {
-    return this.userServices.find(us => us.desc.toLowerCase().includes('trainer')) !== undefined;
   }
 
   get isTrainer() {
@@ -137,12 +126,10 @@ export class CreateUserComponent implements OnInit {
         .subscribe(result => this.onResult(result));
     } else if (this.idUser < 0 && !this.usersNotExist) {
       this.user.card = this.user.card || ERole[ERole.TRAINER];
-      this.user.trainer = +this.trainer['created'];
       if (!this.showPassword) this.user['password'] = this.user.card;
       this.http.post(REST_API.POST.user, this.user)
         .subscribe(result => this.onResult(result));
     } else {
-      this.user.trainer = +this.trainer['created'];
       this.http.put(REST_API.PUT.user, this.user)
         .subscribe(result => this.onResult(result));
     }
@@ -156,32 +143,5 @@ export class CreateUserComponent implements OnInit {
       alert('Something wrong.');
       console.error(response);
     }
-  }
-
-  addService() {
-    this.modalService.open(AbonementComponent, {
-      service: this.service, idUser: this.user['created']
-    }, (userService: IUserService) => {
-      userService.desc = this.common.services.find(s => s.id === userService.idService).name;
-      this.userServices.push(userService);
-    });
-  }
-
-  editService(uService: IUserService) {
-    this.modalService.open(AbonementComponent, {
-      service: uService, idUser: this.user['created'], isUpdate: true
-    }, (userService: IUserService) => {
-      if (!userService.dtBeg) {
-        const idx = this.userServices.indexOf(uService);
-        this.userServices.splice(idx, 1);
-      } else {
-        this.userServices.forEach(us => {
-          if (us.idService === userService.idService) {
-            us.dtBeg = userService.dtBeg;
-            us.dtEnd = userService.dtEnd;
-          }
-        });
-      }
-    });
   }
 }

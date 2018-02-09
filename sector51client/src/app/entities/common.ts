@@ -22,7 +22,7 @@ export interface IModalWindow {
 export interface IBox { idtype: number; number: number; card?: string; time?: any; }
 export interface IResponse { result: string; message: any; }
 export interface IService { id: number; name: string; desc: string; price: number; }
-export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: number; dtEnd: number; }
+export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: number; dtEnd: number; value: string; }
 export interface IHistory { id: number; idEvent: number; idUser: number; time: number; desc: string; price: number; }
 export interface IEvent { id: number; name: string; desc: string; }
 

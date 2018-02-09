@@ -1,32 +1,60 @@
-<div>
+<div class="p-2">
   <h5 class="mt-2 text-center">{{ 'productsList' | translate | uppercase }}</h5>
   <hr>
-  <table class="table table-sm table-striped table-bordered">
-    <thead>
+
+  <p-table [value]="products" [resizableColumns]="true" selectionMode="single" sortMode="multiple">
+    <ng-template pTemplate="header">
       <tr>
-        <th class="text-center">#</th>
-        <th class="text-center">{{ 'name' | translate | uppercase }}</th>
-        <th class="text-center">{{ 'desc' | translate | uppercase }}</th>
-        <th class="text-center">{{ 'count' | translate | uppercase }}</th>
-        <th class="text-center">{{ 'price' | translate | uppercase }}</th>
-        <th *ngIf="permissions"></th>
-        <th *ngIf="permissions"></th>
+        <th class="text-center" width="50">№</th>
+        <th class="text-center" [pSortableColumn]="'name'" pResizableColumn>
+          {{ 'name' | translate | uppercase }}
+          <p-sortIcon [field]="'name'"></p-sortIcon>
+        </th>
+        <th class="text-center" [pSortableColumn]="'desc'" pResizableColumn>
+          {{ 'desc' | translate | uppercase }}
+          <p-sortIcon [field]="'desc'"></p-sortIcon>
+        </th>
+        <th class="text-center" [pSortableColumn]="'count'" width="150">
+          {{ 'count' | translate | uppercase }}
+          <p-sortIcon [field]="'count'"></p-sortIcon>
+        </th>
+        <th class="text-center" [pSortableColumn]="'price'" width="80">
+          {{ 'price' | translate | uppercase }}
+          <p-sortIcon [field]="'price'"></p-sortIcon>
+        </th>
+        <th width="50"></th>
+        <th width="50"></th>
       </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let p of products; let idx = index;">
-        <th class="text-center">{{ idx + 1 }}</th>
-        <td>{{ p.name }}</td>
+    </ng-template>
+    <ng-template pTemplate="body" let-p let-rowIndex="rowIndex">
+      <tr [pSelectableRow]="p">
+        <td class="text-right">{{ rowIndex + 1 }}</td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="text" class="text-right" [(ngModel)]="p.name" required>
+            </ng-template>
+            <ng-template pTemplate="output">{{ p.name }}</ng-template>
+          </p-cellEditor>
+        </td>
         <td>{{ p.desc }}</td>
-        <td [ngClass]="{ 'text-center': p.count === 0, 'text-right': p.count > 0 }">{{ p.count > 0 ? p.count : '-' }}</td>
-        <td class="text-right pr-2">{{ p.price/100 | number:'0.2' }}</td>
-        <td *ngIf="permissions" class="text-center text-warning" (click)="editProduct(p)">
-          <i class="fa fa-edit"></i>
+        <td class="text-right">{{ p.count }}</td>
+        <td class="text-right" pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input type="number" class="text-right" [(ngModel)]="p.price" required>
+            </ng-template>
+            <ng-template pTemplate="output">{{ p.price/100 | number:'0.2' }}</ng-template>
+          </p-cellEditor>
         </td>
-        <td *ngIf="permissions" class="text-center text-danger" (click)="removeProduct(p)">
-          <i class="fa fa-trash"></i>
+        <td class="text-center">
+          <i class="fa fa-fw fa-save text-primary pointer" (click)="updateProduct(p)" [ngbTooltip]="'save' | translate | uppercase"
+            [ngClass]="{'text-success': p['success'] && p['done'], 'text-danger': !p['success'] && p['done']}"></i>
+        </td>
+        <td class="text-center">
+          <i class="fa fa-fw fa-trash text-danger pointer" (click)="removeProduct(p)" [ngbTooltip]="'remove' | translate | uppercase"></i>
         </td>
       </tr>
-    </tbody>
-  </table>
+    </ng-template>
+  </p-table>
 </div>

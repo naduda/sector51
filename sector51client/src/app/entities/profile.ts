@@ -10,7 +10,6 @@ export class Profile {
   role: ERole;
   sex: ESex | boolean;
   balance: number;
-  trainer: number;
   birthday: Date;
 
   constructor(login?: string, name?: string, surname?: string, phone?: string,

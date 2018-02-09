@@ -8,14 +8,17 @@ public class UserServise51 {
   private Timestamp idUser;
   private Timestamp dtBeg;
   private Timestamp dtEnd;
+  private String value;
 
   public UserServise51() {}
 
-  public UserServise51(int idService, Timestamp idUser, Timestamp dtBeg, Timestamp dtEnd) {
+  public UserServise51(int idService, Timestamp idUser, Timestamp dtBeg, Timestamp dtEnd, String value) {
+    this();
     this.idService = idService;
     this.idUser = idUser;
     this.dtBeg = dtBeg;
     this.dtEnd = dtEnd;
+    this.value = value;
   }
 
   public int getIdService() {
@@ -56,5 +59,13 @@ public class UserServise51 {
 
   public void setDtEnd(Timestamp dtEnd) {
     this.dtEnd = dtEnd;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
   }
 }

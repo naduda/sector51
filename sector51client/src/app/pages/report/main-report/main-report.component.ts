@@ -11,8 +11,10 @@ import { CommonService } from '../../../services/common.service';
 })
 export class MainReportComponent implements OnInit {
   history: IHistory[];
+  selectedHistory: IHistory;
 
-  constructor(private http: HttpClient, private common: CommonService) {
+  constructor(private http: HttpClient,
+              private common: CommonService) {
     this.history = [];
   }
 

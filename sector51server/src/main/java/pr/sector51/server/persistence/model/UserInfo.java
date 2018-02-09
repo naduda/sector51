@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 
 public class UserInfo {
   private Timestamp created;
-  private Timestamp trainer;
   private String name;
   private String surname;
   private String phone;
@@ -49,14 +48,6 @@ public class UserInfo {
 
   public void setCreated(Timestamp created) {
     this.created = created;
-  }
-
-  public Timestamp getTrainer() {
-    return trainer;
-  }
-
-  public void setTrainer(Timestamp trainer) {
-    this.trainer = trainer;
   }
 
   public Timestamp getBirthday() {

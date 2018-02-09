@@ -12,12 +12,6 @@ split {
 div.rounded, .card { height: 100%; }
 div.rounded { border: 1px solid rgba(0,0,0,.125); }
 
-.card-title { text-align: center; }
-tr th {
-  width:1%;
-  white-space: nowrap;
-}
-
 div.bg-faded {
   align-items: center;
   display: flex;

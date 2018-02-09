@@ -20,7 +20,6 @@ CREATE TABLE userinfo (
 	card character varying(15),
 	balance integer NOT NULL DEFAULT 0,
 	sex boolean,
-	trainer timestamp without time zone,
 	birthday timestamp without time zone,
 	CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
 	CONSTRAINT pk_user_info PRIMARY KEY (created)
@@ -99,5 +98,6 @@ CREATE TABLE user_service (
 	idUser timestamp without time zone,
 	dtBeg timestamp without time zone,
 	dtEnd timestamp without time zone,
+	value character varying(50),
 	CONSTRAINT pk_user_service PRIMARY KEY (idService, idUser)
 );

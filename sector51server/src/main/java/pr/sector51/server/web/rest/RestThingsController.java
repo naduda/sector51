@@ -141,7 +141,7 @@ public class RestThingsController extends RestCommon {
   @RequestMapping(value = "/update/userservice", method = RequestMethod.PUT)
   public Sector51Result updateBox(@RequestBody UserServise51 userService) {
     boolean trResult = thingsDao.runTransaction(() -> {
-      int updated = thingsDao.updateUserService(userService);
+      thingsDao.updateUserService(userService);
       History history = new History(3, userService.getIdUser(), userService.getIdService() + "_" + userService.getDesc());
       thingsDao.insert2history(history);
     });

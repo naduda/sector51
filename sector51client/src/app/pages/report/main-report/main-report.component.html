@@ -1,11 +1,28 @@
 <div id="history-div" class="mt-2 p-2">
   <h5 class="text-center">{{ 'history' | translate | uppercase }}</h5>
   <hr>
-  <div class="bg-faded d-flex align-items-center" *ngFor="let h of history; let idx = index;">
-    <div class="w-rem-2-5 border p-2 text-right d-inline-flex">{{ idx + 1 }}</div>
-    <div class="w-rem-10 border p-2 d-inline-flex">{{ h.time | date:'dd.MM.yyyy HH:mm:ss' }}</div>
-    <div class="w-rem-20 border p-2 d-inline-flex">{{ h['event'] }}</div>
-    <div class="w-rem-20 border p-2 d-inline-flex">{{ h['user'] }}</div>
-    <div class="w-rem-10 border p-2 d-inline-flex">{{ h.desc }}</div>
-  </div>
+
+  <p-table [value]="history" [resizableColumns]="true" selectionMode="single" [(selection)]="selectedHistory" sortMode="multiple">
+    <ng-template pTemplate="header">
+        <tr>
+            <th class="text-center" style="width: 50px;">№</th>
+            <th class="text-center" style="width: 175px;" [pSortableColumn]="'time'">
+              Time
+              <p-sortIcon [field]="'time'"></p-sortIcon>
+            </th>
+            <th class="text-center" pResizableColumn>Name</th>
+            <th class="text-center" pResizableColumn>Object</th>
+            <th class="text-center" pResizableColumn>Description</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-h let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="h">
+            <td class="text-right">{{ rowIndex + 1 }}</td>
+            <td class="text-center">{{ h.time | date:'dd.MM.yyyy HH:mm:ss' }}</td>
+            <td>{{ h['event'] }}</td>
+            <td>{{ h['user'] }}</td>
+            <td>{{ h.desc }}</td>
+        </tr>
+    </ng-template>
+  </p-table>
 </div>

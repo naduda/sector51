@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IProduct, ERestResult, RESERVED_PRODUCTS_ID, ERole } from '../../entities/common';
+import { IProduct, ERestResult, RESERVED_PRODUCTS_ID, ERole, IResponse } from '../../entities/common';
 import { ModalService } from '../../services/modal.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ModalComponent } from '../modal/modal.component';
@@ -55,7 +55,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
     });
   }
 
-  editProduct(product: IProduct) {
-    this.modalService.open(BarcodeComponent, { product: Object.assign({}, product) });
+  updateProduct(product: IProduct) {
+    product['done'] = product['success'] = false;
+    this.http.put(REST_API.PUT.product, product).subscribe((response: IResponse) => {
+      product['done'] = true;
+      product['success'] = ERestResult[ERestResult.OK] === response.result;
+    });
   }
 }
