@@ -21,8 +21,6 @@ export class CreateUserComponent implements OnInit {
   allRoles: IRole[];
   created: boolean;
   user: Profile;
-  service: IService;
-  userServices: IUserService[];
   cardRedonly: boolean;
   usersNotExist: boolean;
   buttonText: string;
@@ -31,8 +29,6 @@ export class CreateUserComponent implements OnInit {
   constructor(private http: HttpClient, private location: Location,
               private route: ActivatedRoute, public common: CommonService,
               private modalService: ModalService) {
-    this.service = this.common.services ? this.common.services[0] : undefined;
-    this.userServices = [];
     this.buttonText = 'create';
   }
 
@@ -49,6 +45,7 @@ export class CreateUserComponent implements OnInit {
       .do((user: Profile) => {
         if (!user) {
           user = new Profile();
+          user.sex = ESex.MAN;
           this.created = true;
         } else {
           user.email = user.email.toLowerCase();
@@ -70,13 +67,6 @@ export class CreateUserComponent implements OnInit {
           })).filter(p => p['value'] === this.user.authorities);
         }
       })
-      .flatMap(pairs => this.http.get<IResponse>(REST_API.GET.userServices(this.idUser)))
-      .do((response: IResponse) => {
-        if (ERestResult[ERestResult.OK] === response.result) {
-          this.userServices = response.message;
-        }
-      })
-      .flatMap(services => this.http.get<Profile[]>(REST_API.GET.users))
       .subscribe(users => {
         this.buttonText = this.user.name ? 'update' : 'create';
         this.user['password'] = this.user['password2'] = '';
@@ -87,8 +77,9 @@ export class CreateUserComponent implements OnInit {
     return dateString ? new Date(dateString) : null;
   }
 
-  get isTrainer() {
-    return this.user.authorities !== ERole[ERole.TRAINER];
+  get isNotTrainerOrSelder() {
+    return this.user.authorities !== ERole[ERole.TRAINER] &&
+           this.user.authorities !== ERole[ERole.SELDER];
   }
 
   get showPassword() {

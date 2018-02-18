@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IModalWindow, ERestResult, IService, IResponse, IUserService, ERole } from '../../../entities/common';
+import { IModalWindow, ERestResult, IService, IResponse, IUserService, ERole, IBox } from '../../../entities/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
 import { Profile } from '../../../entities/profile';
@@ -19,6 +19,8 @@ export class AbonementComponent implements OnInit, IModalWindow {
   dtBeg: Date;
   dtEnd: Date;
   cash: number;
+  boxes: IBox[];
+  boxNumber: number;
   trainer: Profile;
   trainers: Profile[];
   service: IService;
@@ -30,9 +32,14 @@ export class AbonementComponent implements OnInit, IModalWindow {
   constructor(public activeModal: NgbActiveModal, private http: HttpClient,
               private common: CommonService, private modalService: ModalService) {
     this.cash = 0;
+    this.boxNumber = -1;
   }
 
   ngOnInit() {
+    this.http.get(REST_API.GET.boxnumbers).subscribe((boxes: IBox[]) => {
+      this.boxes = boxes.filter(b => b.idtype === 3 && (!b.card || b.card.length === 0));
+      this.boxes.sort((a, b) => a.number - b.number);
+    });
     this.trainers = this.common.users.filter(u => u['roles'] === ERole[ERole.TRAINER]);
     this.trainers.unshift(new Profile(null, '-', ''));
     const oldTrainer = this.service.id === 1 ? this.common.users.find(u => u['created'] === +this.service['value']) : undefined;
@@ -92,6 +99,9 @@ export class AbonementComponent implements OnInit, IModalWindow {
           }
         });
     } else {
+      switch (userService.idService) {
+        case 1: userService.value = instance.trainer !== instance.trainers[0] ? instance.trainer['created'] : undefined; break;
+      }
       instance.http.post(REST_API.POST.userService, userService)
         .subscribe((response: IResponse) => {
           if (ERestResult[ERestResult.OK] === response.result) {
@@ -120,8 +130,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
     return dateString ? new Date(dateString) : null;
   }
 
-  removeUserService() {
-    this.isRemove = true;
-    this.activeModal.close(true);
+  trainerText(trainer: Profile) {
+    return (trainer.surname + ' ' + trainer.name).toUpperCase();
   }
 }

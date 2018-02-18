@@ -45,7 +45,7 @@ public interface IThingsMapper {
           "WHERE us.idUser = #{idUser};")
   List<UserServise51> getUserServices(@Param("idUser") Timestamp idUser);
 
-  @Select("INSERT INTO user_service VALUES(#{idService}, #{idUser}, #{dtBeg}, #{dtEnd}) RETURNING *;")
+  @Select("INSERT INTO user_service VALUES(#{idService}, #{idUser}, #{dtBeg}, #{dtEnd}, #{value}) RETURNING *;")
   UserServise51 insertUserService(UserServise51 userServise);
 
   @Update("UPDATE user_service set dtbeg = #{dtBeg}, dtend = #{dtEnd}, value = #{value} " +

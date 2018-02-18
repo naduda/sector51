@@ -28,6 +28,15 @@
   "frmProfile": {
     "difPasswords": "Разные пароли"
   },
+  "user": {
+    "name": "имя",
+    "surname": "фамилия",
+    "phone": "телефон",
+    "card": "карта",
+    "birthday": "день рождения",
+    "role": "роль",
+    "gender": "пол"
+  },
   "password": "пароль",
   "showAll": "показать всех",
   "account": "клиент",
@@ -41,6 +50,7 @@
   },
   "apply": "применить",
   "cancel": "отменить",
+  "save": "сохранить",
   "attention": "внимание{{end}}",
   "properties": "свойства",
   "delete": "удалить",

@@ -33,3 +33,7 @@ div[ngbdropdown] .dropdown-item:hover{ background-color: LightBlue !important; }
 .w-rem-25 { width: 25rem !important; }
 
 .pointer:hover { cursor: pointer; }
+.pointer-faded:hover {
+  background-color: #eee;
+  cursor: pointer;
+}

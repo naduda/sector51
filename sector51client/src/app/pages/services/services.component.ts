@@ -25,6 +25,10 @@ export class ServicesComponent implements OnInit {
     this.http.put(REST_API.PUT.service, service).subscribe((response: IResponse) => {
       service['done'] = true;
       service['success'] = ERestResult[ERestResult.OK] === response.result;
+      if (service['success']) {
+        const old = this.common.services.find(s => s.id === service.id);
+        old.price = service.price;
+      }
     });
   }
 }

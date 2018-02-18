@@ -36,8 +36,10 @@ public class BarcodeDao extends CommonDao {
       Product oldProduct = scanner.getPrpoductById(product.getId());
       int count = product.getCount() - oldProduct.getCount();
       scanner.updateProduct(product);
-      History history = new History(count > 0 ? 4 : 5, idUser, product.getId() + "_" + Math.abs(count));
-      insert2history(history);
+      if (count != 0) {
+        History history = new History(count > 0 ? 4 : 5, idUser, product.getId() + "_" + Math.abs(count));
+        insert2history(history);
+      }
     });
     return trResult ? ESector51Result.OK : ESector51Result.ERROR;
   }

@@ -1,10 +1,9 @@
-#create-div {
-  
-}
+div.col { height: calc(100% - 1rem); }
 
 form {
-    max-width: 540px;
-    border: 1px solid #292b2c;
+  min-width: 540px;
+  max-width: 540px;
+  border: 1px solid #292b2c;
 }
 
 .nav-item.nav-link:hover {
@@ -33,7 +32,5 @@ label.form-check-label:hover {
   background-color: LightBlue;
 }
 
-.fa.position-absolute {
-  margin-top: -1.4rem;
-}
+.fa.position-absolute { margin-top: -1.4rem; }
 .fa.fa-fw:hover { cursor: pointer; }

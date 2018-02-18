@@ -37,6 +37,7 @@ import { AbonementComponent } from './pages/modal/abonement/abonement.component'
 import { ServicesComponent } from './pages/services/services.component';
 import { MainReportComponent } from './pages/report/main-report/main-report.component';
 import { UserServicesComponent } from './components/user-services/user-services.component';
+import { ComboComponent } from './components/combo/combo.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -60,7 +61,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AbonementComponent,
     ServicesComponent,
     MainReportComponent,
-    UserServicesComponent
+    UserServicesComponent,
+    ComboComponent
   ],
   imports: [
     BrowserModule,

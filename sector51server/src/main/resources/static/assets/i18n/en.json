@@ -28,6 +28,15 @@
   "frmProfile": {
     "difPasswords": "Passwords aren't equal"
   },
+  "user": {
+    "name": "name",
+    "surname": "sername",
+    "phone": "phone",
+    "card": "card",
+    "birthday": "birthday",
+    "role": "role",
+    "gender": "gender"
+  },
   "password": "password",
   "showAll": "show All",
   "account": "client",
@@ -41,6 +50,7 @@
   },
   "apply": "apply",
   "cancel": "cancel",
+  "save": "save",
   "attention": "attention{{end}}",
   "properties": "properties",
   "delete": "delete",

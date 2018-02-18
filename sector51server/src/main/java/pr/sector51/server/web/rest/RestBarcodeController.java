@@ -7,6 +7,7 @@ import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 import pr.sector51.server.web.socket.ScannerService;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @RequestMapping("/api")
@@ -84,8 +85,14 @@ public class RestBarcodeController extends RestCommon {
   // PUT =============================================================================
   @RequestMapping(value = "/update/product", method = RequestMethod.PUT)
   public Sector51Result updateProduct(@RequestBody Product product) {
-    Sector51Result response = new Sector51Result(barcode.updateProduct(product, null));
-    response.setMessage(product);
+    Sector51Result response = new Sector51Result(ESector51Result.ERROR);
+    try {
+      Timestamp idUser = new Timestamp(Long.parseLong(product.getDesc()));
+      response = new Sector51Result(barcode.updateProduct(product, idUser));
+      response.setMessage(product);
+    } catch (Exception ex) {
+      response.setMessage(ex.getMessage());
+    }
     return response;
   }
 }

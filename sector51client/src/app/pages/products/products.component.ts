@@ -37,7 +37,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.products = products.filter(p => p.id !== 0 && p.id !== RESERVED_PRODUCTS_ID)
           .map(p => {
             const user = this.common.users.find(u => u['created'] === +p.desc);
-            p.desc = user ? user.surname + ' ' + user.name : '-';
+            p['description'] = user ? user.surname + ' ' + user.name : '-';
             return p;
           })
       );
