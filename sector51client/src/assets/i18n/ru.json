@@ -70,5 +70,8 @@
   "key": "ключ",
   "settings": "настройки",
   "services": "услуги",
-  "reports": "отчеты"
+  "reports": "отчеты",
+  "activeUsers": "сейчас в зале",
+  "type": "тип",
+  "selder": "продавец"
 }

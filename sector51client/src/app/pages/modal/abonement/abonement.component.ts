@@ -91,6 +91,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
       userService.idService = instance.service['idService'];
       switch (userService.idService) {
         case 1: userService.value = instance.trainer !== instance.trainers[0] ? instance.trainer['created'] : undefined; break;
+        case 2: userService.value = instance.boxNumber; break;
       }
       instance.http.put(REST_API.PUT.userService, userService)
         .subscribe((response: IResponse) => {
@@ -101,6 +102,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
     } else {
       switch (userService.idService) {
         case 1: userService.value = instance.trainer !== instance.trainers[0] ? instance.trainer['created'] : undefined; break;
+        case 2: userService.value = instance.boxNumber; break;
       }
       instance.http.post(REST_API.POST.userService, userService)
         .subscribe((response: IResponse) => {

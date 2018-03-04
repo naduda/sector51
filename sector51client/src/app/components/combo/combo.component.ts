@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'sector51-combo',
@@ -10,7 +10,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
   }
   i::after { margin-left: 0.5rem; }` ]
 })
-export class ComboComponent implements OnInit {
+export class ComboComponent {
   @Output() onchange: EventEmitter<any> = new EventEmitter();
   @Input() itemToText: Function | string;
   @Input() itemToValue: Function | string;
@@ -35,8 +35,6 @@ export class ComboComponent implements OnInit {
   selectedValue: string;
 
   constructor() { }
-
-  ngOnInit() {}
 
   changeValue(selectedItem: any) {
     this.item = selectedItem;

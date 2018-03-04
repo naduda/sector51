@@ -11,30 +11,28 @@ import java.util.List;
 @Service
 public class ThingsDao extends CommonDao {
   @Autowired
-  private IThingsMapper mapper;
-  @Autowired
   private UserDao userDao;
 
   public Sector51Result removeBoxType(int id) {
-    return new Sector51Result(mapper.removeBoxType(id) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
+    return new Sector51Result(thingsMapper.removeBoxType(id) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
   }
 
   public List<BoxType> getBoxTypes() {
-    return mapper.getBoxTypes();
+    return thingsMapper.getBoxTypes();
   }
 
   public List<BoxNumber> getBoxNumbers() {
-    return mapper.getBoxNumbers();
+    return thingsMapper.getBoxNumbers();
   }
 
   public int insertBoxType(String boxType) {
-    return mapper.insertBoxType(boxType);
+    return thingsMapper.insertBoxType(boxType);
   }
 
   public Sector51Result updateBoxType(BoxType boxType) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
-      mapper.updateBoxType(boxType);
+      thingsMapper.updateBoxType(boxType);
     } catch (Exception ex) {
       result.setMessage(ex.getMessage());
       result.setResult(ESector51Result.ERROR);
@@ -43,17 +41,17 @@ public class ThingsDao extends CommonDao {
   }
 
   public int insertBoxNumber(BoxNumber boxNumber) {
-    return mapper.insertBoxNumber(boxNumber);
+    return thingsMapper.insertBoxNumber(boxNumber);
   }
 
   public Sector51Result removeBoxNumber(BoxNumber boxNumber) {
     Sector51Result result = new Sector51Result(ESector51Result.ERROR);
     result.setMessage(boxNumber);
-    result.setResult(mapper.removeBoxNumber(boxNumber) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
+    result.setResult(thingsMapper.removeBoxNumber(boxNumber) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
     return result;
   }
 
-  public Sector51Result updateBox(BoxNumber boxNumber) {
+  public Sector51Result updateBox(BoxNumber boxNumber, boolean withHistory) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
       boolean res = runTransaction(() -> {
@@ -63,13 +61,15 @@ public class ThingsDao extends CommonDao {
           user = userDao.getUserInfoByCard(boxNumber.getCard());
           number = boxNumber.getNumber();
         } else {
-          BoxNumber old = mapper.getBoxNumber(boxNumber.getIdtype(), boxNumber.getNumber());
+          BoxNumber old = thingsMapper.getBoxNumber(boxNumber.getIdtype(), boxNumber.getNumber());
           user = userDao.getUserInfoByCard(old.getCard());
           number = old.getNumber();
         }
-        History history = new History(boxNumber.getCard() != null ? 0 : 1, user.getCreated(), String.valueOf(number));
-        insert2history(history);
-        long time = mapper.updateBox(boxNumber);
+        if (withHistory) {
+          History history = new History(boxNumber.getCard() != null ? 0 : 1, user.getCreated(), String.valueOf(number));
+          insert2history(history);
+        }
+        long time = thingsMapper.updateBox(boxNumber);
         boxNumber.setTime(new Timestamp(time));
         result.setMessage(boxNumber);
       });
@@ -82,29 +82,40 @@ public class ThingsDao extends CommonDao {
   }
 
   public List<Service51> getServices() {
-    return mapper.getServices();
+    return thingsMapper.getServices();
   }
 
   public List<UserServise51> getUserServices(Timestamp idUser) {
-    return mapper.getUserServices(idUser);
+    return thingsMapper.getUserServices(idUser);
   }
 
   public UserServise51 insertUserService(UserServise51 userServise) {
-    return mapper.insertUserService(userServise);
+    return thingsMapper.insertUserService(userServise);
   }
 
   public int updateUserService(UserServise51 userServise51) {
-    return mapper.updateUserService(userServise51);
+    return thingsMapper.updateUserService(userServise51);
   }
 
   public int removeUserService(long idUser, int idService) {
-    return mapper.removeUserService(new Timestamp(idUser), idService);
+    int[] result = new int[1];
+    boolean res = runTransaction(() -> {
+      Timestamp userId = new Timestamp(idUser);
+      if (idService == 2) {
+        UserServise51 uService = getUserServices(userId).stream()
+                .filter(us -> us.getIdService() == idService).findFirst().get();
+        BoxNumber boxNumber = new BoxNumber(3, Integer.parseInt(uService.getValue()));
+        updateBox(boxNumber, false);
+      }
+      result[0] = thingsMapper.removeUserService(userId, idService);
+    });
+    return result[0];
   }
 
   public Sector51Result updateService(Service51 servise) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
-      result.setResult(mapper.updateService(servise) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
+      result.setResult(thingsMapper.updateService(servise) > 0 ? ESector51Result.OK : ESector51Result.ERROR);
     } catch (Exception ex) {
       result.setMessage(ex.getMessage());
       result.setResult(ESector51Result.ERROR);
@@ -113,10 +124,10 @@ public class ThingsDao extends CommonDao {
   }
 
   public List<History> getHistory() {
-    return mapper.getHistory();
+    return thingsMapper.getHistory();
   }
 
   public List<Event> getEvents() {
-    return mapper.getEvents();
+    return thingsMapper.getEvents();
   }
 }

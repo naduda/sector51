@@ -128,6 +128,7 @@ export class BoxesComponent implements OnInit, OnDestroy {
   }
 
   updateBox(box: IBox) {
+    if (box.idtype === 3) return;
     const props = {
       header: this.user.surname + ' ' + this.user.name,
       headerParam: { end: '!' },

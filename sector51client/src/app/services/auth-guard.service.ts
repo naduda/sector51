@@ -51,7 +51,7 @@ export class CanActivateAuthGuard implements CanActivate {
           this.common.router.navigate(['/login']);
           return of(false);
         });
-    } else if (location.href.endsWith('/registration')) {
+    } else if (location.href.endsWith('/registration?first=true')) {
       return this.http.get<boolean>(REST_API.GET.usersNotExist).catch(e => of(false));
     }
     this.common.router.navigate(['/login']);

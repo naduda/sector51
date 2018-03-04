@@ -24,6 +24,7 @@ export class CreateUserComponent implements OnInit {
   cardRedonly: boolean;
   usersNotExist: boolean;
   buttonText: string;
+  isFirst: boolean;
   private idUser: number;
 
   constructor(private http: HttpClient, private location: Location,
@@ -37,6 +38,7 @@ export class CreateUserComponent implements OnInit {
     this.route.params
       .do(params => this.idUser = params['idUser'] || -1)
       .flatMap(params => this.route.queryParams)
+      .do(params => this.isFirst = params['first'] || false)
       .do(queryParams => code = queryParams['code'] || '')
       .flatMap(params => this.http.get<boolean>(REST_API.GET.usersNotExist))
       .do(usersNotExist => this.usersNotExist = usersNotExist)
@@ -51,7 +53,7 @@ export class CreateUserComponent implements OnInit {
           user.email = user.email.toLowerCase();
           user.authorities = user['roles'];
         }
-        user.sex = user['sex'] === true ? ESex.MAN : ESex.WOMAN;
+        user.sex = user['sex'] ? ESex.MAN : ESex.WOMAN;
         user.card = code || user.card;
         this.cardRedonly = code;
         this.user = user;
@@ -73,9 +75,10 @@ export class CreateUserComponent implements OnInit {
       });
   }
 
-  parseDate(dateString: string): Date {
-    return dateString ? new Date(dateString) : null;
-  }
+  genderText = (sex: ESex): string => ESex[sex];
+  get genders(): ESex[] { return [ ESex.MAN, ESex.WOMAN ]; }
+
+  parseDate = (dateString: string): Date => dateString ? new Date(dateString) : null;
 
   get isNotTrainerOrSelder() {
     return this.user.authorities !== ERole[ERole.TRAINER] &&
@@ -85,14 +88,6 @@ export class CreateUserComponent implements OnInit {
   get showPassword() {
     const auth = this.user.authorities;
     return auth === ERole[ERole.OWNER] || auth === ERole[ERole.ADMIN];
-  }
-
-  get genders() {
-    return [ ESex.MAN, ESex.WOMAN ];
-  }
-
-  genderText(sex: ESex): string {
-    return ESex[sex];
   }
 
   changePassword(value: string, isRepeat: boolean) {

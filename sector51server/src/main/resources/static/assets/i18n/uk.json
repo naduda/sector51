@@ -70,5 +70,8 @@
   "key": "ключ",
   "settings": "налаштування",
   "services": "послуги",
-  "reports": "звіти"
+  "reports": "звіти",
+  "activeUsers": "зараз в залi",
+  "type": "тип",
+  "selder": "продавець"
 }

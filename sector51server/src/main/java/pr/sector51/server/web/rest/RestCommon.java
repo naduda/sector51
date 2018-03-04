@@ -8,7 +8,7 @@ import java.util.List;
 
 class RestCommon {
   @Autowired
-  private UserDao userDao;
+  protected UserDao userDao;
 
   protected UserInfo getUserInfoByLogin(String login) {
     List<UserInfo> users = null;

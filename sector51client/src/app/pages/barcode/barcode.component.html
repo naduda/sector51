@@ -7,7 +7,7 @@
 <div class="modal-body" *ngIf="ready">
   <form class="form-inline" [hidden]="isEdit || isExist">
     <label for="barcode" class="text-right pr-2 w-20">
-      <strong>Type:</strong>
+      <strong>{{ 'type' | translate | titlecase }}:</strong>
     </label>
     <div ngbDropdown class="d-inline-block mb-2 w-80">
       <button type="button" class="nav-item nav-link text-right rounded btn bg-faded w-100 pr-4"
@@ -28,16 +28,9 @@
     <input type="text" class="form-control mb-2 w-80" name="name" [(ngModel)]="product.name"
       [prFocus]="focusName" required>
   </form>
-  <!-- <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
-    <label for="desc" class="text-right pr-2 w-20">
-      <strong>{{ 'desc' | translate | titlecase }}:</strong>
-    </label>
-    <input type="text" class="form-control mb-2 w-80" name="desc" [(ngModel)]="product.desc"
-      [prFocus]="focusDesc" required>
-  </form> -->
   <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
     <label class="text-right pr-2 w-20">
-      <strong>{{ 'desc' | translate | titlecase }}:</strong>
+      <strong>{{ 'selder' | translate | titlecase }}:</strong>
     </label>
     <div ngbDropdown class="d-inline-block mb-2 w-80">
       <i class="d-flex justify-content-between align-items-center pl-2 pr-2" ngbDropdownToggle>

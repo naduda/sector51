@@ -6,6 +6,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pr.sector51.server.persistence.mappers.ICommonMapper;
+import pr.sector51.server.persistence.mappers.IThingsMapper;
 import pr.sector51.server.persistence.model.Event;
 import pr.sector51.server.persistence.model.History;
 
@@ -14,6 +15,8 @@ public class CommonDao {
   private ICommonMapper commonMapper;
   @Autowired
   private DataSourceTransactionManager transactionManager;
+  @Autowired
+  protected IThingsMapper thingsMapper;
 
   public boolean runTransaction(Runnable method) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();

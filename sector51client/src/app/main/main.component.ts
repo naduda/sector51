@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '../services/common.service';
 import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
@@ -27,7 +27,7 @@ export class MainComponent implements OnInit {
   public letter: any;
   private boxes: IBox[];
 
-  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute,
+  constructor(private http: HttpClient, private route: ActivatedRoute,
               private modalService: ModalService, public common: CommonService,
               private translate: TranslateService) {
     this.wWidth = window.innerWidth;
@@ -88,7 +88,7 @@ export class MainComponent implements OnInit {
       const newparams = {};
       Object.keys(params).forEach(key => newparams[key] = params[key]);
       newparams[name] = value;
-      this.router.navigate(['/main'], { queryParams: newparams });
+      this.common.navigate('main', newparams);
     }).unsubscribe();
   }
 

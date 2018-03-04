@@ -95,6 +95,11 @@ public class RestThingsController extends RestCommon {
     try {
       boolean trResult = thingsDao.runTransaction(() -> {
         UserServise51 inserted = thingsDao.insertUserService(userService);
+        if (userService.getIdService() == 2) {
+          BoxNumber box = new BoxNumber(3, Integer.parseInt(userService.getValue()));
+          box.setCard(String.valueOf(userService.getIdUser().getTime()));
+          thingsDao.updateBox(box, false);
+        }
         History history = new History(2, inserted.getIdUser(), inserted.getIdService() + "_" + userService.getDesc());
         thingsDao.insert2history(history);
         result.setMessage(inserted);
@@ -115,18 +120,6 @@ public class RestThingsController extends RestCommon {
     return result;
   }
 
-  @RequestMapping(value = "/add/history", method = RequestMethod.POST)
-  public Sector51Result addHistory(@RequestBody History history) {
-    Sector51Result result = new Sector51Result(ESector51Result.ERROR);
-    try {
-      thingsDao.insert2history(history);
-      result.setResult(ESector51Result.OK);
-    } catch (Exception ex) {
-      result.setMessage(ex.getMessage());
-    }
-    return result;
-  }
-
   // PUT =============================================================================
   @RequestMapping(value = "/update/boxType", method = RequestMethod.PUT)
   public Sector51Result updateBoxtype(@RequestBody BoxType boxType) {
@@ -135,7 +128,8 @@ public class RestThingsController extends RestCommon {
 
   @RequestMapping(value = "/update/boxNumber", method = RequestMethod.PUT)
   public Sector51Result updateBox(@RequestBody BoxNumber boxNumber) {
-    return thingsDao.updateBox(boxNumber);
+    if (boxNumber.getIdtype() == 3) return new Sector51Result(ESector51Result.ERROR);
+    return thingsDao.updateBox(boxNumber, true);
   }
 
   @RequestMapping(value = "/update/userservice", method = RequestMethod.PUT)

@@ -21,7 +21,8 @@
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
-          <li class="list-group-item p-2" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" (click)="changeQueryParam('user', u['created'])">
+          <li class="list-group-item p-2" *ngFor="let u of common.users"
+            [ngClass]="{'bg-info': u['created'] === selectedUserId}" (click)="changeQueryParam('user', u['created'])">
             <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
               {{ u.surname + ' ' + u.name }}
             </a>
@@ -32,7 +33,7 @@
 
     <split-area [size]="sizeValue[1]" [ngClass]="{ 'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth <= 540 }">
       <p-tabView [activeIndex]="0">
-        <p-tabPanel header="Main">
+        <p-tabPanel [header]="'activeUsers' | translate | titlecase">
           <div>
             <p-table [value]="activeUsers" [resizableColumns]="true" selectionMode="single"
               [(selection)]="activeUsers[selectedUserId]" sortMode="multiple">

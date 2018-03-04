@@ -22,7 +22,7 @@
         [required]="isNotTrainerOrSelder">
     </div>
     <div class="form-group row pr-3">
-      <label for="email" class="col-4 col-form-label">e-mail</label>
+      <label for="email" class="col-4 col-form-label">E-mail</label>
       <input class="col-8 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="email"
         name="email" [(ngModel)]="user.email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
     </div>
@@ -45,8 +45,8 @@
     </div>
 
     <div class="form-group row pr-3">
-        <label class="col-2 col-form-label">{{ 'user.role' | translate | titlecase }}</label>
-        <sector51-combo class="col-4 p-0"
+        <label class="col-2 col-form-label" *ngIf="!isFirst">{{ 'user.role' | translate | titlecase }}</label>
+        <sector51-combo class="col-4 p-0" *ngIf="!isFirst"
           [items]="allRoles" [itemToText]="'name'" [itemToValue]="'name'"
           [selected]="user.authorities" (onchange)="user.authorities = $event.name">
         </sector51-combo>
@@ -54,7 +54,7 @@
         <label class="col-2 col-form-label">{{ 'user.gender' | translate | titlecase }}</label>
         <sector51-combo class="col-4 p-0"
           [items]="genders" [itemToText]="genderText" [itemToValue]="genderText"
-          [selected]="user.sex" (onchange)="user.sex = $event">
+          [selected]="!user.sex" (onchange)="user.sex = $event">
         </sector51-combo>
     </div>
     <hr>

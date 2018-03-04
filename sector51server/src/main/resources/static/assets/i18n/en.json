@@ -70,5 +70,8 @@
   "key": "key",
   "settings": "settings",
   "services": "services",
-  "reports": "reports"
+  "reports": "reports",
+  "activeUsers": "exist clients",
+  "type": "type",
+  "selder": "selder"
 }
