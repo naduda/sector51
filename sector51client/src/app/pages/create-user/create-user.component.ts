@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Location } from '@angular/common';
 import { NgModel } from '@angular/forms/src/forms';
 import { HttpClient } from '@angular/common/http';
@@ -18,6 +18,16 @@ import { AbonementComponent } from '../modal/abonement/abonement.component';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
+  @Input() set profile(value) {
+    this.user = value;
+    if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
+    this.user.sex = this.user['sex'] ? ESex.MAN : ESex.WOMAN;
+    this.user.authorities = this.user['roles'];
+    this.usersNotExist = false;
+    this.buttonText = this.user.name ? 'update' : 'create';
+    this.user['password'] = this.user['password2'] = '';
+    this.isBack = false;
+  }
   allRoles: IRole[];
   created: boolean;
   user: Profile;
@@ -26,14 +36,17 @@ export class CreateUserComponent implements OnInit {
   buttonText: string;
   isFirst: boolean;
   private idUser: number;
+  private isBack = true;
 
   constructor(private http: HttpClient, private location: Location,
               private route: ActivatedRoute, public common: CommonService,
               private modalService: ModalService) {
     this.buttonText = 'create';
+    this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
   }
 
   ngOnInit() {
+    if (this.user) return;
     let code;
     this.route.params
       .do(params => this.idUser = params['idUser'] || -1)
@@ -58,7 +71,6 @@ export class CreateUserComponent implements OnInit {
         this.cardRedonly = code;
         this.user = user;
         if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
-        this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
       })
       .flatMap(user => this.allRoles === null ? this.http.get<any[]>(REST_API.GET.roles) : of(this.allRoles))
       .do(pairs => {
@@ -122,6 +134,7 @@ export class CreateUserComponent implements OnInit {
 
   private onResult(response) {
     if (ERestResult[ERestResult.OK] === response.result) {
+      if (!this.isBack) return;
       this.common.profile = null;
       this.location.back();
     } else {

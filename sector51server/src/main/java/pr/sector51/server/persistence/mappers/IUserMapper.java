@@ -39,7 +39,7 @@ public interface IUserMapper {
   UserSecurity getUserSecurityById(Timestamp value);
 
   @Select("SELECT ui.*, us.roles, box.number, box.time FROM usersecurity AS us, userinfo AS ui " +
-          "LEFT JOIN box ON ui.card = box.card WHERE us.created = ui.created;")
+          "LEFT JOIN box ON ui.card = box.card AND box.idtype < 3 WHERE us.created = ui.created;")
   List<UserInfo> getUsersInfo();
 
   @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "

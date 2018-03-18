@@ -34,7 +34,7 @@
     "@ngx-translate/http-loader": "^2.0.0",
     "angular-split": "^1.0.0-rc.0",
     "angular2-websocket": "^0.9.5",
-    "bootstrap": "^4.0.0-alpha.6",
+    "bootstrap": "^4.0.0",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "primeng": "^5.2.0",

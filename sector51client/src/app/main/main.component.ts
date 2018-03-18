@@ -51,7 +51,7 @@ export class MainComponent implements OnInit {
     })
     .flatMap(params => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
     .do(boxes => {
-      this.boxes = boxes;
+      this.boxes = boxes.filter(b => b.idtype < 3);
       this.common.users.forEach(u => {
         const boxes = this.boxes.filter(b => b.card === u.card);
         if (boxes) {

@@ -4,7 +4,7 @@
     <div class="form-check pb-1 pointer-faded" *ngFor="let r of _items; let idx = index;">
       <label class="form-check-label justify-content-start pointer-faded w-100" (click)="changeValue(r)">
         <input class="form-check-input pointer-faded" type="radio"
-        [checked]="_items[idx] === item" [value]="itemValue(r)">
+        [checked]="_items[idx] === item" [value]="itemValue(r)" style="display: none;">
         <span class="pointer-faded">{{ itemText(r) }}</span>
       </label>
     </div>

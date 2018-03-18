@@ -15,7 +15,7 @@ export class CartComponent implements OnInit {
   public cash: number;
   public isCancel: boolean;
 
-  constructor(private common: CommonService, private http: HttpClient) { }
+  constructor(public common: CommonService, private http: HttpClient) { }
 
   ngOnInit() {
     this.userProduct = RESERVED_PRODUCTS_ID;

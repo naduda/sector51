@@ -69,7 +69,7 @@ export class BoxesComponent implements OnInit, OnDestroy {
     this.boxes = this.boxNumbers.filter(b => b.idtype === this.type.id).map((b: IBox) => {
       b.time = b.card && b.time ? new Date(b.time) : undefined;
       if (b.time) {
-        const user = this.common.users.find(u => +u['created'] === +b.card);
+        const user = this.common.users.find(u => u.card === b.card);
         b['tooltip'] = user.surname + ' ' + user.name + '\n';
         let month: string = b.time.getMonth().toString() + 1;
         month = +month < 10 ? '0' + month : month;
@@ -120,19 +120,19 @@ export class BoxesComponent implements OnInit, OnDestroy {
         this.http.post(REST_API.POST.boxnumber, { idtype: this.type.id, number: i }) :
         this.http.delete(REST_API.DELETE.boxnumber(this.type.id, i));
       httpAction.subscribe((response: IResponse) => {
-          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            if (insert) {
-              this.boxNumbers.push({ idtype: this.type.id, number: +response.message });
-            } else {
-              const removed = response.message as IBox;
-              const bNumber = this.boxNumbers.find(b => b.idtype === removed.idtype && b.number === removed.number);
-              this.boxNumbers.splice(this.boxNumbers.indexOf(bNumber), 1);
-            }
-            this.refreshBoxes();
+        if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+          if (insert) {
+            this.boxNumbers.push({ idtype: this.type.id, number: +response.message });
           } else {
-            alert('Error');
+            const removed = response.message as IBox;
+            const bNumber = this.boxNumbers.find(b => b.idtype === removed.idtype && b.number === removed.number);
+            this.boxNumbers.splice(this.boxNumbers.indexOf(bNumber), 1);
           }
-        });
+          this.refreshBoxes();
+        } else {
+          alert('Error');
+        }
+      });
     }
   }
 

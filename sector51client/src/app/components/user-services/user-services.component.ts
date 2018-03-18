@@ -23,7 +23,7 @@ export class UserServicesComponent implements OnInit {
       }
     });
   }
-  private _user: Profile;
+  _user: Profile;
   trainers: Profile[];
   service: IService;
   userServices: IUserService[];

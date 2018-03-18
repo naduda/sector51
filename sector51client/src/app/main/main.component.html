@@ -9,9 +9,6 @@
     <button (click)="sendEmail()">SendEmail</button>
   </div>
   <div class="d-inline-block bg-faded p-2" *ngIf="user && permissions">
-    <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
-      {{ 'properties' | translate | titlecase }}
-    </a>
     <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
       {{ 'delete' | translate | uppercase }}
     </button>
@@ -63,6 +60,9 @@
         </p-tabPanel>
         <p-tabPanel [header]="'services' | translate | titlecase">
           <sector51-user-services [user]="user"></sector51-user-services>
+        </p-tabPanel>
+        <p-tabPanel [header]="'properties' | translate | titlecase">
+          <sector51-create-user [profile]="user"></sector51-create-user>
         </p-tabPanel>
       </p-tabView>
 

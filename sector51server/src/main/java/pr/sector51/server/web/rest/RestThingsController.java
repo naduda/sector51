@@ -3,6 +3,7 @@ package pr.sector51.server.web.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pr.sector51.server.persistence.ThingsDao;
+import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
@@ -13,6 +14,8 @@ import java.util.List;
 public class RestThingsController extends RestCommon {
   @Autowired
   private ThingsDao thingsDao;
+  @Autowired
+  private UserDao userDao;
 
   // DELETE ==========================================================================
   @RequestMapping(value = "/delete/boxType/{id}", method = RequestMethod.DELETE)
@@ -100,7 +103,8 @@ public class RestThingsController extends RestCommon {
         UserServise51 inserted = thingsDao.insertUserService(userService);
         if (userService.getIdService() == 2) {
           BoxNumber box = new BoxNumber(3, Integer.parseInt(userService.getValue()));
-          box.setCard(String.valueOf(userService.getIdUser().getTime()));
+          UserInfo userInfo = userDao.getUserInfoById(userService.getIdUser());
+          box.setCard(userInfo.getCard());
           thingsDao.updateBox(box, false);
         }
         History history = new History(2, inserted.getIdUser(), inserted.getIdService() + "_" + userService.getDesc());

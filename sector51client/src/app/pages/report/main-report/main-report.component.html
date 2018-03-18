@@ -3,17 +3,17 @@
   <hr>
   <div class="row m-0">
     <div class="col d-flex align-items-center">
-      <label>{{ 'period' | translate | titlecase }}</label>
-      <label>{{ 'from' | translate | lowercase }}</label>
+      <label class="mr-2 mb-0">{{ 'period' | translate | titlecase }}</label>
+      <label class="mr-2 mb-0">{{ 'from' | translate | lowercase }}</label>
       <p-calendar [(ngModel)]="dtBeg" (onSelect)="changeDate($event)" dateFormat="dd.mm.yy" showIcon="true" class="mr-5" [inputStyle]="{'width':'7rem'}"
         readonlyInput="true"></p-calendar>
-      <label>{{ 'to' | translate | lowercase }}</label>
+      <label class="mr-2 mb-0">{{ 'to' | translate | lowercase }}</label>
       <p-calendar [(ngModel)]="dtEnd" (onSelect)="changeDate($event)" dateFormat="dd.mm.yy" showIcon="true" [inputStyle]="{'width':'7rem'}"
         [icon]="icon" readonlyInput="true"></p-calendar>
     </div>
     <div class="col d-flex align-items-center">
-      <label for="filter" class="mr-2">Filter:</label>
-      <p-multiSelect [options]="events" [(ngModel)]="selectedEvents" [panelStyle]="{ width:'15em' }"></p-multiSelect>
+      <label for="filter" class="mr-2 mb-0">Filter:</label>
+      <p-multiSelect class="mt-1" [options]="events" [(ngModel)]="selectedEvents" [panelStyle]="{ width:'15em' }"></p-multiSelect>
     </div>
   </div>
   <hr>
