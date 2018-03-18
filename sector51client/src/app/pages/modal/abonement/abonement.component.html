@@ -9,21 +9,18 @@
     <label for="dtBeg" class="text-right pr-4 w-20 justify-content-end">
       <strong>{{ 'Since' | translate | titlecase }}:</strong>
     </label>
-    <input type="date" class="form-control mb-2 w-80" name="dtBeg" [value]="dtBeg | date:'yyyy-MM-dd'"
-            (input)="dtBeg=parseDate($event.target.value)">
+    <p-calendar class="mb-2 w-80" [(ngModel)]="dtBeg" name="dtBeg" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
     <label for="dtEnd" class="text-right pr-4 w-20 justify-content-end">
       <strong>{{ 'Till' | translate | titlecase }}:</strong>
     </label>
-    <input type="date" class="form-control mb-2 w-80" name="dtEnd" [value]="dtEnd | date:'yyyy-MM-dd'"
-            (input)="dtEnd=parseDate($event.target.value)">
+    <p-calendar class="mb-2 w-80" [(ngModel)]="dtEnd" name="dtEnd" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
     <label for="cash" class="text-right pr-4 w-20 justify-content-end">
       <strong>{{ 'Cash' | translate | titlecase }}:</strong>
     </label>
-    <input type="number" class="form-control mb-2 w-80" [(ngModel)]="cash" name="cash" required>
-    <label *ngIf="service.id === 1" for="trainer" class="d-inline-block text-right pr-4 w-20">
-      <strong>{{ 'trainer' | translate | titlecase }}:</strong>
-    </label>
-    <sector51-combo class="d-inline-block w-80" *ngIf="service.id === 1"
+    <div class="d-inline w-80 mb-2">
+      <input type="number" class="form-control" style="width: 7em!important;" [(ngModel)]="cash" name="cash" required>
+    </div>
+    <sector51-combo class="d-inline-block w-100" *ngIf="service.id === 1"
       [items]="trainers" [itemToText]="trainerText" [itemToValue]="'created'" (onchange)="trainer = $event">
     </sector51-combo>
 

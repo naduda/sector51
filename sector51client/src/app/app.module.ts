@@ -1,5 +1,6 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
@@ -12,6 +13,8 @@ import { AngularSplitModule } from 'angular-split';
 import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { TooltipModule } from 'primeng/tooltip';
+import { CalendarModule } from 'primeng/calendar';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -66,6 +69,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     TranslateModule.forRoot({
@@ -80,6 +84,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TableModule,
     TabViewModule,
     TooltipModule,
+    CalendarModule,
+    MultiSelectModule,
     Sector51RoutingModule
   ],
   entryComponents: [

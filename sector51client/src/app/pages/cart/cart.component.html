@@ -53,7 +53,7 @@
     </ng-template>
   </p-table>
 
-  <form class="w-100" (ngSubmit)="f.form.valid && pay()" #f="ngForm">
+  <form class="fixed-bottom w-100 p-2" (ngSubmit)="f.form.valid && pay()" #f="ngForm">
     <hr [hidden]="products.length === 0">
     <table class="table table-sm table-striped table-bordered">
       <tbody *ngIf="user">
@@ -79,10 +79,10 @@
     <hr [hidden]="!user">
 
     <div class="text-right">
-      <button type="submit" class="btn btn-primary" [disabled]="!enaughtMony" name="submit">
+      <button type="submit" class="btn btn-primary" [disabled]="!this.user || !enaughtMony" name="submit">
         {{ 'pay' | translate | uppercase }}
       </button>
-      <button class="btn btn-danger" (click)="clear()" name="cancel">
+      <button class="btn btn-danger" (click)="clear()" [disabled]="common.cartProducts.length < 1" name="cancel">
         {{ 'clear' | translate | uppercase }}
       </button>
     </div>

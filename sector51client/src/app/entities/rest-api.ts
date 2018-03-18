@@ -39,7 +39,7 @@ export const REST_API = {
     /** /api/userservices/{idUser: Timestamp} */
     userServices: (idUser: number) => '/api/userservices/' + idUser,
     /** /api/history */
-    history: '/api/history',
+    history: (dtBeg: Date, dtEnd: Date) => '/api/history/' + dtBeg.getTime() + '_' + dtEnd.getTime(),
     /** /api/events */
     events: '/api/events'
   },

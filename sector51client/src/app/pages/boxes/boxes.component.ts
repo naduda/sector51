@@ -19,11 +19,12 @@ import { Profile } from '../../entities/profile';
   styleUrls: ['./boxes.component.css']
 })
 export class BoxesComponent implements OnInit, OnDestroy {
-  public types: IRole[];
-  public type: IRole;
-  public boxNumbers: IBox[];
-  public boxes: IBox[];
-  public number: string;
+  types: IRole[];
+  type: IRole;
+  boxNumbers: IBox[];
+  boxes: IBox[];
+  number: string;
+  tooltip: string;
   private subscription: Subscription;
   private user: Profile;
 
@@ -65,8 +66,16 @@ export class BoxesComponent implements OnInit, OnDestroy {
   }
 
   private refreshBoxes() {
-    this.boxes = this.boxNumbers.filter(b => b.idtype === this.type.id).map(b => {
+    this.boxes = this.boxNumbers.filter(b => b.idtype === this.type.id).map((b: IBox) => {
       b.time = b.card && b.time ? new Date(b.time) : undefined;
+      if (b.time) {
+        const user = this.common.users.find(u => +u['created'] === +b.card);
+        b['tooltip'] = user.surname + ' ' + user.name + '\n';
+        let month: string = b.time.getMonth().toString() + 1;
+        month = +month < 10 ? '0' + month : month;
+        b['tooltip'] += b.time.getDate() + '.' + month + '.' + b.time.getFullYear() + ' ';
+        b['tooltip'] += b.time.getHours() + ':' + b.time.getMinutes();
+      }
       return b;
     });
     this.boxes.sort((a, b) => a.number - b.number);

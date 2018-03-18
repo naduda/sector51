@@ -1,37 +1,37 @@
-<div class="pt-2">
-  <div class="d-inline-block mr-4">
+<div class="p-2">
+  <div class="d-inline-flex align-items-center mr-4">
     <label for="boxtype" class="text-right pr-2">
       <strong>Type:</strong>
     </label>
-    <div ngbDropdown class="d-inline-block mb-2">
+    <div ngbDropdown class="d-inline-block mb-2 mr-2">
       <button type="button" class="nav-item nav-link text-right rounded btn bg-faded w-100 pr-2" ngbDropdownToggle *ngIf="type">
         <span class="text-center w-100">{{ type.name }}</span>
       </button>
       <div ngbDropdownMenu *ngIf="type">
-        <div class="form-check" *ngFor="let p of types">
-          <label class="form-check-label ml-2 w-100" (click)="changeType(p)">{{ p.name }}</label>
+        <div class="pointer" *ngFor="let p of types">
+          <label class="ml-2 pointer" (click)="changeType(p)">{{ p.name }}</label>
         </div>
       </div>
     </div>
-    <i class="fa fa-fw fa-edit text-warning" (click)="insertOrEditBoxType(false)"></i>
+    <i class="fa fa-fw fa-edit fa-lg text-warning pointer" (click)="insertOrEditBoxType(false)"></i>
   </div>
   <div class="d-inline-block">
-    <form class="form-inline d-inline-flex align-items-baseline">
+    <form class="form-inline d-inline-flex align-items-center">
       <label for="name" class="text-right pr-2">
         <strong>{{ 'name' | translate | titlecase }}:</strong>
       </label>
       <input type="text" class="form-control mr-2 w-50" name="name" [(ngModel)]="number"
         #nModel="ngModel" pattern="[0-9]{1,2}([\-][0-9]{1,2})*" required>
-      <i class="fa fa-fw fa-plus-square text-primary" (click)="insertOrRemoveBoxNumber(true)" *ngIf="nModel.valid"></i>
-      <i class="fa fa-fw fa-trash text-danger" (click)="insertOrRemoveBoxNumber(false)" *ngIf="nModel.valid"></i>
+      <i class="fa fa-fw fa-lg fa-plus-square text-primary pointer" (click)="insertOrRemoveBoxNumber(true)" *ngIf="nModel.valid"></i>
+      <i class="fa fa-fw fa-lg fa-trash text-danger pointer" (click)="insertOrRemoveBoxNumber(false)" *ngIf="nModel.valid"></i>
     </form>
   </div>
 </div>
 <hr>
-<div class="d-flex flex-wrap">
+<div class="d-flex flex-wrap p-5">
   <div id="boxes" class="d-inline-flex m-2 p-3 rounded text-white"
     [ngClass]="{ 'bg-primary': !p.card, 'bg-danger': p.card }"
-    placement="top" [ngbTooltip]="p.time | date:'dd.MM.yyyy HH:mm'"
+    placement="top" [ngbTooltip]="p.tooltip"
     *ngFor="let p of boxes;" (click)="updateBox(p)">
     {{ p.number | number:'2.0-0' }}
   </div>

@@ -13,16 +13,31 @@ export class MainReportComponent implements OnInit {
   history: IHistory[];
   selectedHistory: IHistory;
   products: IProduct[];
+  events: any[];
+  selectedEvents: number[];
+  dtBeg: Date;
+  dtEnd: Date;
+  icon: string;
 
-  constructor(private http: HttpClient,
-              private common: CommonService) {
+  constructor(private http: HttpClient, private common: CommonService) {
     this.history = [];
+    this.selectedEvents = [ 5 ];
+    this.events = this.common.events.map(function(e) { return { label: e.desc, value: e.id }; });
+    this.dtEnd = new Date();
+    this.dtBeg = new Date(this.dtEnd.getFullYear(), this.dtEnd.getMonth(), this.dtEnd.getDate());
+    this.dtEnd = new Date(this.dtBeg.getTime() + 24 * 60 * 60 * 1000);
+    this.icon = 'fa-calendar-check-o';
   }
 
   ngOnInit() {
     this.http.get<IProduct[]>(REST_API.GET.products)
     .do(products => this.products = products)
-    .flatMap(products => this.http.get<IHistory[]>(REST_API.GET.history))
+    .subscribe(products => this.changeDate(null));
+  }
+
+  changeDate(date: Date) {
+    this.history = [];
+    this.http.get<IHistory[]>(REST_API.GET.history(this.dtBeg, this.dtEnd))
     .subscribe(result => {
       result.forEach(h => {
         const user = h.idUser ? this.common.users.find(u => u['created'] === h.idUser) : undefined;

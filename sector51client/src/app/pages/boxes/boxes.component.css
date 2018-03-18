@@ -1,4 +1,3 @@
-i.fa:hover, #boxes:hover { cursor: pointer; }
 #boxes:hover { color: #ffc107 !important; }
 
 .ng-valid[required], .ng-valid.required {

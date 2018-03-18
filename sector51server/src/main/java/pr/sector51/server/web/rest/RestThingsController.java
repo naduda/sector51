@@ -52,9 +52,12 @@ public class RestThingsController extends RestCommon {
     return events;
   }
 
-  @RequestMapping("/history")
-  public List<History> history() {
-    return thingsDao.getHistory();
+  @RequestMapping("/history/{period}")
+  public List<History> history(@PathVariable("period") String period) {
+    String[] times = period.split("_");
+    Timestamp dtBeg = new Timestamp(Long.parseLong(times[0]));
+    Timestamp dtEnd = new Timestamp(Long.parseLong(times[1]));
+    return thingsDao.getHistory(dtBeg, dtEnd);
   }
 
   @RequestMapping("/boxnumbers")

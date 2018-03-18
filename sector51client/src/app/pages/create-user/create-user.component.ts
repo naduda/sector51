@@ -57,6 +57,7 @@ export class CreateUserComponent implements OnInit {
         user.card = code || user.card;
         this.cardRedonly = code;
         this.user = user;
+        if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
         this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
       })
       .flatMap(user => this.allRoles === null ? this.http.get<any[]>(REST_API.GET.roles) : of(this.allRoles))
@@ -77,8 +78,6 @@ export class CreateUserComponent implements OnInit {
 
   genderText = (sex: ESex): string => ESex[sex];
   get genders(): ESex[] { return [ ESex.MAN, ESex.WOMAN ]; }
-
-  parseDate = (dateString: string): Date => dateString ? new Date(dateString) : null;
 
   get isNotTrainerOrSelder() {
     return this.user.authorities !== ERole[ERole.TRAINER] &&

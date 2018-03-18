@@ -32,7 +32,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
   constructor(public activeModal: NgbActiveModal, private http: HttpClient,
               private common: CommonService, private modalService: ModalService) {
     this.cash = 0;
-    this.boxNumber = -1;
+    this.boxNumber = 1;
   }
 
   ngOnInit() {
@@ -41,7 +41,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
       this.boxes.sort((a, b) => a.number - b.number);
     });
     this.trainers = this.common.users.filter(u => u['roles'] === ERole[ERole.TRAINER]);
-    this.trainers.unshift(new Profile(null, '-', ''));
+    this.trainers.unshift(new Profile(null, 'Select trainer...', ''));
     const oldTrainer = this.service.id === 1 ? this.common.users.find(u => u['created'] === +this.service['value']) : undefined;
     const oldTrainerId = oldTrainer ? oldTrainer['created'] : 0;
     this.trainer = this.trainers.find(t => t['created'] === oldTrainerId);
@@ -49,13 +49,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
     if (this.isUpdate) return;
     this.dtBeg = new Date();
     this.dtEnd = new Date();
-  }
-
-  private date2string(d: Date): string {
-    let res = d.getFullYear() + '-';
-    res += (d.getMonth() > 8 ? '' : '0') + (d.getMonth() + 1) + '-';
-    res += d.getDate();
-    return res;
+    this.dtEnd.setMonth(this.dtBeg.getMonth() < 11 ? this.dtBeg.getMonth() + 1 : 0);
   }
 
   btOkClick(instance: any, onSuccess) {
@@ -126,10 +120,6 @@ export class AbonementComponent implements OnInit, IModalWindow {
       this.dtEnd = new Date(this.service['dtEnd']);
       this.service.name = this.service['desc'];
     }
-  }
-
-  parseDate(dateString: string): Date {
-    return dateString ? new Date(dateString) : null;
   }
 
   trainerText(trainer: Profile) {

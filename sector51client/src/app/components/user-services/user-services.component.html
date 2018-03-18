@@ -15,7 +15,8 @@
   </form>
 
   <hr>
-  <p-table [value]="userServices" [resizableColumns]="true" selectionMode="single" [(selection)]="userService" sortMode="multiple">
+  <p-table [value]="userServices" [resizableColumns]="true" selectionMode="single"
+    [(selection)]="userService" sortMode="multiple">
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center" width="50">№</th>
@@ -40,8 +41,7 @@
         <td class="text-center" pEditableColumn>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input type="date" class="form-control" name="dtBeg"
-                [value]="us.dtBeg | date:'yyyy-MM-dd'" (input)="us.dtBeg=parseDate($event.target.value)">
+              <p-calendar [(ngModel)]="us.dtBeg" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
             </ng-template>
             <ng-template pTemplate="output">{{ us.dtBeg | date:'dd.MM.yyyy' }}</ng-template>
           </p-cellEditor>
@@ -49,8 +49,7 @@
         <td class="text-center" pEditableColumn>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input type="date" class="form-control" name="dtEnd"
-                [value]="us.dtEnd | date:'yyyy-MM-dd'" (input)="us.dtEnd=parseDate($event.target.value)">
+              <p-calendar [(ngModel)]="us.dtEnd" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
             </ng-template>
             <ng-template pTemplate="output">{{ us.dtEnd | date:'dd.MM.yyyy' }}</ng-template>
           </p-cellEditor>

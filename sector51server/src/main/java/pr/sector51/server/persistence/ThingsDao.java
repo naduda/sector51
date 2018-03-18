@@ -123,8 +123,8 @@ public class ThingsDao extends CommonDao {
     return result;
   }
 
-  public List<History> getHistory() {
-    return thingsMapper.getHistory();
+  public List<History> getHistory(Timestamp dtBeg, Timestamp dtEnd) {
+    return thingsMapper.getHistory(dtBeg, dtEnd);
   }
 
   public List<Event> getEvents() {

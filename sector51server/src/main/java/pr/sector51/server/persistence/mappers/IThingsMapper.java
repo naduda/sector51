@@ -13,8 +13,8 @@ public interface IThingsMapper {
   @Select("SELECT * FROM box;")
   List<BoxNumber> getBoxNumbers();
 
-  @Select("SELECT * FROM history ORDER BY time;")
-  List<History> getHistory();
+  @Select("SELECT * FROM history WHERE time BETWEEN #{dtBeg} AND #{dtEnd} ORDER BY time;")
+  List<History> getHistory(@Param("dtBeg") Timestamp dtBeg, @Param("dtEnd") Timestamp dtEnd);
 
   @Delete("DELETE FROM boxtype WHERE id = #{id}; DELETE FROM box WHERE idtype = #{id};")
   int removeBoxType(@Param("id") int id);

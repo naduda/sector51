@@ -5,7 +5,8 @@ sector51-login { height: 100%; }
 
 html { font-size: 14px; }
 
-.bg-faded { background-color: #f7f7f7; }
+label.ui-multiselect-label { margin: 0 !important; }
+sector51-user-services .ui-table-resizable>.ui-table-wrapper { overflow-x: visible; }
 
 button:hover { cursor: pointer; }
 

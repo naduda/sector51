@@ -53,6 +53,8 @@ export class UserServicesComponent implements OnInit {
 
   private modifyServices(services: IUserService[]) {
     services.forEach(s => {
+      s.dtBeg = new Date(s.dtBeg);
+      s.dtEnd = new Date(s.dtEnd);
       switch (s.idService) {
         case 1:
           let trainerId = s.value && s.value.length > 0 ? +s.value : 0;
@@ -70,10 +72,6 @@ export class UserServicesComponent implements OnInit {
     const trainer = this.trainers[trainerIndex];
     service.value = trainer['created'];
     service['valueDesc'] = trainer ? trainer.surname + ' ' + trainer.name : undefined;
-  }
-
-  parseDate(dateString: string): Date {
-    return dateString ? new Date(dateString) : null;
   }
 
   addService() {

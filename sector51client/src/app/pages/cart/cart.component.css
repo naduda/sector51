@@ -20,10 +20,6 @@
 .count { width: 4rem; }
 .capt { width: calc(50% - 10rem); }
 
-form {
-  position: absolute;
-  bottom: 0;
-}
 thead { font-size: 0.9rem; }
 
 table { table-layout:fixed; }

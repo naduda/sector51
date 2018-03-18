@@ -19,10 +19,10 @@ export interface IModalWindow {
   btCancelClick(reason: any, instance: any): any;
   init(props: any): void;
 }
-export interface IBox { idtype: number; number: number; card?: string; time?: any; }
+export interface IBox { idtype: number; number: number; card?: string; time?: Date; }
 export interface IResponse { result: string; message: any; }
 export interface IService { id: number; name: string; desc: string; price: number; }
-export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: number; dtEnd: number; value: string; }
+export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: Date; dtEnd: Date; value: string; }
 export interface IHistory { id: number; idEvent: number; idUser: number; time: number; desc: string; price: number; }
 export interface IEvent { id: number; name: string; desc: string; }
 
