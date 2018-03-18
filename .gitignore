@@ -9,3 +9,4 @@ sector51client/.vscode/tasks.json
 docker/test/uninstall_scanner.bat
 docker/test/settings.properties
 docker/test/install.bat
+docker/test/security.properties
