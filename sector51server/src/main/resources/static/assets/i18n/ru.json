@@ -73,5 +73,6 @@
   "reports": "отчеты",
   "activeUsers": "сейчас в зале",
   "type": "тип",
-  "selder": "продавец"
+  "selder": "продавец",
+  "notifications": "уведомления"
 }
