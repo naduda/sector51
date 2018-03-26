@@ -73,6 +73,8 @@ export const REST_API = {
     /** /api/update/userservice */
     userService: '/api/update/userservice',
     /** /api/update/service */
-    service: '/api/update/service'
+    service: '/api/update/service',
+    /** /api/update/events/{userId_field} */
+    events: (userId_field) => '/api/update/events/' + userId_field
   }
 };

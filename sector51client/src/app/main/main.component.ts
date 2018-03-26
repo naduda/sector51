@@ -25,6 +25,8 @@ export class MainComponent implements OnInit {
   public wWidth: number;
   public sizeValue: number[];
   public letter: any;
+  public isOwner: boolean;
+  public selectedEvents: number[];
   private boxes: IBox[];
 
   constructor(private http: HttpClient, private route: ActivatedRoute,
@@ -36,6 +38,13 @@ export class MainComponent implements OnInit {
       'body': 'Test Message',
       'recipient': 'pavel.naduda@nik.net.ua'
     };
+    this.isOwner = common.profile.role === ERole.OWNER;
+    console.log(common.events)
+  }
+
+  applyNotifications() {
+    this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents })
+      .subscribe(result => console.log(result))
   }
 
   sendEmail() {

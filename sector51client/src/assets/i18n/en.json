@@ -73,5 +73,6 @@
   "reports": "reports",
   "activeUsers": "exist clients",
   "type": "type",
-  "selder": "selder"
+  "selder": "selder",
+  "notifications": "notifications"
 }

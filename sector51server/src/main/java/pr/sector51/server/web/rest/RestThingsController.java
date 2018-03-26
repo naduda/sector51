@@ -1,6 +1,8 @@
 package pr.sector51.server.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import pr.sector51.server.persistence.ThingsDao;
 import pr.sector51.server.persistence.UserDao;
@@ -8,6 +10,7 @@ import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/api")
 @RestController
@@ -143,7 +146,8 @@ public class RestThingsController extends RestCommon {
   public Sector51Result updateBox(@RequestBody UserServise51 userService) {
     boolean trResult = thingsDao.runTransaction(() -> {
       thingsDao.updateUserService(userService);
-      History history = new History(3, userService.getIdUser(), userService.getIdService() + "_" + userService.getDesc());
+      String historyDesc = userService.getIdService() + "_" + userService.getDesc();
+      History history = new History(3, userService.getIdUser(), historyDesc);
       thingsDao.insert2history(history);
     });
     return new Sector51Result(trResult ? ESector51Result.OK : ESector51Result.ERROR);
@@ -152,5 +156,39 @@ public class RestThingsController extends RestCommon {
   @RequestMapping(value = "/update/service", method = RequestMethod.PUT)
   public Sector51Result updateService(@RequestBody Service51 servise) {
     return thingsDao.updateService(servise);
+  }
+
+  @RequestMapping(value = "/update/events/{field}", method = RequestMethod.PUT)
+  public Sector51Result updateEvents(@PathVariable("field") String field, @RequestBody Map<String, List<Integer>> eventIds) {
+    if (field == null) return new Sector51Result(ESector51Result.ERROR);
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    UserSecurity currentUserSecurity = (UserSecurity) auth.getDetails();
+    long userId = currentUserSecurity.getCreated().getTime();
+    List<Integer> ids = eventIds.get("ids");
+
+    Sector51Result httpResult = new Sector51Result(ESector51Result.OK);
+
+    boolean result = thingsDao.runTransaction(() -> {
+      List<Event> events = events();
+      events.forEach(e -> {
+        boolean isAdd = ids.contains(e.getId());
+        switch (field.toLowerCase()) {
+          case "email":
+            String email = e.getEmail() == null ? "" : e.getEmail();
+            email = email.replace(String.valueOf(userId), "").replace(",,", ",");
+            if (isAdd) {
+              email += "," + userId;
+            }
+            if (email.startsWith(",")) email = email.substring(1);
+            if (email.endsWith(",")) email = email.substring(0, email.length() - 1);
+            e.setEmail(email);
+            break;
+        }
+        if (thingsDao.updateEvent(e) < 1) httpResult.setResult(ESector51Result.ERROR);
+      });
+    });
+
+    httpResult.setResult(result ? ESector51Result.OK : ESector51Result.ERROR);
+    return httpResult;
   }
 }

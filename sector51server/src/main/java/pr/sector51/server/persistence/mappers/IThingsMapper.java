@@ -60,4 +60,7 @@ public interface IThingsMapper {
 
   @Select("SELECT * FROM event;")
   List<Event> getEvents();
+
+  @Update("UPDATE event SET name = #{name}, \"desc\" = #{desc}, email = #{email} WHERE id = #{id};")
+  int updateEvent(Event event);
 }

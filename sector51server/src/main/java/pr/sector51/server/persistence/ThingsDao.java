@@ -130,4 +130,8 @@ public class ThingsDao extends CommonDao {
   public List<Event> getEvents() {
     return thingsMapper.getEvents();
   }
+
+  public int updateEvent(Event event) {
+    return thingsMapper.updateEvent(event);
+  }
 }

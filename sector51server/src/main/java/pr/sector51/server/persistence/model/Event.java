@@ -4,6 +4,7 @@ public class Event {
     private int id;
     private String name;
     private String desc;
+    private String email;
 
     public Event() {}
 
@@ -40,5 +41,13 @@ public class Event {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
