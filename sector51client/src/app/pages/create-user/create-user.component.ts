@@ -19,6 +19,9 @@ import { AbonementComponent } from '../modal/abonement/abonement.component';
 })
 export class CreateUserComponent implements OnInit {
   @Input() set profile(value) {
+    if (!value) {
+      return;
+    }
     this.user = value;
     if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
     this.user.sex = this.user['sex'] ? ESex.MAN : ESex.WOMAN;

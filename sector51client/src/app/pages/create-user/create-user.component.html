@@ -1,5 +1,5 @@
 <div class="row m-0">
-  <form class="mx-auto p-3 rounded align-self-center" *ngIf="allRoles" #userForm="ngForm"
+  <form class="mx-auto p-3 rounded align-self-center" *ngIf="allRoles && user" #userForm="ngForm"
     (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
     <div class="form-group row pr-3">
       <label for="name" class="col-2 col-form-label">{{ 'user.name' | translate | titlecase }}</label>

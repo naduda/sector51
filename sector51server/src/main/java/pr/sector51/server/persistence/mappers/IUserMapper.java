@@ -43,10 +43,6 @@ public interface IUserMapper {
   List<UserInfo> getUsersInfo();
 
   @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "
-      + "WHERE ui.created = #{value} AND us.created = ui.created")
-  UserInfo getUserInfoById(Timestamp value);
-
-  @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "
       + "WHERE ui.card = #{value} AND us.created = ui.created")
   UserInfo getUserInfoByCard(String value);
 

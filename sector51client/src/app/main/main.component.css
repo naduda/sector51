@@ -1,12 +1,12 @@
 div.mt-3 {
-  height: calc(100% - 3rem);
-  max-height: calc(100% - 3rem);
-  min-height: calc(100% - 3rem);
+  height: calc(100% - 1rem);
+  max-height: calc(100% - 1rem);
+  min-height: calc(100% - 1rem);
 }
 
 split {
-  max-height: calc(100% - 4rem);
-  min-height: calc(100% - 4rem);
+  max-height: calc(100% - 1.5rem);
+  min-height: calc(100% - 1.5rem);
 }
 
 div.rounded, .card { height: 100%; }

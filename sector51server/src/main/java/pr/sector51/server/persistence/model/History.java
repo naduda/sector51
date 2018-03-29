@@ -1,6 +1,8 @@
 package pr.sector51.server.persistence.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class History {
   private int id;
@@ -16,6 +18,13 @@ public class History {
     this.idEvent = idEvent;
     this.idUser = idUser;
     this.desc = desc;
+  }
+
+  @Override
+  public String toString() {
+    String timeStr = (time == null ? LocalDateTime.now() : time.toLocalDateTime())
+            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+    return timeStr + " - " + desc;
   }
 
   public int getId() {

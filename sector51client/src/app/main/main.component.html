@@ -1,18 +1,9 @@
 <div class="mt-3" (window:resize)="wWidth = $event.target.innerWidth">
-  <div class="d-inline-block test">
-    <label for="recipient"></label>
-    <input type="text" name="recipient" [(ngModel)]="letter.recipient">
-    <label for="title"></label>
-    <input type="text" name="title" [(ngModel)]="letter.title">
-    <label for="body"></label>
-    <input type="text" name="body" [(ngModel)]="letter.body">
-    <button (click)="sendEmail()">SendEmail</button>
-  </div>
-  <div class="d-inline-block bg-faded p-2" *ngIf="user && permissions">
+  <!-- <div class="d-inline-block bg-faded p-2" *ngIf="user && permissions">
     <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
       {{ 'delete' | translate | uppercase }}
     </button>
-  </div>
+  </div> -->
   <hr>
   <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3" (dragEnd)="onDragEnd(0, $event)" *ngIf="sizeValue">
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
@@ -28,7 +19,7 @@
     </split-area>
 
     <split-area [size]="sizeValue[1]" [ngClass]="{ 'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth <= 540 }">
-      <p-tabView [activeIndex]="3">
+      <p-tabView [activeIndex]="0">
         <p-tabPanel [header]="'activeUsers' | translate | titlecase">
           <div>
             <p-table [value]="activeUsers" [resizableColumns]="true" selectionMode="single" [(selection)]="activeUsers[selectedUserId]"
@@ -76,9 +67,9 @@
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-event>
-              <tr [pSelectableRow]="event.id">
+              <tr [pSelectableRow]="event">
                 <td>
-                  <p-tableCheckbox [value]="event.id"></p-tableCheckbox>
+                  <p-tableCheckbox [value]="event"></p-tableCheckbox>
                 </td>
                 <td>{{ event.desc }}</td>
               </tr>

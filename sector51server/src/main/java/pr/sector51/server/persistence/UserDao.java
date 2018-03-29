@@ -120,11 +120,6 @@ public class UserDao extends CommonDao implements IUserMapper {
   }
 
   @Override
-  public UserInfo getUserInfoById(Timestamp value) {
-    return userMapper.getUserInfoById(value);
-  }
-
-  @Override
   public UserInfo getUserInfoByCard(String value) {
     UserInfo user = userMapper.getUserInfoByCard(value);
     if (user != null) {

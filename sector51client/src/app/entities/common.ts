@@ -24,7 +24,7 @@ export interface IResponse { result: string; message: any; }
 export interface IService { id: number; name: string; desc: string; price: number; }
 export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: Date; dtEnd: Date; value: string; }
 export interface IHistory { id: number; idEvent: number; idUser: number; time: number; desc: string; price: number; }
-export interface IEvent { id: number; name: string; desc: string; }
+export interface IEvent { id: number; name: string; desc: string; email: string; }
 
 export enum ERole { OWNER = 0, ADMIN = 10, USER = 100, SELDER = 125, TRAINER = 150 }
 export enum ESex { MAN = 1, WOMAN = 0 }

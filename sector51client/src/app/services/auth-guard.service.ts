@@ -36,7 +36,7 @@ export class CanActivateAuthGuard implements CanActivate {
         .do(users => this.common.users = users)
         .flatMap(users => this.http.get<IService[]>(REST_API.GET.services))
         .do(services => this.common.services = services)
-        .flatMap(services => this.http.get<Profile>(REST_API.GET.profileByName(this.auth.username.replace('.', ','))))
+        .flatMap(services => this.http.get<Profile>(REST_API.GET.profileByName(this.auth.username.replace(/\./g, ','))))
         .do(user => of(this.setPermissions(route, state, user)))
         .map(user => {
           this.auth.initWebsocket(this.auth.token);

@@ -24,6 +24,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translate.get('locale')
       .subscribe(locales => this.locales = locales);
+    document.onkeypress = (event) => console.log(event);
   }
 
   onLangChange(lang: string) {

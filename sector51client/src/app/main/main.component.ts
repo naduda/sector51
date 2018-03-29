@@ -5,7 +5,7 @@ import { CommonService } from '../services/common.service';
 import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
-import { ERole, IBox } from '../entities/common';
+import { ERole, IBox, ERestResult, IResponse, IEvent } from '../entities/common';
 import { TranslateService } from '@ngx-translate/core';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
@@ -26,7 +26,7 @@ export class MainComponent implements OnInit {
   public sizeValue: number[];
   public letter: any;
   public isOwner: boolean;
-  public selectedEvents: number[];
+  public selectedEvents: IEvent[];
   private boxes: IBox[];
 
   constructor(private http: HttpClient, private route: ActivatedRoute,
@@ -39,12 +39,15 @@ export class MainComponent implements OnInit {
       'recipient': 'pavel.naduda@nik.net.ua'
     };
     this.isOwner = common.profile.role === ERole.OWNER;
-    console.log(common.events)
   }
 
   applyNotifications() {
-    this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents })
-      .subscribe(result => console.log(result))
+    this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents.map(e => e.id) })
+      .subscribe((response: IResponse) => {
+        if (ERestResult[ERestResult.OK] !== response.result) {
+          alert('Something wrong...');
+        }
+      });
   }
 
   sendEmail() {
@@ -53,6 +56,9 @@ export class MainComponent implements OnInit {
 
   ngOnInit() {
     this.permissions = this.common.profile.role < ERole.USER;
+    this.selectedEvents = this.common.events
+      .filter(e => e.email.includes(this.common.profile['created']));
+
     this.route.queryParams
     .do(params => {
       this.showAll = params['all'] === 'true';
