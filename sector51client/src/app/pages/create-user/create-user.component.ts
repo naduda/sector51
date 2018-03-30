@@ -117,7 +117,7 @@ export class CreateUserComponent implements OnInit {
 
   onSubmit() {
     this.user['roles'] = this.user.authorities;
-    if (this.user['password'] && this.user['password'].length === 0) {
+    if (this.user['password'] !== undefined && this.user['password'].length === 0) {
       delete this.user['password'];
     }
 
