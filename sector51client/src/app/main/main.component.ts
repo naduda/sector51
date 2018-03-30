@@ -77,6 +77,7 @@ export class MainComponent implements OnInit {
       });
       const spliter = this.common.fromStorage('spliter');
       this.sizeValue = spliter ? spliter.size : [ 25, 75 ];
+      console.log(this.sizeValue)
     })
     .subscribe(users => {
       this.user = this.common.users.find(u => u['created'] === this.selectedUserId);

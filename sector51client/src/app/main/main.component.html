@@ -5,7 +5,7 @@
     </button>
   </div> -->
   <hr>
-  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3" (dragEnd)="onDragEnd(0, $event)" *ngIf="sizeValue">
+  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3" (dragEnd)="onDragEnd(0, $event)" >
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
