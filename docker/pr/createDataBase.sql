@@ -64,6 +64,7 @@ CREATE TABLE event (
 	id integer NOT NULL,
 	name character varying(50),
 	"desc" character varying(50),
+	email ntext,
 	CONSTRAINT pk_event PRIMARY KEY (id)
 );
 INSERT INTO event VALUES(0, 'IN', 'Somebody in ...');
