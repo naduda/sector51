@@ -9,7 +9,7 @@
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
-          <li class="list-group-item p-2" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" (click)="changeQueryParam('user', u['created'])">
+          <li class="list-group-item p-2 pointer" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" (click)="changeQueryParam('user', u['created'])">
             <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
               {{ u.surname + ' ' + u.name }}
             </a>
@@ -31,13 +31,13 @@
                     {{ 'time' | translate | uppercase }}
                     <p-sortIcon [field]="'time'"></p-sortIcon>
                   </th>
-                  <th class="text-center" pResizableColumn>{{ 'surname' | translate | uppercase }}</th>
-                  <th class="text-center" pResizableColumn>{{ 'name' | translate | uppercase }}</th>
-                  <th class="text-center" pResizableColumn width="50">{{ 'box' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn>{{ 'user.surname' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn>{{ 'user.name' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn width="60">{{ 'box' | translate | uppercase }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-u let-rowIndex="rowIndex">
-                <tr [pSelectableRow]="u">
+                <tr [pSelectableRow]="u" [ngClass]="{ 'bg-danger': u['isFinish'], 'text-white': u['isFinish'] }">
                   <td class="text-right">{{ rowIndex + 1 }}</td>
                   <td class="text-center">{{ u['time'] | date:'HH:mm' }}</td>
                   <td>{{ u.surname }}</td>

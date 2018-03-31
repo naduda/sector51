@@ -74,5 +74,15 @@
   "activeUsers": "сейчас в зале",
   "type": "тип",
   "selder": "продавец",
-  "notifications": "уведомления"
+  "notifications": "уведомления",
+  "box": "ящик",
+  "time": "время",
+  "boxes": "ящики",
+  "history": "история",
+  "object": "объект",
+  "main-report": "полный отчёт",
+  "period": "период",
+  "from": "с",
+  "to": "по",
+  "filter": "фильтр"
 }

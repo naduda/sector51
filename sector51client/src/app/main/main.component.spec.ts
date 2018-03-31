@@ -98,7 +98,7 @@ describe('MainComponent', () => {
     expect(card).toBeDefined('card of logined user');
     et.click('split-area ul > li:nth-child(2)');
     expect(card).toBeDefined('card should be visible');
-    const buttons = et.de('div.card div.bg-faded');
+    const buttons = et.de('div.card div.bg-light');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
   }));
 
@@ -108,7 +108,7 @@ describe('MainComponent', () => {
     const card = et.de('split-area div.card');
     et.click('split-area ul > li:first-child');
     expect(card).toBeDefined('card should be visible');
-    const buttons = et.de('div.bg-faded');
+    const buttons = et.de('div.bg-light');
     expect(buttons).toBe(null, 'buttons should not be visible for USER');
   }));
 
@@ -116,7 +116,7 @@ describe('MainComponent', () => {
     currentProfile = users.findIndex(u => u.role === ERole.ADMIN);
     fixture.detectChanges();
     et.click('split-area ul > li:first-child');
-    const buttons = et.de('div.bg-faded');
+    const buttons = et.de('div.bg-light');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
     expect(location).toBeUndefined();
     et.click('button.btn-danger');

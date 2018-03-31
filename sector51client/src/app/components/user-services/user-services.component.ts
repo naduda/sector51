@@ -20,6 +20,9 @@ export class UserServicesComponent implements OnInit {
       if (ERestResult[ERestResult.OK] === response.result) {
         this.userServices = response.message;
         this.modifyServices(this.userServices);
+        const now = new Date();
+        const isFinish = this.userServices.filter(us => us.dtEnd < now).length > 0;
+        this.common.users.find(u => u['created'] === value['created'])['isFinish'] = isFinish;
       }
     });
   }

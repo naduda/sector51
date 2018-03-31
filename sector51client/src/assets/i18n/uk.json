@@ -74,5 +74,15 @@
   "activeUsers": "зараз в залi",
   "type": "тип",
   "selder": "продавець",
-  "notifications": "оповіщення"
+  "notifications": "оповіщення",
+  "box": "ящик",
+  "time": "час",
+  "boxes": "ящики",
+  "history": "iсторiя",
+  "object": "об'єкт",
+  "main-report": "повний звіт",
+  "period": "період",
+  "from": "з",
+  "to": "по",
+  "filter": "фільтр"
 }

@@ -11,23 +11,27 @@
       <p-calendar [(ngModel)]="dtEnd" (onSelect)="changeDate($event)" dateFormat="dd.mm.yy" showIcon="true" [inputStyle]="{'width':'7rem'}"
         [icon]="icon" readonlyInput="true"></p-calendar>
     </div>
-    <div class="col d-flex align-items-center">
-      <label for="filter" class="mr-2 mb-0">Filter:</label>
-      <p-multiSelect class="mt-1" [options]="events" [(ngModel)]="selectedEvents" [panelStyle]="{ width:'15em' }"></p-multiSelect>
+    <div class="col d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <label for="filter" class="mr-2 mb-0">{{ 'filter' | translate | titlecase }}:</label>
+        <p-multiSelect class="mt-1" [options]="events" [(ngModel)]="selectedEvents" [panelStyle]="{ width:'15em' }"></p-multiSelect>
+      </div>
+      <i class="fa fa-fw fa-lg fa-file-excel-o text-success pointer" (click)="dt.exportCSV()"></i>
     </div>
   </div>
   <hr>
-
-  <p-table [value]="history" [resizableColumns]="true" selectionMode="single" [(selection)]="selectedHistory" sortMode="multiple">
+  
+  <p-table #dt [value]="history" [resizableColumns]="true" selectionMode="multiple" [columns]="tableColumns"
+    [(selection)]="selectedHistory" sortMode="multiple">
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center" style="width: 175px;" [pSortableColumn]="'time'">
-          Time
+          {{ 'time' | translate | uppercase }}
           <p-sortIcon [field]="'time'"></p-sortIcon>
         </th>
-        <th class="text-center" pResizableColumn>Name</th>
-        <th class="text-center" pResizableColumn>Object</th>
-        <th class="text-center" pResizableColumn>Description</th>
+        <th class="text-center" pResizableColumn>{{ 'name' | translate | uppercase }}</th>
+        <th class="text-center" pResizableColumn>{{ 'object' | translate | uppercase }}</th>
+        <th class="text-center" pResizableColumn>{{ 'desc' | translate | uppercase }}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-h>

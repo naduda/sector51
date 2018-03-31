@@ -12,14 +12,6 @@ split {
 div.rounded, .card { height: 100%; }
 div.rounded { border: 1px solid rgba(0,0,0,.125); }
 
-div.bg-faded {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  line-height: 1.25;
-  text-align: center;
-}
-
 @media (max-width: 750px) {
   .test { display: none !important; }
 }

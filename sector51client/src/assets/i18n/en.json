@@ -30,7 +30,7 @@
   },
   "user": {
     "name": "name",
-    "surname": "sername",
+    "surname": "surname",
     "phone": "phone",
     "card": "card",
     "birthday": "birthday",
@@ -74,5 +74,15 @@
   "activeUsers": "exist clients",
   "type": "type",
   "selder": "selder",
-  "notifications": "notifications"
+  "notifications": "notifications",
+  "box": "box",
+  "time": "time",
+  "boxes": "boxes",
+  "history": "history",
+  "object": "object",
+  "main-report": "whole report",
+  "period": "period",
+  "from": "from",
+  "to": "to",
+  "filter": "filter"
 }

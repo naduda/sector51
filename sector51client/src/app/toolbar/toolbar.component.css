@@ -14,7 +14,8 @@ nav {
   color: #292b2c;
   text-align: left;
   list-style: none;
-  border-top: 1px solid #292b2c;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
   transition: 0.5s;
   width: 100%;
 }

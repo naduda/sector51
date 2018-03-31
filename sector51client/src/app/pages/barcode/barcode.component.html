@@ -10,7 +10,7 @@
       <strong>{{ 'type' | translate | titlecase }}:</strong>
     </label>
     <div ngbDropdown class="d-inline-block mb-2 w-80">
-      <button type="button" class="nav-item nav-link text-right rounded btn bg-faded w-100 pr-4"
+      <button type="button" class="nav-item nav-link text-right rounded btn bg-light w-100 pr-4"
         ngbDropdownToggle *ngIf="product" [disabled]="isExist">
         <span class="text-center w-100">{{ product.name }}</span>
       </button>
@@ -81,11 +81,11 @@
   </form>
 </div>
 <div class="modal-footer" [hidden]="!ready">
-  <button type="button" class="btn btn-primary" (click)="activeModal.close(true)"
+  <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(true)"
     *ngIf="isEdit || !someThingWrong || isBuy">
     {{ (isExist ? isEdit ? 'update' : 'apply' : 'add') | translate | titlecase }}
   </button>
-  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss(0)">
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss(0)">
     {{ 'cancel' | translate | titlecase }}
   </button>
 </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IHistory, IProduct } from '../../../entities/common';
+import { IHistory, IProduct, ITableExport } from '../../../entities/common';
 import { HttpClient } from '@angular/common/http';
 import { REST_API } from '../../../entities/rest-api';
 import { CommonService } from '../../../services/common.service';
@@ -18,6 +18,7 @@ export class MainReportComponent implements OnInit {
   dtBeg: Date;
   dtEnd: Date;
   icon: string;
+  tableColumns: ITableExport[];
 
   constructor(private http: HttpClient, private common: CommonService) {
     this.history = [];
@@ -27,6 +28,12 @@ export class MainReportComponent implements OnInit {
     this.dtBeg = new Date(this.dtEnd.getFullYear(), this.dtEnd.getMonth(), this.dtEnd.getDate());
     this.dtEnd = new Date(this.dtBeg.getTime() + 24 * 60 * 60 * 1000);
     this.icon = 'fa-calendar-check-o';
+    this.tableColumns = [
+      { field: 'formatTime', header: 'time' },
+      { field: 'event', header: 'name' },
+      { field: 'user', header: 'object' },
+      { field: 'desc', header: 'desc' },
+    ];
   }
 
   ngOnInit() {
@@ -44,11 +51,21 @@ export class MainReportComponent implements OnInit {
         const event = this.common.events.find(e => e.id === h.idEvent);
         h['event'] = event ? event.desc : '';
         h['user'] = user ? user.surname + ' ' + user.name : '';
+        h['formatTime'] = this.formatDateTime(h.time);
         this.parseDescription(h);
         this.history.push(h);
       });
     });
   }
+
+  private formatDateTime(value: number): string {
+    const date = new Date(value);
+    return date.getDate() + '.' + this.formatNumber(date.getMonth() + 1) + '.' + date.getFullYear() + ' ' +
+      this.formatNumber(date.getHours()) + ':' + this.formatNumber(date.getMinutes()) + ':' +
+      this.formatNumber(date.getSeconds());
+  }
+
+  private formatNumber = (value: number): string => value < 10 ? '0' + value : value.toString();
 
   private parseDescription(history: IHistory) {
     const pars = history.desc.split('_');

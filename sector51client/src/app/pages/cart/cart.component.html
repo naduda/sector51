@@ -79,10 +79,10 @@
     <hr [hidden]="!user">
 
     <div class="text-right">
-      <button type="submit" class="btn btn-primary" [disabled]="!this.user || !enaughtMony" name="submit">
+      <button type="submit" class="btn btn-outline-primary" [disabled]="!this.user || !enaughtMony" name="submit">
         {{ 'pay' | translate | uppercase }}
       </button>
-      <button class="btn btn-danger" (click)="clear()" [disabled]="common.cartProducts.length < 1" name="cancel">
+      <button class="btn btn-outline-secondary" (click)="clear()" [disabled]="common.cartProducts.length < 1" name="cancel">
         {{ 'clear' | translate | uppercase }}
       </button>
     </div>

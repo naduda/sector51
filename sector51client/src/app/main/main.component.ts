@@ -6,11 +6,11 @@ import { Profile } from '../entities/profile';
 import { ModalComponent } from '../pages/modal/modal.component';
 import { ModalService } from '../services/modal.service';
 import { ERole, IBox, ERestResult, IResponse, IEvent } from '../entities/common';
+import { REST_API } from '../entities/rest-api';
 import { TranslateService } from '@ngx-translate/core';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { of } from 'rxjs/observable/of';
-import { REST_API } from '../entities/rest-api';
 
 @Component({
   selector: 'sector51-main',
@@ -20,11 +20,9 @@ import { REST_API } from '../entities/rest-api';
 export class MainComponent implements OnInit {
   public selectedUserId: number;
   public user: Profile;
-  public showAll: boolean;
   public permissions: boolean;
   public wWidth: number;
   public sizeValue: number[];
-  public letter: any;
   public isOwner: boolean;
   public selectedEvents: IEvent[];
   private boxes: IBox[];
@@ -33,25 +31,7 @@ export class MainComponent implements OnInit {
               private modalService: ModalService, public common: CommonService,
               private translate: TranslateService) {
     this.wWidth = window.innerWidth;
-    this.letter = {
-      'title': 'testTitle',
-      'body': 'Test Message',
-      'recipient': 'pavel.naduda@nik.net.ua'
-    };
     this.isOwner = common.profile.role === ERole.OWNER;
-  }
-
-  applyNotifications() {
-    this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents.map(e => e.id) })
-      .subscribe((response: IResponse) => {
-        if (ERestResult[ERestResult.OK] !== response.result) {
-          alert('Something wrong...');
-        }
-      });
-  }
-
-  sendEmail() {
-    this.http.post('/api/sendemail', this.letter).subscribe(result => console.log(result));
   }
 
   ngOnInit() {
@@ -61,7 +41,6 @@ export class MainComponent implements OnInit {
 
     this.route.queryParams
     .do(params => {
-      this.showAll = params['all'] === 'true';
       this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
     })
     .flatMap(params => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
@@ -83,18 +62,11 @@ export class MainComponent implements OnInit {
     });
   }
 
-  private formatDate(v: number): string {
-    const d = new Date(v);
-    const day = (d.getDate() < 10 ? '0' : '') + d.getDate();
-    const month = (d.getMonth() < 9 ? '0' : '') + (d.getMonth() + 1);
-    return day + '.' + month + '.' + d.getFullYear();
-  }
-
   get activeUsers(): Profile[] {
     return this.common.users.filter(u => u['active'] === true);
   }
 
-  onDragEnd(columnindex: number, e: {gutterNum: number, sizes: Array<number>}) {
+  onDragEnd(columnindex: number, e: { gutterNum: number, sizes: Array<number> }) {
     this.common.toStorage('spliter', { size: e.sizes });
   }
 
@@ -125,5 +97,14 @@ export class MainComponent implements OnInit {
           }
         })
     );
+  }
+
+  applyNotifications() {
+    this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents.map(e => e.id) })
+      .subscribe((response: IResponse) => {
+        if (ERestResult[ERestResult.OK] !== response.result) {
+          alert('Something wrong...');
+        }
+      });
   }
 }

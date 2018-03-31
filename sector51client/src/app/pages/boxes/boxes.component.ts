@@ -71,7 +71,7 @@ export class BoxesComponent implements OnInit, OnDestroy {
       if (b.time) {
         const user = this.common.users.find(u => u.card === b.card);
         b['tooltip'] = user.surname + ' ' + user.name + '\n';
-        let month: string = b.time.getMonth().toString() + 1;
+        let month: string = (b.time.getMonth() + 1).toString();
         month = +month < 10 ? '0' + month : month;
         b['tooltip'] += b.time.getDate() + '.' + month + '.' + b.time.getFullYear() + ' ';
         b['tooltip'] += b.time.getHours() + ':' + b.time.getMinutes();
