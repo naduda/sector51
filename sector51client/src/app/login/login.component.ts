@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, isDevMode } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../services/authentication.service';
 import { Profile } from '../entities/profile';
-import { environment } from '../../environments/environment.responsive';
 import { REST_API } from '../entities/rest-api';
 
 @Component({
@@ -21,7 +20,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.http.get<boolean>(REST_API.GET.usersNotExist).subscribe(response => this.usersNotExist = response);
     this.auth.logout();
-    if (!environment.production) {
+    if (isDevMode()) {
       this.model.username = 'owner@gmail.com';
       this.model.password = 'owner';
     }
