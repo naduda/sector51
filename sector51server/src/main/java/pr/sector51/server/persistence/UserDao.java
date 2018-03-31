@@ -4,12 +4,15 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pr.sector51.server.persistence.mappers.IScannerMapper;
 import pr.sector51.server.persistence.mappers.ISqlMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
 import pr.sector51.server.persistence.model.*;
+import pr.sector51.server.security.ERole;
 
 @Service
 public class UserDao extends CommonDao implements IUserMapper {
@@ -65,11 +68,18 @@ public class UserDao extends CommonDao implements IUserMapper {
     if (userExist != null) {
       return ESector51Result.USER_ALREADY_EXIST;
     }
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    UserSecurity currentUserSecurity = (UserSecurity) auth.getDetails();
+
     boolean result = runTransaction(() -> {
       UserSecurity user = new UserSecurityBuilder()
               .setPassword(userInfo.getPassword())
               .setRoles(userInfo.getRoles())
               .build();
+
+      if (user.getRole().value < currentUserSecurity.getRole().value) {
+        return;
+      }
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);

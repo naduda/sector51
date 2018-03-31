@@ -84,6 +84,7 @@ export class CreateUserComponent implements OnInit {
             name: pair['value']
           })).filter(p => p['value'] === this.user.authorities);
         }
+        this.allRoles = this.allRoles.filter(r => r.id >= this.common.profile.role);
       })
       .subscribe(users => {
         this.buttonText = this.user.name ? 'update' : 'create';
