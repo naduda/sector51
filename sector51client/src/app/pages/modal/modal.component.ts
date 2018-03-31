@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, Input, HostListener } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal/modal-ref';
 
 @Component({
   selector: 'sector51-modal',
@@ -9,18 +9,27 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
     }
-    button.btn:hover { cursor: pointer; }
   `]
 })
 export class ModalComponent implements OnInit {
   @Input() header;
-  @Input() body;
+  @Input() headerParam;
   @Input() btOK;
   @Input() btCancel;
   @Input() headerClass;
   @Input() bodyClass;
+  @Input() body;
+  private ready: boolean;
 
   constructor(public activeModal: NgbActiveModal) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    this.ready = true;
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (!this.ready || event.keyCode !== 13) return;
+    if (event.keyCode === 13) this.activeModal.close(true);
+  }
 }

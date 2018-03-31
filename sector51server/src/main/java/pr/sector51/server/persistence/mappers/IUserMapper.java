@@ -8,9 +8,9 @@ import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
 public interface IUserMapper {
-  @Insert("INSERT INTO usersecurity(username, password, roles, accountNonExpired, accountNonLocked,"
+  @Insert("INSERT INTO usersecurity(password, roles, accountNonExpired, accountNonLocked,"
       + "credentialsNonExpired, enabled, created) "
-      + "VALUES (#{username}, #{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "
+      + "VALUES (#{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "
       + "#{credentialsNonExpired}, #{enabled}, #{created})")
   void insertUserSecurity(UserSecurity user);
 
@@ -18,36 +18,40 @@ public interface IUserMapper {
           "attempts = 0, lastmodified = now() WHERE created = #{created};")
   void updateUserSecurity(UserInfo user);
 
-  @Delete("DELETE FROM usersecurity WHERE created = #{created};" +
+  @Delete("DELETE FROM barcode WHERE code = (SELECT card from userinfo WHERE created = #{created});" +
+          "DELETE FROM usersecurity WHERE created = #{created};" +
           "DELETE FROM userinfo WHERE created = #{created};")
-  void deleteUser(@Param("created") Timestamp created);
+  int deleteUser(@Param("created") Timestamp created);
 
-  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex) "
-      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex});")
+  @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday) "
+      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{birthday});")
   void insertUserInfo(UserInfo user);
 
-  @Update("UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}," +
-          "email = #{email}, card = #{card}, sex = #{sex} WHERE created = #{created};")
+  @Update("UPDATE barcode SET code = #{card} WHERE code = (SELECT card FROM userinfo WHERE created = #{created});" +
+          "UPDATE userinfo SET name = #{name}, surname = #{surname}, phone = #{phone}, balance = #{balance}, " +
+          "email = #{email}, card = #{card}, sex = #{sex}, birthday = #{birthday} WHERE created = #{created};")
   void updateUserInfo(UserInfo user);
 
   @Select("SELECT * FROM usersecurity;")
   List<UserSecurity> getUsersSecurity();
 
-  @Select("SELECT * FROM usersecurity WHERE username = #{value}")
-  UserSecurity getUserSecurityByName(String value);
-
   @Select("SELECT * FROM usersecurity WHERE created = #{value}")
   UserSecurity getUserSecurityById(Timestamp value);
 
-  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui " +
-          "WHERE us.created = ui.created")
+  @Select("SELECT ui.*, us.roles, box.number, box.time FROM usersecurity AS us, userinfo AS ui " +
+          "LEFT JOIN box ON ui.card = box.card AND box.idtype < 3 WHERE us.created = ui.created;")
   List<UserInfo> getUsersInfo();
 
-  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui "
-      + "WHERE ui.created = #{value} AND us.created = ui.created")
-  UserInfo getUserInfoById(Timestamp value);
-
-  @Select("SELECT us.username as login, ui.*, us.roles FROM usersecurity as us, userinfo as ui "
+  @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "
       + "WHERE ui.card = #{value} AND us.created = ui.created")
   UserInfo getUserInfoByCard(String value);
+
+  @Select("SELECT * FROM userinfo WHERE email = #{value};")
+  List<UserInfo> getUserInfoByEmail(String value);
+
+  @Select("SELECT * FROM userinfo WHERE phone like #{value};")
+  List<UserInfo> getUserInfoByPnone(String value);
+
+  @Select("SELECT count(*) FROM usersecurity;")
+  int getUsersCount();
 }

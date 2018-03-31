@@ -2,126 +2,78 @@
 cls
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-call :read_settings %~dp0settings.properties || exit /b 1
+echo You can press ENTER to set value by default
+set installDir=%~dp0sector51
+set props=%~dp0settings.properties
 
-IF NOT EXIST %~dp0services (
-  mkdir %~dp0services
-  set url="https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe"
-  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%url%','%~dp0services\winsw.exe')"
+IF NOT EXIST %props% (
+  set branch=master&& set /p branch=Enter branch:
+  call :saveKeyValueToFile %props% GIT_BRANCH "!branch!"
+  set line=localhost&& set /p line=Enter db host:
+  call :saveKeyValueToFile %props% POSTGRES_HOST "!line!"
+  set line=5432&& set /p line=Enter db port:
+  call :saveKeyValueToFile %props% POSTGRES_PORT "!line!"
+  set line=8087&& set /p line=Enter webserver port:
+  call :saveKeyValueToFile %props% WEB_SERVER_PORT "!line!"
+  set line=sector51&& set /p line=Enter db name:
+  call :saveKeyValueToFile %props% POSTGRES_DB "!line!"
+  set line=12345678&& set /p line=Enter db password:
+  call :saveKeyValueToFile %props% POSTGRES_PASSWORD "!line!"
+  set line=emailUser&& set /p line=Enter email user:
+  call :saveKeyValueToFile %props% EMAIL_USER "!line!"
+  set line=emailPassword&& set /p line=Enter email password:
+  call :saveKeyValueToFile %props% EMAIL_PASSWORD "!line!"
+  powershell -Command "(gc %props%) -replace '\u0022', '' | Out-File %props%"
+  powershell -Command "(gc %props%) -replace '`r`n', '`n' | sc %props% -Force"
 )
-IF NOT EXIST %~dp0services\scanner (
-  mkdir %~dp0services\scanner
-  call build.bat
-  for %%i in ("%~dp0..") do set "scannerFolder=%%~fi\Scanner\Scanner\bin\Debug"
-  xcopy /s /y %scannerFolder% %~dp0services\scanner
-  call createService.bat scanner
-)
+call :read_settings %props%
 
-docker stop %container_name%
+IF NOT EXIST %installDir% (
+  echo Selected branch is %GIT_BRANCH%
+  call :saveGitRepository %GIT_BRANCH%
+  del /q /s %installDir%\.gitignore
+)
+IF NOT EXIST %~dp0Scanner (
+  mkdir %~dp0Scanner
+  set release=%installDir%\Scanner\ScannerService\bin\Release
+  copy /y !release! %~dp0Scanner
+)
+copy /y %props% %~dp0Scanner
 
-set param=%1
-for %%A in (civ cvi icv ivc vic vci) do if /i "%param%"=="--clean-%%A" (
-  echo qwe2
-  call :delete-containers
-  call :delete-images
-  call :delete-volumes
-  echo qwe
-)
+xcopy %installDir%\docker\pr %~dp0Scanner\pr /y /e /i
+call %~dp0Scanner\ScannerService.exe -s port=%WEB_SERVER_PORT%
 
-for %%A in (cv vc) do if /i "%param%"=="--clean-%%A" (
-  call :delete-containers
-  call :delete-volumes
+set file=uninstall_scanner.bat
+copy /y %installDir%\docker\%file% %~dp0%file%
+set list=docker-compose.yml,Dockerfile.db,Dockerfile.web
+FOR %%F IN (%list%) DO (
+  copy /y %installDir%\docker\%%F %~dp0Scanner\%%F
 )
+xcopy %installDir%\sector51server %~dp0Scanner\sector51server /y /e /i
+powershell -Command "(gc %~dp0Scanner\docker-compose.yml) -replace '5432:5432', '%POSTGRES_PORT%:5432' | Out-File %~dp0Scanner\docker-compose.yml"
+powershell -Command "(gc %~dp0Scanner\docker-compose.yml) -replace '8087:8089', '%WEB_SERVER_PORT%:8089' | Out-File %~dp0Scanner\docker-compose.yml"
+docker-compose -f %~dp0Scanner\docker-compose.yml up --build -d
 
-if /i "%param%"=="--clean-c" (
-  call :delete-containers
-)
-
-if /i "%param%"=="--clean-i" (
-  call :delete-images
-)
-
-if /i "%param%"=="--clean-v" (
-  call :delete-volumes
-)
-
-REM Create image if not exist
-set /a isexist=0
-for /f "tokens=1,3 skip=1 usebackq" %%i in (`docker image ls -a`) do (
-  if %%i==%image_name% set isexist=1
-)
-if %isexist%==0 (
-  (docker build -t %image_name% .) || (exit /b %errorlevel%)
-)
-
-REM Create volume if not exist
-set /a isexist=0
-for /f "tokens=2 skip=1 usebackq" %%i in (`docker volume ls`) do (
-  if %%i==%volume_name% set isexist=1
-)
-if %isexist%==0 (
-  (docker volume create --name %volume_name%) || (exit /b %errorlevel%)
-  echo volume "%volume_name%" was created
-)
-
-REM Create container if not exist
-set /a isexist=0
-for /f "tokens=1,2 skip=1 usebackq" %%i in (`docker ps -a`) do (
-  if /i %%j==%image_name% set isexist=1
-)
-
-if %isexist%==0 (
-  (docker create --name %container_name% ^
-    --restart=always ^
-    -p 5432:5432 ^
-    -v %~dp0pr:/pr/data ^
-    -v %volume_name%:/var/lib/postgresql/data ^
-    %image_name% ^
-    --POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^
-    --DB_NAME=%DB_NAME%) || (exit /b %errorlevel%)
-  echo container "%container_name%" was created
-  pause
-)
-
-docker start %container_name%
-rem docker exec -it %container_name% /bin/sh
-rem docker logs %container_name%
-rem docker ps
-set url=https://github.com/kohsuke/winsw/releases/download/winsw-v2.1.2/WinSW.NET4.exe
-IF NOT EXIST %~dp0service mkdir %~dp0service
-powershell -Command (New-Object Net.WebClient).DownloadFile('%url%','%~dp0service\winsv.exe')
-exit /b 0
-
-rem ****************************** Functions ******************************
-:delete-volumes
-for /f "tokens=2 skip=1 usebackq" %%i in (`docker volume ls`) do (
-  docker volume rm -f %%i
-)
-exit /b 0
-
-:delete-images
-for /f "tokens=1,3 skip=1 usebackq" %%i in (`docker image ls -a`) do (
-  if %%i NEQ anapsix/alpine-java (
-    echo **************** %%i ==================^> %%j
-    docker rmi -f %%j
-  )
-)
-docker images ls
-exit /b 0
-
-:delete-containers
-for /f "tokens=1 skip=1 usebackq" %%i in (`docker ps -a`) do (
-  docker rm -f %%i
-)
-exit /b 0
+rd /s /q %installDir% && pause
 
 :read_settings
 set SETTINGSFILE=%1
-if not exist %SETTINGSFILE% (
+IF NOT EXIST %SETTINGSFILE% (
   echo FAIL: File "%SETTINGSFILE%" not exist
   exit /b 1
 )
 for /f "eol=# delims== tokens=1,2" %%i in (%SETTINGSFILE%) do (
   set %%i=%%j
 )
+exit /b 0
+
+:saveKeyValueToFile
+echo %2=%3 && echo %2=%3>>%1
+exit /b 0
+
+:saveGitRepository
+set all=https://github.com/naduda/sector51/archive/%1.zip
+powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%all%','%~dp0project.zip')"
+powershell -Command "Expand-Archive -Path %~dp0project.zip -DestinationPath %~dp0/"
+rename %~dp0sector51-%1 sector51 && del /s /q %~dp0project.zip
 exit /b 0

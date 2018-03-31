@@ -22,14 +22,18 @@ export class ElementTools<T> {
   ne(css: string) {
     const res = this.de(css);
     return res ? res.nativeElement : undefined;
-  };
+  }
 
   click(selector: string) {
     const element = this.ne(selector);
+    this.clickElement(element);
+  }
+
+  clickElement(element: any) {
     if (element) {
       element.click();
     } else {
-     console.error(selector);
+     console.error('element not defined');
     }
     tick();
     this.fixture.detectChanges();
@@ -39,6 +43,9 @@ export class ElementTools<T> {
     this.fixture.detectChanges();
     tick();
     const input = this.ne(selector);
+    if (!input) {
+      console.error('Error: elemenet ' + selector + ' not exist.');
+    }
     input.dispatchEvent(new Event('blur'));
     input.value = value;
     input.dispatchEvent(new Event('input'));

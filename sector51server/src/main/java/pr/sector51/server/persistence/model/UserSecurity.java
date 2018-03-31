@@ -98,6 +98,10 @@ public class UserSecurity implements UserDetails {
     }
   }
 
+  public ERole getRole() {
+    return authorities.get(0);
+  }
+
   public Timestamp getCreated() {
     return created;
   }

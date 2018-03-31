@@ -3,7 +3,6 @@ package pr.sector51.server.persistence.model;
 import java.sql.Timestamp;
 
 public class UserInfo {
-  private String login;
   private Timestamp created;
   private String name;
   private String surname;
@@ -11,15 +10,18 @@ public class UserInfo {
   private String email;
   private String roles;
   private String card;
+  private int balance;
   private boolean sex;
   private  String password;
+  private Timestamp dtBeg;
+  private Timestamp dtEnd;
+  private Timestamp birthday;
 
   public UserInfo() {}
 
-  public UserInfo(String login, String password, Timestamp id, String name, String surname,
-      String phone, String email, String roles, String card, boolean sex) {
+  public UserInfo(String password, Timestamp id, String name, String surname,
+      String phone, String email, String roles, String card, int balance, boolean sex) {
     this();
-    this.login = login;
     this.password = password;
     this.name = name;
     this.surname = surname;
@@ -27,12 +29,9 @@ public class UserInfo {
     this.email = email;
     this.roles = roles;
     this.card = card;
+    this.balance = balance;
     this.created = id;
     this.sex = sex;
-  }
-
-  public String getLogin() {
-    return login;
   }
 
   public String getPassword() {
@@ -49,6 +48,14 @@ public class UserInfo {
 
   public void setCreated(Timestamp created) {
     this.created = created;
+  }
+
+  public Timestamp getBirthday() {
+    return birthday;
+  }
+
+  public void setBirthday(Timestamp birthday) {
+    this.birthday = birthday;
   }
 
   public String getName() {
@@ -71,11 +78,39 @@ public class UserInfo {
     return roles;
   }
 
+  public void setRoles(String roles) {
+    this.roles = roles;
+  }
+
   public String getCard() {
     return card;
   }
 
+  public int getBalance() {
+    return balance;
+  }
+
+  public void setBalance(int balance) {
+    this.balance = balance;
+  }
+
   public boolean isSex() {
     return sex;
+  }
+
+  public Timestamp getDtBeg() {
+    return dtBeg;
+  }
+
+  public void setDtBeg(Timestamp dtBeg) {
+    this.dtBeg = dtBeg;
+  }
+
+  public Timestamp getDtEnd() {
+    return dtEnd;
+  }
+
+  public void setDtEnd(Timestamp dtEnd) {
+    this.dtEnd = dtEnd;
   }
 }

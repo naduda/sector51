@@ -14,7 +14,8 @@ nav {
   color: #292b2c;
   text-align: left;
   list-style: none;
-  border-top: 1px solid #292b2c;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
   transition: 0.5s;
   width: 100%;
 }
@@ -29,6 +30,8 @@ nav {
 .dropdown-menu { min-width: 0; }
 button { font-size: 0.8rem; padding-left: 0.5rem; }
 img { width: 1.25rem; margin-right: 0.25rem; }
+#divLang { width: 11rem; }
+#divLang > span { width: 100%; }
 
 @media (max-width: 576px) {
   .navbar-brand > i { display: inline-block; }

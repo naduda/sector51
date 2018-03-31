@@ -3,19 +3,20 @@ package pr.sector51.server.persistence.model;
 public class Event {
     private int id;
     private String name;
-    private String description;
+    private String desc;
+    private String email;
 
-    public Event(){}
+    public Event() {}
 
-    public Event(int id, String name){
+    public Event(int id, String name) {
         this();
         this.id = id;
         this.name = name;
     }
 
-    public Event(int id, String text, String description){
-        this(id, text);
-        this.description = description;
+    public Event(int id, String name, String desc) {
+        this(id, name);
+        this.desc = desc;
     }
 
     public int getId() {
@@ -30,15 +31,23 @@ public class Event {
         return name;
     }
 
-    public void setName(String text) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

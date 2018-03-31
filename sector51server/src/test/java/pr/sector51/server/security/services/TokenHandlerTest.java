@@ -13,6 +13,5 @@ public class TokenHandlerTest {
 
     Optional<String> id = tokenHandler.extractUserId(token);
     System.out.println(id.get().toString());
-    System.out.println("****************\n\n\n\n\n\n\n*********************");
   }
 }

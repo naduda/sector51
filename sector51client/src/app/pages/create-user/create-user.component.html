@@ -1,97 +1,66 @@
-<form class="mt-3 mx-auto p-2 rounded" *ngIf="allRoles" #userForm="ngForm" (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
-  <div class="form-group row">
-    <label for="login" class="col-3 col-form-label">Login</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" [readOnly]="!created" type="text" name="login"
-        [(ngModel)]="user.login" pattern="[A-Za-z0-9]{1,10}" [required]="created">
+<div class="row m-0">
+  <form class="mx-auto p-3 rounded align-self-center" *ngIf="allRoles && user" #userForm="ngForm"
+    (ngSubmit)="validate(psw2) && userForm.valid && onSubmit(userForm.value)">
+    <div class="form-group row pr-3">
+      <label for="name" class="col-2 col-form-label">{{ 'user.name' | translate | titlecase }}</label>
+      <input class="col-4 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text"
+        name="name" [(ngModel)]="user.name" pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+
+      <label for="surname" class="col-2 col-form-label">{{ 'user.surname' | translate | titlecase }}</label>
+      <input class="col-4 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text"
+        name="surname" [(ngModel)]="user.surname" pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
     </div>
-  </div>
-  <div class="form-group row">
-    <label for="name" class="col-3 col-form-label">Name</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="name" [(ngModel)]="user.name"
-        pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+    <div class="form-group row pr-3">
+      <label for="phone" class="col-2 col-form-label">{{ 'user.phone' | translate | titlecase }}</label>
+      <input class="col-4 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="tel"
+        name="phone" placeholder="+38(050) 662-25-56" [(ngModel)]="user.phone"
+        pattern="\+38[\(,\s]*[0-9]{3}[\),\s]{0,2}[0-9]{3}[-,\s]*[0-9]{2}[-,\s]*[0-9]{2}" required>
+
+      <label for="card" class="col-2 col-form-label">{{ 'user.card' | translate | titlecase }}</label>
+      <input class="col-4 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text"
+        name="card" [(ngModel)]="user.card" pattern="[0-9]{1,15}" [readOnly]="cardRedonly"
+        [required]="isNotTrainerOrSelder">
     </div>
-  </div>
-  <div class="form-group row">
-    <label for="surname" class="col-3 col-form-label">SurName</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="search" name="surname" [(ngModel)]="user.surname"
-        pattern="[A-Za-z\u0400-\u04ff]{1,25}" required>
+    <div class="form-group row pr-3">
+      <label for="email" class="col-4 col-form-label">E-mail</label>
+      <input class="col-8 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="email"
+        name="email" [(ngModel)]="user.email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
     </div>
-  </div>
-  <div class="form-group row">
-    <label for="phone" class="col-3 col-form-label">Telephone</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="tel" name="phone" placeholder="+38(050) 662-25-56"
-        pattern="\+38[\(,\s]*[0-9]{3}[\),\s]{0,2}[0-9]{3}[-,\s]*[0-9]{2}[-,\s]*[0-9]{2}" [(ngModel)]="user.phone" required>
+    <div class="form-group row pr-3 mb-2">
+      <label for="birthday" class="col-4 col-form-label">{{ 'user.birthday' | translate | titlecase }}</label>
+      <p-calendar class="col-8 pl-0" [showIcon]="true" readonlyInput="true" [(ngModel)]="user.birthday"
+        [yearNavigator]="true" yearRange="1950:2050" name="birthday" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
     </div>
-  </div>
-  <div class="form-group row">
-    <label for="email" class="col-3 col-form-label">Email</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="email" name="email" [(ngModel)]="user.email"
-        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="password" class="col-3 col-form-label">Password</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="password" name="password" [(ngModel)]="user['password']"
-        #psw="ngModel" [required]="created">
-    </div>
-  </div>
-  <div class="form-group row" [hidden]="!created">
-    <label for="password2" class="col-3 col-form-label">Password2</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" type="password" name="password2" [(ngModel)]="user['password2']"
-        #psw2="ngModel" [required]="created">
-    </div>
-    <div class="col-9" [hidden]="psw.untouched || psw2.untouched || (psw.value === psw2.value)">
-      <small class="text-danger">{{ 'frmProfile.difPasswords' | translate }}</small>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="card" class="col-3 col-form-label">Card</label>
-    <div class="col-9">
-      <input class="form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="card" [(ngModel)]="user.card"
-        pattern="[0-9]{1,15}" required>
-    </div>
-  </div>
-  <div class="form-group row">
-    <div class="d-inline-block col-6">
-      <label class="col-6 col-form-label pl-0">Authorities</label>
-      <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link text-right" ngbDropdownToggle>{{this.user.authorities}}</i>
-        <div class="dropdown-menu">
-          <div class="form-check" *ngFor="let r of allRoles">
-            <label class="form-check-label ml-2">
-              <input class="form-check-input" type="radio" [checked]="this.user.authorities.indexOf(r.name) != -1" (change)="this.user.authorities = r.name"
-                [value]="r.name">
-              <span class="mt-2">{{r.name | uppercase}}</span>
-            </label>
-          </div>
-        </div>
+    <div class="form-group row pr-3" *ngIf="showPassword">
+      <label for="password" class="col-2 col-form-label">{{ 'password' | translate | titlecase }}</label>
+      <input class="col-4 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="password"
+        name="password" [(ngModel)]="user['password']" #psw="ngModel" [required]="created">
+
+      <label for="password2" class="col-2 col-form-label">{{ 'password' | translate | titlecase }}2</label>
+      <input class="col-4 form-control" [ngClass]="{ 'ng-touched': userForm.submitted }" type="password"
+        name="password2" [(ngModel)]="user['password2']" #psw2="ngModel" [required]="created">
+      <div class="col" [hidden]="(psw !== undefined && psw.untouched) || psw2.untouched || (user['password'] === user['password2'])">
+        <small class="text-danger">{{ 'frmProfile.difPasswords' | translate }}</small>
       </div>
     </div>
-    <div class="col-6 col-form-label">
-        <label class="col-6 col-form-label pl-0">Gender</label>
-        <div ngbDropdown class="d-inline-block">
-          <i class="nav-item nav-link text-right" ngbDropdownToggle>{{genderText(this.user.sex)}}</i>
-          <div class="dropdown-menu">
-            <div class="form-check" *ngFor="let g of genders">
-              <label class="form-check-label ml-2">
-                <input class="form-check-input" type="radio" [checked]="this.user.sex === g"
-                  (change)="this.user.sex = g" [value]="genderText(g)">
-                <span class="mt-2">{{genderText(g) | uppercase}}</span>
-              </label>
-            </div>
-          </div>
-        </div>
+
+    <div class="form-group row pr-3">
+        <label class="col-2 col-form-label" *ngIf="!isFirst">{{ 'user.role' | translate | titlecase }}</label>
+        <sector51-combo class="col-4 p-0" *ngIf="!isFirst"
+          [items]="allRoles" [itemToText]="'name'" [itemToValue]="'name'"
+          [selected]="user.authorities" (onchange)="user.authorities = $event.name">
+        </sector51-combo>
+
+        <label class="col-2 col-form-label">{{ 'user.gender' | translate | titlecase }}</label>
+        <sector51-combo class="col-4 p-0"
+          [items]="genders" [itemToText]="genderText" [itemToValue]="genderText"
+          [selected]="!user.sex" (onchange)="user.sex = $event">
+        </sector51-combo>
     </div>
-  </div>
-  <hr>
-  <div class="form-group row buttons mb-0" [hidden]="!common.profile['permited']">
-    <button class="btn btn-primary mr-3" type="submit">OK</button>
-  </div>
-</form>
+    <hr>
+    <div class="form-group row justify-content-end mb-0"
+      [hidden]="!usersNotExist && common.profile && !common.profile['permited']">
+      <button class="btn btn-outline-primary mr-3" type="submit">{{ buttonText | translate | titlecase }}</button>
+    </div>
+  </form>
+</div>

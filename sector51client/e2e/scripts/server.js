@@ -6,7 +6,7 @@ const userScript = require('./user.js');
 const roleScript = require('./role.js');
 
 const isAuthorized = (req) => {
-  if (req.url === '/api/login') {
+  if (req.url.includes('/api/public/')) {
     return true;
   }
   const token = req.headers['x-auth-token'];
@@ -32,47 +32,55 @@ server.use((req, res, next) => {
 server.use(jsonServer.bodyParser);
 server.use((req, res, next) => {
   if (req.method === 'GET') {
-    if (req.url.includes('/api/profile/')) {
+    if (req.url.includes('/api/profileByName/')) {
       const login = req.url.substring(req.url.lastIndexOf('/') + 1);
-      res.jsonp(userScript.getUserByLogin(login));
+      const userInfo = router.db.get('userinfo').filter({ name: login }).value();
+      res.jsonp(userScript.getUserById(+userInfo[0].created));
       return;
     }
-    if (req.url.includes('/api/getUserById/')) {
+    if (req.url.includes('/api/userById/')) {
       const id = req.url.substring(req.url.lastIndexOf('/') + 1);
       res.jsonp(userScript.getUserById(+id));
       return;
     }
+    if (req.url.includes('/api/public/usersNotExist')) {
+      const users = router.db.get('usersecurity').value();
+      res.jsonp(!users || users.length === 0);
+      return;
+    }
   } else if (req.method === 'DELETE') {
-    if (req.url.includes('/api/removeUser/')) {
+    if (req.url.includes('/api/delete/userById/')) {
       const id = req.url.substring(req.url.lastIndexOf('/') + 1);
       userScript.deleteUserById(+id);
-      res.jsonp({ message: 'User ' + id + ' removed.', result: 'OK' });
+      res.jsonp('OK');
       return;
     }
   }
   next()
 });
 
-server.get('/api/getRoles', (req, res) => res.jsonp(roleScript.roles()));
-server.get('/api/getUsers', (req, res) => res.jsonp(userScript.users()));
+server.get('/api/public/roles', (req, res) => res.jsonp(roleScript.roles()));
+server.get('/api/users', (req, res) => res.jsonp(userScript.users()));
+server.get('/api/boxnumbers', (req, res) => res.jsonp([]));
 
-server.post('/api/login', (req, res) => {
+server.post('/api/public/login', (req, res) => {
   const data = req.body;
-  const user = router.db.get('usersecurity')
-    .filter({ username: data.username, password: data.password }).value()[0];
+  const userInfo = router.db.get('userinfo').filter({ name: data.username }).value();
+  const user = userInfo.length != 1 ? undefined :
+    router.db.get('usersecurity').filter({ created: userInfo[0].created, password: data.password }).value()[0];
   req.body = {token: user ? (user.created + '_' + (new Date().valueOf() + 24*60*60000)) : ''};
   router.db.set('login', req.body).write();
   res.jsonp(req.body);
 });
 
-server.post('/api/createUser', (req, res) => {
+server.post('/api/add/user', (req, res) => {
   userScript.createUser(req.body);
-  res.jsonp({ message: 'User ' + req.body.login + ' created.', result: 'OK' });
+  res.jsonp({result: 'OK'});
 });
 
-server.put('/api/updateUser', (req, res) => {
+server.put('/api/update/user', (req, res) => {
   userScript.updateUser(req.body);
-  res.jsonp({ message: 'User ' + req.body.login + ' updated.', result: 'OK' });
+  res.jsonp({result: 'OK'});
 });
 
 server.use('/api', router);

@@ -6,17 +6,17 @@
   width: 100%;
 }
 
-div.col-7 {
+div.col-8 {
   border: 0.1rem solid #999;
   border-radius: 0.5rem;
 }
 
 .help-block {
-  width:200px;
-  color:white;
-  background-color:gray;
+  width: 200px;
+  color: white;
+  background-color: gray;
 }
 
 .btn {
-  margin-top:20px;
+  min-width: 8rem;
 }

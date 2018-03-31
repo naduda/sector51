@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    container_name: db_container
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=11111111
+      - TZ=Europe/Kiev
+    ports:
+      - 5432:5432
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    restart: always
+  web:
+    container_name: web_container
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    environment:
+      - TZ=Europe/Kiev
+    links:
+      - db
+    ports:
+      - 8087:8089
+    depends_on:
+      - db
+    restart: always
+    command: ["/pr/wait-for.sh", "db:5432", "--", "/pr/init_web.sh"]
+volumes:
+  db_volume:

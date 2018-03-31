@@ -10,10 +10,12 @@ import { CreateUserComponent } from './create-user.component';
 import { ActivatedRoute } from '@angular/router';
 import { Profile } from '../../entities/profile';
 import { Observable } from 'rxjs/Observable';
-import { ERole } from '../../entities/common';
+import { ERole, ERestResult } from '../../entities/common';
 import { By } from '@angular/platform-browser';
 import { ElementTools } from '../../testing/commonTest';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
+import { of } from 'rxjs/observable/of';
+import { REST_API } from '../../entities/rest-api';
 
 describe('CreateUserComponent', () => {
   let component: CreateUserComponent;
@@ -34,11 +36,17 @@ describe('CreateUserComponent', () => {
         { provide: Location, useValue: { back: () => locationState = 'back'} },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         { provide: CommonService, useValue: { profile: profileMock } },
-        { provide: ActivatedRoute, useValue: { params: Observable.of({ idUser: undefined }) } },
+        { provide: ActivatedRoute, useValue: {
+          params: of({ idUser: -1 }),
+          queryParams: of({ })
+        }},
         { provide: HttpClient, useValue: {
-            get: (idUser: string) => Observable.of(undefined),
-            post: (url: string, body: any | null, options?: any) => Observable.of({name: 'qqqq'}),
-            put: (q: string, body: any) => Observable.of({})
+            get: (url: string) => {
+              if (url === REST_API.GET.users) return of([]);
+              return of(undefined);
+            },
+            post: (url: string, body: any | null, options?: any) => of({ result: ERestResult[ERestResult.OK] }),
+            put: (q: string, body: any) => of({ result: ERestResult[ERestResult.OK] })
           }
         }
       ],
@@ -65,10 +73,6 @@ describe('CreateUserComponent', () => {
   });
 
   it('validate form', fakeAsync(() => {
-    validateField('input[name="login"]', '', 'ng-dirty ng-invalid');
-    expect(et.ne('form').getAttribute('class')).toContain('ng-invalid');
-    validateField('input[name="login"]', 'Login12ю', 'ng-invalid');
-    validateField('input[name="login"]', 'Login12', 'ng-valid');
     validateField('input[name="name"]', 'TestТест ', 'ng-invalid');
     validateField('input[name="name"]', 'TestТест', 'ng-valid');
     validateField('input[name="surname"]', 'TestТестsuname ', 'ng-invalid');
@@ -101,11 +105,10 @@ describe('CreateUserComponent', () => {
   it('check button click', fakeAsync(() => {
     fixture.detectChanges();
     expect(locationState).toBeUndefined();
-    et.setInputValue('input[name="login"]', '');
+    et.setInputValue('input[name="name"]', '');
     et.ne('button.btn-primary').click();
     expect(locationState).toBeUndefined();
 
-    et.setInputValue('input[name="login"]', 'login');
     et.setInputValue('input[name="name"]', 'name');
     et.setInputValue('input[name="surname"]', 'surname');
     et.setInputValue('input[name="phone"]', '+380501234567');
@@ -119,17 +122,16 @@ describe('CreateUserComponent', () => {
 
   it('check dropdown lists (Authorities and Gender)', fakeAsync(() => {
     fixture.detectChanges();
-    const divSelector = 'div.form-group.row:nth-child(9)';
-    checkDropDown(divSelector, ' > div:first-child > div > i', 'OWNER');
-    checkDropDown(divSelector, ' > div:first-child > div > i', 'ADMIN');
-    checkDropDown(divSelector, ' > div:last-child > div > i', 'MAN');
-    checkDropDown(divSelector, ' > div:last-child > div > i', 'WOMAN');
+    checkDropDown('div[id="divAuthorities"] > div', 'OWNER');
+    checkDropDown('div[id="divAuthorities"] > div', 'ADMIN');
+    checkDropDown('div[id="divGender"] > div', 'MAN');
+    checkDropDown('div[id="divGender"] > div', 'WOMAN');
   }));
 
-  function checkDropDown(selector: string, iSelector: string, inputValue: string) {
-    et.click(selector + iSelector);
+  function checkDropDown(selector: string, inputValue: string) {
+    et.click(selector + ' > i');
     et.click(selector + ' input[value="' + inputValue + '"]');
-    expect(et.ne(selector + iSelector).innerHTML).toEqual(inputValue);
+    expect(et.ne(selector + ' > i').innerHTML).toEqual(inputValue);
   }
 
   function validateField(selector: string, value: string, expectValue: string) {

@@ -1,0 +1,5 @@
+env GOOS=linux CGO_ENABLED=0 go build -a -installsuffix cgo
+
+docker cp d:\GIT\sector51\docker\test\tree.sh db_container:/pr/treeGo.sh
+
+docker cp db_container:/pr/createDataBase.sql d:\GIT\sector51\docker\test\go.sql

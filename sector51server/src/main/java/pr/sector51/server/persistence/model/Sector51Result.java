@@ -1,7 +1,7 @@
 package pr.sector51.server.persistence.model;
 
 public class Sector51Result {
-    private String message;
+    private Object message;
     private ESector51Result result;
 
     public Sector51Result(ESector51Result result) {
@@ -13,11 +13,11 @@ public class Sector51Result {
         this.result = result;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 

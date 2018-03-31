@@ -1,30 +1,42 @@
 <nav class="navbar navbar-toggleable navbar-light p-1 pl-2 pr-2">
   <div class="collapse navbar-collapse show">
     <div class="navbar-nav">
-      <div ngbDropdown class="d-inline-block user">
-        <i class="nav-item nav-link" ngbDropdownToggle>{{'account' | translate | uppercase}}</i>
-        <div class="dropdown-menu">
-          <a routerLink="/registration" class="dropdown-item">{{'addUser' | translate | titlecase}}</a>
+      <div ngbDropdown class="d-inline-block mr-4 user" *ngIf="permissions">
+        <i class="nav-item nav-link" ngbDropdownToggle>{{ 'account' | translate | uppercase }}</i>
+        <div ngbDropdownMenu>
+          <a routerLink="/registration" class="dropdown-item fa fa-fw fa-user-plus">{{ 'addUser' | translate | titlecase }}</a>
         </div>
       </div>
 
-      <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link " ngbDropdownToggle>Menu-2</i>
-        <div class="dropdown-menu">
-          <button class="dropdown-item">Action - 2.1</button>
-          <button class="dropdown-item">Action - 2.2</button>
-          <button class="dropdown-item">Action - 2.3</button>
+      <div ngbDropdown class="d-inline-block mr-4">
+        <i class="nav-item nav-link " ngbDropdownToggle>{{ 'products' | translate | uppercase }}</i>
+        <div ngbDropdownMenu>
+          <a routerLink="/products" class="dropdown-item fa fa-fw fa-list">{{ 'productsList' | translate | titlecase }}</a>
+          <button class="dropdown-item fa fa-fw fa-plus-square" (click)="createProduct()" *ngIf="permissions">
+            {{ 'create' | translate | titlecase }}
+          </button>
+          <a routerLink="/cart" class="dropdown-item fa fa-fw fa-shopping-cart" *ngIf="permissions">
+            {{ 'cart' | translate | titlecase }}
+          </a>
         </div>
       </div>
 
-      <div ngbDropdown class="d-inline-block">
-        <i class="nav-item nav-link" ngbDropdownToggle>Menu-3</i>
-        <div class="dropdown-menu">
-          <button class="dropdown-item">Action - 3.1</button>
-          <button class="dropdown-item">Action - 3.2</button>
-          <button class="dropdown-item">Action - 3.3</button>
+      <div ngbDropdown class="d-inline-block mr-4">
+        <i class="nav-item nav-link" ngbDropdownToggle>{{ 'settings' | translate | uppercase }}</i>
+        <div ngbDropdownMenu>
+            <a routerLink="/boxes" class="dropdown-item fa fa-fw fa-inbox" *ngIf="permissions">
+              {{ 'boxes' | translate | titlecase }}
+            </a>
+          <a routerLink="/services" class="dropdown-item fa fa-fw fa-cogs">{{ 'services' | translate | titlecase }}</a>
         </div>
       </div>
+
+      <div ngbDropdown class="d-inline-block mr-4">
+          <i class="nav-item nav-link" ngbDropdownToggle>{{ 'reports' | translate | uppercase }}</i>
+          <div ngbDropdownMenu>
+            <a routerLink="/main-report" class="dropdown-item fa fa-fw fa-file">{{ 'main-report' | translate | titlecase }}</a>
+          </div>
+        </div>
     </div>
   </div>
 </nav>

@@ -1,16 +1,14 @@
 package pr.sector51.server.persistence;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pr.sector51.server.persistence.mappers.IScannerMapper;
 import pr.sector51.server.persistence.mappers.ISqlMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
 import pr.sector51.server.persistence.model.*;
@@ -19,6 +17,7 @@ import pr.sector51.server.security.ERole;
 @Service
 public class UserDao extends CommonDao implements IUserMapper {
   public final static String TABLE_NAME = "usersecurity";
+  public static final int RESERVED_PRODUCTS_ID = 100;
   public final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
   @Autowired
@@ -27,34 +26,8 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Autowired
   private IUserMapper userMapper;
 
-  @PostConstruct
-  public void init() {
-    if (isTableExist(TABLE_NAME)) {
-      return;
-    }
-    Resource resource = new ClassPathResource("createDataBase.sql");
-    StringBuilder sqlBuilder = new StringBuilder("");
-    try(BufferedInputStream inputStream = new BufferedInputStream(resource.getInputStream())) {
-      byte[] contents = new byte[1024];
-
-      int bytesRead;
-
-      while((bytesRead = inputStream.read(contents)) != -1) {
-        sqlBuilder.append(new String(contents, 0, bytesRead));
-      }
-    } catch (IOException ex) {
-      System.out.println(ex);
-    }
-
-    boolean res = runTransaction(() -> {
-      if (sqlBuilder.toString().length() > 0) {
-        sqlMapper.execute(sqlBuilder.toString());
-      }
-      insertUser(ERole.OWNER);
-      insertEvent(new Event(EEvent.SCANNER.getId(), EEvent.SCANNER.name()));
-    });
-    System.out.println("Table users was " + (res ? "" : "not ") + "created");
-  }
+  @Autowired
+  private IScannerMapper scannerMapper;
 
   @Override
   public void insertUserSecurity(UserSecurity user) {
@@ -68,17 +41,16 @@ public class UserDao extends CommonDao implements IUserMapper {
   }
 
   @Override
-  public void deleteUser(Timestamp created) {
-    userMapper.deleteUser(created);
+  public int deleteUser(Timestamp created) {
+    return userMapper.deleteUser(created);
   }
 
   public ESector51Result removeUser(long created) {
     try {
-      deleteUser(new Timestamp(created));
+      return deleteUser(new Timestamp(created)) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
     } catch (Exception e) {
       return ESector51Result.ERROR;
     }
-    return ESector51Result.OK;
   }
 
   @Override
@@ -91,44 +63,34 @@ public class UserDao extends CommonDao implements IUserMapper {
     userMapper.updateUserInfo(user);
   }
 
-  private void insertUser(ERole role) {
-    UserSecurity user = new UserSecurityBuilder()
-        .setUsername(role.name().toLowerCase())
-        .setPassword(role.name().toLowerCase())
-        .setRoles(role.name())
-        .build();
-    insertUserSecurity(user);
-    UserInfo userInfo = new UserInfoBuilder()
-        .setLogin(role.name().toLowerCase())
-        .setCreated(user.getCreated())
-        .setName("Name" + role.name())
-        .setSurname("Surname" + role.name())
-        .setEmail(role.name() + "@gmail.com")
-        .setPhone("+380501234567")
-        .setRoles(user.getRoles()).build();
-    insertUserInfo(userInfo);
-  }
-
-  public ESector51Result insertUser(UserInfo userInfo){
-    UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
+  public ESector51Result insertUser(UserInfo userInfo) {
+    UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userExist != null) {
       return ESector51Result.USER_ALREADY_EXIST;
     }
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    UserSecurity currentUserSecurity = (UserSecurity) auth.getDetails();
+
     boolean result = runTransaction(() -> {
       UserSecurity user = new UserSecurityBuilder()
-              .setUsername(userInfo.getLogin())
               .setPassword(userInfo.getPassword())
               .setRoles(userInfo.getRoles())
               .build();
+
+      if (user.getRole().value < currentUserSecurity.getRole().value) {
+        return;
+      }
       insertUserSecurity(user);
       userInfo.setCreated(user.getCreated());
       insertUserInfo(userInfo);
+      String card = userInfo.getCard() != null ? userInfo.getCard() : "0";
+      scannerMapper.insertBarcode(RESERVED_PRODUCTS_ID, card);
     });
     return result ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
   public ESector51Result updateUser(UserInfo userInfo){
-    UserSecurity userExist = userMapper.getUserSecurityByName(userInfo.getLogin());
+    UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userInfo.getPassword() == null) {
       userInfo.setPassword(userExist.getPassword());
     } else {
@@ -144,11 +106,6 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public List<UserSecurity> getUsersSecurity() {
     return userMapper.getUsersSecurity();
-  }
-
-  @Override
-  public UserSecurity getUserSecurityByName(String name) {
-    return userMapper.getUserSecurityByName(name);
   }
 
   @Override
@@ -173,14 +130,33 @@ public class UserDao extends CommonDao implements IUserMapper {
   }
 
   @Override
-  public UserInfo getUserInfoById(Timestamp value) {
-    return userMapper.getUserInfoById(value);
+  public UserInfo getUserInfoByCard(String value) {
+    UserInfo user = userMapper.getUserInfoByCard(value);
+    if (user != null) {
+      user.setPassword(null);
+    } else {
+      user = new UserInfo();
+    }
+    return user;
   }
 
   @Override
-  public UserInfo getUserInfoByCard(String value) {
-    UserInfo user = userMapper.getUserInfoByCard(value);
-    user.setPassword(null);
-    return user;
+  public List<UserInfo> getUserInfoByEmail(String value) {
+    return userMapper.getUserInfoByEmail(value);
+  }
+
+  @Override
+  public List<UserInfo> getUserInfoByPnone(String value) {
+    value = value
+        .replaceAll(" ", "")
+        .replaceAll("\\(", "")
+        .replaceAll("\\)", "")
+        .replaceAll("-", "");
+    return userMapper.getUserInfoByPnone("%" + value);
+  }
+
+  @Override
+  public int getUsersCount() {
+    return userMapper.getUsersCount();
   }
 }

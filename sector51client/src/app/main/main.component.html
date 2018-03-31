@@ -1,54 +1,88 @@
 <div class="mt-3" (window:resize)="wWidth = $event.target.innerWidth">
-  <label class="form-check-label">
-    <input class="form-check-input" type="checkbox" [checked]="showAll" (change)="changeQueryParam('all', !showAll)">
-    <span class="mt-2">{{'showAll' | translate | titlecase}}</span>
-  </label>
+  <!-- <div class="d-inline-block bg-faded p-2" *ngIf="user && permissions">
+    <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
+      {{ 'delete' | translate | uppercase }}
+    </button>
+  </div> -->
   <hr>
-  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3">
-    <split-area [size]="25" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
+  <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3" (dragEnd)="onDragEnd(0, $event)" *ngIf="sizeValue">
+    <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
       <div class="rounded mt-0">
         <ul class="list-group">
-          <li class="list-group-item p-2" *ngFor="let u of users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" [hidden]="!showAll && !u.active"
-            (click)="changeQueryParam('user', u['created'])" [title]="u.login">
-            <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active, 'text-white': u['created'] === selectedUserId}">
-              {{u.surname + ' ' + u.name}}
+          <li class="list-group-item p-2 pointer" *ngFor="let u of common.users" [ngClass]="{'bg-info': u['created'] === selectedUserId}" (click)="changeQueryParam('user', u['created'])">
+            <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
+              {{ u.surname + ' ' + u.name }}
             </a>
           </li>
         </ul>
       </div>
     </split-area>
 
-    <split-area [size]="75" [ngClass]="{'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth<=540}">
-      <div class="card" *ngIf="user">
-        <div class="card-block">
-          <h4 class="card-title">{{user.surname}} {{user.name}}</h4>
-          <table class="table table-bordered table-sm">
-            <tbody>
+    <split-area [size]="sizeValue[1]" [ngClass]="{ 'pl-1 pt-0': wWidth > 540, 'pl-0 pt-1': wWidth <= 540 }">
+      <p-tabView [activeIndex]="0">
+        <p-tabPanel [header]="'activeUsers' | translate | titlecase">
+          <div>
+            <p-table [value]="activeUsers" [resizableColumns]="true" selectionMode="single" [(selection)]="activeUsers[selectedUserId]"
+              sortMode="multiple">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-center" width="50">№</th>
+                  <th class="text-center" [pSortableColumn]="'time'" width="75">
+                    {{ 'time' | translate | uppercase }}
+                    <p-sortIcon [field]="'time'"></p-sortIcon>
+                  </th>
+                  <th class="text-center" pResizableColumn>{{ 'user.surname' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn>{{ 'user.name' | translate | uppercase }}</th>
+                  <th class="text-center" pResizableColumn width="60">{{ 'box' | translate | uppercase }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-u let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="u" [ngClass]="{ 'bg-danger': u['isFinish'], 'text-white': u['isFinish'] }">
+                  <td class="text-right">{{ rowIndex + 1 }}</td>
+                  <td class="text-center">{{ u['time'] | date:'HH:mm' }}</td>
+                  <td>{{ u.surname }}</td>
+                  <td>{{ u.name }}</td>
+                  <td class="text-right">{{ u['box'] }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel [header]="'services' | translate | titlecase">
+          <sector51-user-services [user]="user"></sector51-user-services>
+        </p-tabPanel>
+        <p-tabPanel [header]="'properties' | translate | titlecase">
+          <div class="pt-5">
+            <sector51-create-user [profile]="user"></sector51-create-user>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel [header]="'notifications' | translate | titlecase" *ngIf="isOwner">
+          <p-table [value]="common.events" [(selection)]="selectedEvents">
+            <ng-template pTemplate="header">
               <tr>
-                <th scope="row">
-                  <i class="fa fa-fw fa-phone"></i>
+                <th style="width: 2.25em">
+                  <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <td>{{user.phone}}</td>
+                <th>{{ 'event' | translate | titlecase }}</th>
               </tr>
-              <tr>
-                <th scope="row">
-                  <i class="fa fa-fw fa-envelope"></i>
-                </th>
-                <td>{{user.email}}</td>
+            </ng-template>
+            <ng-template pTemplate="body" let-event>
+              <tr [pSelectableRow]="event">
+                <td>
+                  <p-tableCheckbox [value]="event"></p-tableCheckbox>
+                </td>
+                <td>{{ event.desc }}</td>
               </tr>
-            </tbody>
-          </table>
-          <hr>
-          <div class="bg-faded p-2" *ngIf="permissions">
-            <a [routerLink]="['/registration', user['created']]" class="card-link text-info">
-              {{'properties' | translate | titlecase}}
-            </a>
-            <button class="btn btn-danger ml-4" (click)="removeUser(user['created'])">
-              {{'delete' | translate | uppercase}}
+            </ng-template>
+          </p-table>
+          <div class="pt-4 text-right">
+            <button class="btn btn-sm btn-outline-primary" (click)="applyNotifications()">
+              {{ 'apply' | translate | titlecase }}
             </button>
           </div>
-        </div>
-      </div>
+        </p-tabPanel>
+      </p-tabView>
+
     </split-area>
   </split>
 </div>

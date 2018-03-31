@@ -1,11 +1,10 @@
 {
   "login": {
-    "token": "1507095836875_1508403554595"
+    "token": "1507095836875_1514560452790"
   },
   "usersecurity": [
     {
       "created": 1507095836875,
-      "username": "owner",
       "password": "owner",
       "roles": "OWNER"
     }
@@ -13,7 +12,7 @@
   "userinfo": [
     {
       "created": 1507095836875,
-      "name": "NameOwnerqqqq",
+      "name": "rightOwner",
       "surname": "SurnameOwner",
       "phone": "+380501111112",
       "email": "owner@e2e.com",

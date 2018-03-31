@@ -12,6 +12,7 @@ public class UserInfoBuilder {
   private String email;
   private String roles;
   private String card;
+  private int balance;
   private boolean sex;
 
   public UserInfoBuilder setLogin(String login) {
@@ -59,12 +60,17 @@ public class UserInfoBuilder {
     return this;
   }
 
-  public UserInfoBuilder setCSex(boolean sex) {
+  public UserInfoBuilder setBalance(int value) {
+    this.balance = value;
+    return this;
+  }
+
+  public UserInfoBuilder setSex(boolean sex) {
     this.sex = sex;
     return this;
   }
 
   public UserInfo build() {
-    return new UserInfo(login, password, created, name, surname, phone, email, roles, card, sex);
+    return new UserInfo(password, created, name, surname, phone, email, roles, card, balance, sex);
   }
 }

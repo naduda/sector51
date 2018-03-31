@@ -1,0 +1,12 @@
+<div ngbDropdown class="d-inline-block w-100 text-right">
+  <i class="form-control w-100 pointer-faded" ngbDropdownToggle>{{ valueToText }}</i>
+  <div class="p-2" ngbDropdownMenu>
+    <div class="form-check pb-1 pointer-faded" *ngFor="let r of _items; let idx = index;">
+      <label class="form-check-label justify-content-start pointer-faded w-100" (click)="changeValue(r)">
+        <input class="form-check-input pointer-faded" type="radio"
+        [checked]="_items[idx] === item" [value]="itemValue(r)" style="display: none;">
+        <span class="pointer-faded">{{ itemText(r) }}</span>
+      </label>
+    </div>
+  </div>
+</div>

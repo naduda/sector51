@@ -8,6 +8,8 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
 
 namespace ScannerService
 {
@@ -38,13 +40,12 @@ namespace ScannerService
       CTRL_SHUTDOWN_EVENT
     }
     #endregion
-       
 
     static InstallContext GetInstallContext(string[] args)
     {
-      InstallContext context = new InstallContext(null, args);
-      UriBuilder uri = new UriBuilder(Assembly.GetEntryAssembly().GetName().CodeBase);
-      string execPath = Uri.UnescapeDataString(uri.Path);
+      var context = new InstallContext(null, args);
+      var uri = new UriBuilder(Assembly.GetEntryAssembly().GetName().CodeBase);
+      var execPath = Uri.UnescapeDataString(uri.Path);
       context.Parameters.Add("assemblypath", execPath);
       return context;
     }
@@ -65,11 +66,18 @@ namespace ScannerService
       _mainThreadFinished = true;
     }
 
+    static void saveSettings(int port)
+    {
+      var encrypted = Crypt.Encrypt256(port.ToString());
+      var path = Assembly.GetExecutingAssembly().Location.Replace("ScannerService.exe", "settings.txt");
+      File.WriteAllText(path, encrypted);
+    }
+
     static void Main(string[] args)
     {
       if (!Environment.UserInteractive)
       {
-        ServiceBase[] ServicesToRun = new ServiceBase[] { new MyService() };
+       var ServicesToRun = new ServiceBase[] { new MyService() };
         ServiceBase.Run(ServicesToRun);
         return;
       }
@@ -77,8 +85,7 @@ namespace ScannerService
       var context = GetInstallContext(args);
       var myAssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
       Console.WriteLine("Scanner Server, version {0}.{1}", myAssemblyVersion.Major, myAssemblyVersion.Minor);
-      Console.WriteLine("Use /? or /h switches for help.", myAssemblyVersion.Major, myAssemblyVersion.Minor);
-      Console.WriteLine();
+      Console.WriteLine("Use /? or /h switches for help.\n", myAssemblyVersion.Major, myAssemblyVersion.Minor);
 
       if (context.Parameters.Count == 1)
       {
@@ -99,8 +106,8 @@ namespace ScannerService
       {
         Console.WriteLine("The following switches may be used in the command line:");
         Console.WriteLine("/?\t This help.");
-        Console.WriteLine("/i\t");
-        Console.WriteLine("/s\t Install UserScanner as service and start.");
+        Console.WriteLine("/i port=webServerPort\nInstall {0} as service.", Constants.SCANNER_NAME);
+        Console.WriteLine("/s\t Install {0} as service and start.", Constants.SCANNER_NAME);
         Console.WriteLine("/u\t Uninstall service.");
         return;
       }
@@ -110,33 +117,42 @@ namespace ScannerService
         IDictionary stateSaver = new Hashtable();
         try
         {
-          ServiceController controller = new ServiceController(installer.ServiceName);
+          var controller = new ServiceController(Constants.SERVICE_NAME);
           if (context.Parameters.ContainsKey("i") || context.Parameters.ContainsKey("s"))
           {
+            int port = 4200;
+            int.TryParse(context.Parameters["port"], out port);
+            saveSettings(port == 0 ? 4200 : port);
             installer.Install(stateSaver);
             installer.Commit(stateSaver);
-            Console.WriteLine("Service was succefully registered.");
+            logger.Info("Service was succefully registered.");
             if (context.Parameters.ContainsKey("s"))
             {
               controller.Start();
-              Console.WriteLine("Service was started.");
             }
           }
           else if (context.Parameters.ContainsKey("u"))
           {
-            try
+            if (controller.Status != ServiceControllerStatus.Stopped)
             {
               controller.Stop();
             }
-            catch { }
+            var proces = Process.GetProcessesByName(Constants.SCANNER_NAME);
+            foreach (var p in proces)
+            {
+              p.Kill();
+            }
             installer.Uninstall(null);
-            Console.WriteLine("Service was succefully unregistered.");
+            logger.Info("Service was succefully unregistered.");
           }
         }
         catch (Exception ex)
         {
-          installer.Rollback(stateSaver);
-          Console.WriteLine(ex.Message);
+          if (stateSaver.Count > 0)
+          {
+            installer.Rollback(stateSaver);
+          }
+          logger.Error(ex.Message);
         }
       }
     }

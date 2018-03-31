@@ -2,6 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { ILocale } from '../entities/common';
 import { EventEmitter } from '@angular/core';
 import { LangChangeEvent } from '@ngx-translate/core';
+import { of } from 'rxjs/observable/of';
 
 export class TranslateServiceStub {
   static stabLocales: ILocale[] = [
@@ -13,11 +14,11 @@ export class TranslateServiceStub {
   setDefaultLang(lang: string): void {}
 
   use(lang: string): Observable<any> {
-    return Observable.of({});
+    return of({});
   }
 
   get(key: string | Array<string>, interpolateParams?: Object): Observable<string | any> {
-    return Observable.of(TranslateServiceStub.stabLocales);
+    return of(TranslateServiceStub.stabLocales);
   }
 
   get onLangChange(): EventEmitter<LangChangeEvent> {

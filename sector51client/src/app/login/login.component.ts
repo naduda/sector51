@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../services/authentication.service';
 import { Profile } from '../entities/profile';
+import { environment } from '../../environments/environment.responsive';
+import { REST_API } from '../entities/rest-api';
 
 @Component({
   selector: 'sector51-login',
@@ -11,32 +13,34 @@ import { Profile } from '../entities/profile';
 export class LoginComponent implements OnInit {
   model: any = {};
   loading = false;
-  error = '';
+  error: string;
+  usersNotExist: boolean;
 
-  constructor(private auth: AuthenticationService) {}
+  constructor(private auth: AuthenticationService, private http: HttpClient) {}
 
   ngOnInit() {
+    this.http.get<boolean>(REST_API.GET.usersNotExist).subscribe(response => this.usersNotExist = response);
     this.auth.logout();
-    this.model.username = 'owner';
-    this.model.password = 'owner';
+    if (!environment.production) {
+      this.model.username = 'owner@gmail.com';
+      this.model.password = 'owner';
+    }
   }
 
   login() {
     this.loading = true;
     this.auth.login(this.model.username, this.model.password)
-    .subscribe(result => {
-      if (result === true) {
-        this.auth.navigate('main');
-      } else {
-        this.error = 'login.error.incorrectLogin';
+      .subscribe(result => {
+        if (result === true) {
+          this.auth.common.navigate('main');
+        } else {
+          this.loading = false;
+        }
+        this.error = result === true ? '' : 'login.error.incorrectLogin';
+      }, error => {
+        console.log(error);
         this.loading = false;
-      }
-    }, error => {
-      console.log(error);
-      if (error.ok) {
-        this.loading = false;
-        this.error = error;
-      }
-    });
+        this.error = error.statusText || error;
+      });
   }
 }

@@ -1,0 +1,91 @@
+<div class="modal-header rounded-top" [ngClass]="{'bg-info': isExist, 'bg-warning': !isExist}" [hidden]="!ready">
+  <h4 class="modal-title">{{ header | translate | titlecase }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss(0)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" *ngIf="ready">
+  <form class="form-inline" [hidden]="isEdit || isExist">
+    <label for="barcode" class="text-right pr-2 w-20">
+      <strong>{{ 'type' | translate | titlecase }}:</strong>
+    </label>
+    <div ngbDropdown class="d-inline-block mb-2 w-80">
+      <button type="button" class="nav-item nav-link text-right rounded btn bg-light w-100 pr-4"
+        ngbDropdownToggle *ngIf="product" [disabled]="isExist">
+        <span class="text-center w-100">{{ product.name }}</span>
+      </button>
+      <div ngbDropdownMenu>
+        <div class="form-check" *ngFor="let p of types">
+          <label class="form-check-label ml-2 w-100" (click)="product = p">{{ p.name }}</label>
+        </div>
+      </div>
+    </div>
+  </form>
+  <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
+    <label for="name" class="text-right pr-2 w-20">
+      <strong>{{ 'name' | translate | titlecase }}:</strong>
+    </label>
+    <input type="text" class="form-control mb-2 w-80" name="name" [(ngModel)]="product.name"
+      [prFocus]="focusName" required>
+  </form>
+  <form class="form-inline" [hidden]="product.id !== 0 && !isEdit">
+    <label class="text-right pr-2 w-20">
+      <strong>{{ 'selder' | translate | titlecase }}:</strong>
+    </label>
+    <div ngbDropdown class="d-inline-block mb-2 w-80">
+      <i class="d-flex justify-content-between align-items-center pl-2 pr-2" ngbDropdownToggle>
+        {{ selder.surname + ' ' + selder.name }}
+      </i>
+      <div ngbDropdownMenu>
+        <div class="form-check justify-content-start" *ngFor="let r of selders" (click)="selder = r">
+          <label class="form-check-label ml-2 mt-2">
+            <input class="form-check-input pr-1" type="radio" 
+              [checked]="selder === r" [value]="r.surname + ' ' + r.name">
+            <span>{{ r.surname + ' ' + r.name }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </form>
+  <form class="form-inline" [hidden]="0 < product.id && product.id <= 100">
+    <label for="count" class="text-right pr-2 w-20" [hidden]="product.count === 0">
+      <strong>{{ 'count' | translate | titlecase }}:</strong>
+    </label>
+    <input type="number" class="form-control mb-2 w-30" name="count" min="0" [(ngModel)]="product.count"
+      [disabled]="isExist" [hidden]="product.count === 0" required>
+
+    <label for="price" class="text-right pr-2 w-20">
+      <strong>{{ 'price' | translate | titlecase }}:</strong>
+    </label>
+    <input type="number" class="form-control mb-2 w-30" name="price" [(ngModel)]="product.price"
+      [prFocus]="focusPrice" min="0" max="10000" step="0.1" [disabled]="isExist && !isEdit" required>
+  </form>
+  <form class="form-inline barcode" [hidden]="!barcode || barcode == '-1'">
+    <label for="barcode" class="text-right pr-2 w-20 mb-0">
+      <i class="fa fa-fw fa-2x fa-barcode"></i>
+    </label>
+    <input type="text" class="form-control text-center w-30 pl-1 pr-1" name="barcode" [value]="barcode" readonly>
+
+    <div class="justify-content-end align-items-center w-50" [hidden]="!isExist">
+      <input type="number" class="form-control text-center w-35" name="curCount" min="0"
+        [max]="isBuy ? 10000 : product.count" [(ngModel)]="curCount">
+      <label class="form-check-label mr-4 ml-2">
+        <input class="form-check-input" type="radio" name="options" [value]="true" [(ngModel)]="isBuy">
+        <i class="fa fa-plus-square-o text-danger"></i>
+      </label>
+      <label class="form-check-label">
+        <input class="form-check-input" type="radio" name="options" [value]="false" [(ngModel)]="isBuy">
+        <i class="fa fa-minus-square-o text-primary"></i>
+      </label>
+    </div>
+  </form>
+</div>
+<div class="modal-footer" [hidden]="!ready">
+  <button type="button" class="btn btn-outline-primary" (click)="activeModal.close(true)"
+    *ngIf="isEdit || !someThingWrong || isBuy">
+    {{ (isExist ? isEdit ? 'update' : 'apply' : 'add') | translate | titlecase }}
+  </button>
+  <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss(0)">
+    {{ 'cancel' | translate | titlecase }}
+  </button>
+</div>

@@ -1,0 +1,27 @@
+#boxes:hover { color: #ffc107 !important; }
+
+.ng-valid[required], .ng-valid.required {
+  border-left: 5px solid #42A948;
+}
+
+.ng-touched.ng-invalid:not(form),
+.ng-dirty.ng-invalid:not(form) {
+  border-left: 5px solid #a94442;
+}
+
+div.flex-wrap {
+  max-height: calc(100% - 6rem);
+  overflow: auto;
+}
+
+#boxes {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+@media (max-width: 750px) {
+  div.flex-wrap {
+    max-height: calc(100% - 10rem);
+  }
+  #boxes { padding: 0.5rem !important; }
+}

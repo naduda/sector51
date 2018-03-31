@@ -1,4 +1,4 @@
-import { element, by, browser, WebElement, promise } from 'protractor';
+import { element, by, WebElement, browser } from 'protractor';
 import { ABase } from './ABase';
 
 export class Sector51LoginPage extends ABase {
@@ -14,31 +14,34 @@ export class Sector51LoginPage extends ABase {
   }
 
   test(): void {
-    this.checkUserEnter('qwe', 'qwe', '/login')
-      .then(() => this.unSuccessLogin())
-      .then(() => this.checkUserEnter('owner', 'owner', '/main'))
-      .then(() => this.logout());
+    this.loginAsUser('wrongUser', 'wrongPassword').then(() => this.checkUrl('/login'))
+      .then(success => {
+        if (!success) return false;
+        expect(element(by.className('alert alert-danger')).isPresent()).toBeTruthy();
+        this.printText('Check unsuccess login');
+        return this.loginAsUser('rightOwner', 'owner').then(() => this.checkUrl('/main'));
+      })
+      .then(success => {
+        if (!success) return false;
+        this.printText('Check success login');
+        this.elementClick('sector51-toolbar a.dropdown-toggle > i.fa-user');
+        this.elementClick('sector51-toolbar a.dropdown-item > i.fa-sign-out');
+        return this.checkUrl('/login');
+      })
+      .then(success => {
+        if (!success) return false;
+        browser.get('#/main');
+        browser.waitForAngular();
+        return this.checkUrl('/login');
+      })
+      .then(success => {
+        if (!success) {
+          this.printText('Something wrong in Sector51LoginPage');
+          return;
+        }
+        this.printText('Check protection after logout');
+        expect(element(by.className('alert alert-danger')).isPresent()).toBeFalsy();
+        this.printText('Check logout');
+      });
   }
-
-  private unSuccessLogin() {
-    this.checkUrl('/login');
-    expect(element(by.className('alert alert-danger')).isPresent()).toBeTruthy();
-    expect(element(by.className('alert alert-danger')).getText())
-      .toEqual('Username or password is incorrect');
-    this.printText('Check unsuccess login');
-  }
-
-  private checkUserEnter(name: string, password: string, expectedUrl: string) {
-    return this.loginAsUser(name, password)
-      .then(() => this.checkUrl(expectedUrl));
-  }
-
-  private logout() {
-    return element(by.css('sector51-toolbar a.dropdown-toggle > i.fa-user')).click()
-      .then(() => element(by.css('sector51-toolbar a.dropdown-item > i.fa-sign-out')).click())
-      .then(() => this.printText('Check success login'))
-      .then(() => expect(browser.getCurrentUrl()).toContain('/login'))
-      .then(() => expect(element(by.className('alert alert-danger')).isPresent()).toBeFalsy())
-      .then(() => this.printText('Check logout'));
-    }
 }

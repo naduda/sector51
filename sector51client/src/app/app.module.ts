@@ -1,5 +1,6 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
@@ -9,6 +10,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
+import { TableModule } from 'primeng/table';
+import { TabViewModule } from 'primeng/tabview';
+import { TooltipModule } from 'primeng/tooltip';
+import { CalendarModule } from 'primeng/calendar';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -24,6 +30,17 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MenuComponent } from './menu/menu.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ModalComponent } from './pages/modal/modal.component';
+import { BarcodeComponent } from './pages/barcode/barcode.component';
+import { ProductsComponent } from './pages/products/products.component';
+import { FocusDirective } from './directives/focus.directive';
+import { CartComponent } from './pages/cart/cart.component';
+import { BoxesComponent } from './pages/boxes/boxes.component';
+import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
+import { AbonementComponent } from './pages/modal/abonement/abonement.component';
+import { ServicesComponent } from './pages/services/services.component';
+import { MainReportComponent } from './pages/report/main-report/main-report.component';
+import { UserServicesComponent } from './components/user-services/user-services.component';
+import { ComboComponent } from './components/combo/combo.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -37,10 +54,22 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToolbarComponent,
     MenuComponent,
     CreateUserComponent,
-    ModalComponent
+    ModalComponent,
+    BarcodeComponent,
+    ProductsComponent,
+    FocusDirective,
+    CartComponent,
+    BoxesComponent,
+    BoxtypeComponent,
+    AbonementComponent,
+    ServicesComponent,
+    MainReportComponent,
+    UserServicesComponent,
+    ComboComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     TranslateModule.forRoot({
@@ -52,9 +81,19 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     NgbModule.forRoot(),
     AngularSplitModule,
+    TableModule,
+    TabViewModule,
+    TooltipModule,
+    CalendarModule,
+    MultiSelectModule,
     Sector51RoutingModule
   ],
-  entryComponents: [ModalComponent],
+  entryComponents: [
+    ModalComponent,
+    AbonementComponent,
+    BarcodeComponent,
+    BoxtypeComponent,
+  ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

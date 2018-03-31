@@ -5,23 +5,14 @@ div.mt-3 {
 }
 
 split {
-  max-height: calc(100% - 4rem);
-  min-height: calc(100% - 4rem);
+  max-height: calc(100% - 1.5rem);
+  min-height: calc(100% - 1.5rem);
 }
 
 div.rounded, .card { height: 100%; }
 div.rounded { border: 1px solid rgba(0,0,0,.125); }
 
-.card-title { text-align: center; }
-tr th {
-  width:1%;
-  white-space: nowrap;
-}
 
-div.bg-faded {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  line-height: 1.25;
-  text-align: center;
+@media (max-width: 750px) {
+  .test { display: none !important; }
 }

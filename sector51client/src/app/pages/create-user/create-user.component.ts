@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Location } from '@angular/common';
 import { NgModel } from '@angular/forms/src/forms';
 import { HttpClient } from '@angular/common/http';
@@ -6,7 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { CommonService } from '../../services/common.service';
 import { Profile } from '../../entities/profile';
-import { IRole, ERole, ESex } from '../../entities/common';
+import { IRole, ERole, ESex, ERestResult, IService, IUserService, IResponse } from '../../entities/common';
+import { of } from 'rxjs/observable/of';
+import { REST_API } from '../../entities/rest-api';
+import { ModalService } from '../../services/modal.service';
+import { AbonementComponent } from '../modal/abonement/abonement.component';
 
 @Component({
   selector: 'sector51-create-user',
@@ -14,41 +18,91 @@ import { IRole, ERole, ESex } from '../../entities/common';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
-  public allRoles: IRole[];
-  public created: boolean;
-  public user: Profile;
+  @Input() set profile(value) {
+    if (!value) {
+      return;
+    }
+    this.user = value;
+    if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
+    this.user.sex = this.user['sex'] ? ESex.MAN : ESex.WOMAN;
+    this.user.authorities = this.user['roles'];
+    this.usersNotExist = false;
+    this.buttonText = this.user.name ? 'update' : 'create';
+    this.user['password'] = this.user['password2'] = '';
+    this.isBack = false;
+  }
+  allRoles: IRole[];
+  created: boolean;
+  user: Profile;
+  cardRedonly: boolean;
+  usersNotExist: boolean;
+  buttonText: string;
+  isFirst: boolean;
   private idUser: number;
+  private isBack = true;
 
   constructor(private http: HttpClient, private location: Location,
-              private route: ActivatedRoute, public common: CommonService) {
+              private route: ActivatedRoute, public common: CommonService,
+              private modalService: ModalService) {
+    this.buttonText = 'create';
+    this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
   }
 
   ngOnInit() {
-    this.common.sidenavVisible = false;
-
+    if (this.user) return;
+    let code;
     this.route.params
-    .do(params => this.idUser = params['idUser'] === undefined ? -1 : +params['idUser'])
-    .flatMap(params => this.http.get<Profile>('/api/getUserById/' + this.idUser))
-    .do(user => {
-      if (!user) {
-        user = new Profile();
-        this.created = true;
-      } else {
-        user.authorities = user['roles'];
-      }
-      this.user = user;
-      this.user.sex = user['sex'] === true ? ESex.MAN : ESex.WOMAN;
-    })
-    .do(user => this.allRoles = this.common.profile['iroles'])
-    .subscribe(user => this.user['password'] = this.user['password2'] = '');
+      .do(params => this.idUser = params['idUser'] || -1)
+      .flatMap(params => this.route.queryParams)
+      .do(params => this.isFirst = params['first'] || false)
+      .do(queryParams => code = queryParams['code'] || '')
+      .flatMap(params => this.http.get<boolean>(REST_API.GET.usersNotExist))
+      .do(usersNotExist => this.usersNotExist = usersNotExist)
+      .flatMap(usersNotExist => usersNotExist ?
+        of(null) : this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(e => of(null)))
+      .do((user: Profile) => {
+        if (!user) {
+          user = new Profile();
+          user.sex = ESex.MAN;
+          this.created = true;
+        } else {
+          user.email = user.email.toLowerCase();
+          user.authorities = user['roles'];
+        }
+        user.sex = user['sex'] ? ESex.MAN : ESex.WOMAN;
+        user.card = code || user.card;
+        this.cardRedonly = code;
+        this.user = user;
+        if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
+      })
+      .flatMap(user => this.allRoles === null ? this.http.get<any[]>(REST_API.GET.roles) : of(this.allRoles))
+      .do(pairs => {
+        if (this.allRoles === null) {
+          this.user.authorities = ERole[ERole.OWNER];
+          this.allRoles = pairs.map(pair => ({
+            id: +pair['key'],
+            name: pair['value']
+          })).filter(p => p['value'] === this.user.authorities);
+        }
+        this.allRoles = this.allRoles.filter(r => r.id >= this.common.profile.role);
+      })
+      .subscribe(users => {
+        this.buttonText = this.user.name ? 'update' : 'create';
+        this.user['password'] = this.user['password2'] = '';
+      });
   }
 
-  get genders() {
-    return [ ESex.MAN, ESex.WOMAN ];
+  genderText = (sex: ESex): string => ESex[sex];
+  get genders(): ESex[] { return [ ESex.MAN, ESex.WOMAN ]; }
+
+  get isNotTrainerOrSelder() {
+    return this.user.authorities !== ERole[ERole.TRAINER] &&
+           this.user.authorities !== ERole[ERole.SELDER];
   }
 
-  genderText(sex: ESex): string {
-    return ESex[sex];
+  get showPassword() {
+    const auth = this.user.authorities;
+    return auth === ERole[ERole.OWNER] || auth === ERole[ERole.ADMIN];
   }
 
   changePassword(value: string, isRepeat: boolean) {
@@ -64,15 +118,32 @@ export class CreateUserComponent implements OnInit {
 
   onSubmit() {
     this.user['roles'] = this.user.authorities;
-    if (this.user['password'].length === 0) {
+    if (this.user['password'] !== undefined && this.user['password'].length === 0) {
       delete this.user['password'];
     }
-    if (this.idUser < 0) {
-      this.http.post('/api/createUser', this.user)
-        .subscribe(data => this.location.back());
+
+    if (this.idUser < 0 && this.usersNotExist) {
+      this.http.post(REST_API.POST.firstUser, this.user)
+        .subscribe(result => this.onResult(result));
+    } else if (this.idUser < 0 && !this.usersNotExist) {
+      this.user.card = this.user.card || ERole[ERole.TRAINER];
+      if (!this.showPassword) this.user['password'] = this.user.card;
+      this.http.post(REST_API.POST.user, this.user)
+        .subscribe(result => this.onResult(result));
     } else {
-      this.http.put('/api/updateUser', this.user)
-        .subscribe(data => this.location.back());
+      this.http.put(REST_API.PUT.user, this.user)
+        .subscribe(result => this.onResult(result));
+    }
+  }
+
+  private onResult(response) {
+    if (ERestResult[ERestResult.OK] === response.result) {
+      if (!this.isBack) return;
+      this.common.profile = null;
+      this.location.back();
+    } else {
+      alert('Something wrong.');
+      console.error(response);
     }
   }
 }

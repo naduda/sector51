@@ -9,6 +9,8 @@ import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ElementTools } from '../testing/commonTest';
+import { of } from 'rxjs/observable/of';
+import { HttpClient } from '@angular/common/http';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -17,9 +19,12 @@ describe('LoginComponent', () => {
 
   const form: any = {};
   const AuthenticationServiceStub = {
-    login: (name: string, psw: string): Observable<boolean> => Observable.of(name === psw),
+    login: (name: string, psw: string): Observable<boolean> => of(name === psw),
     logout: () => component.loading = false,
-    navigate: () => component.error = undefined
+    navigate: () => component.error = undefined,
+    common: {
+      navigate: (path: string) => console.log('Navigate to ' + path)
+    }
   };
 
   beforeEach(async(() => {
@@ -27,7 +32,10 @@ describe('LoginComponent', () => {
       declarations: [ LoginComponent, TranslatePipeStub ],
       imports: [ FormsModule ],
       providers: [
-        { provide: AuthenticationService, useValue: AuthenticationServiceStub }
+        { provide: AuthenticationService, useValue: AuthenticationServiceStub },
+        { provide: HttpClient, useValue: {
+          get: (url, params): Observable<boolean> => of(false)
+        }}
       ]
     })
     .compileComponents();
@@ -53,36 +61,32 @@ describe('LoginComponent', () => {
   it('validate form', fakeAsync(() => {
     et.setInputValue(form.tbLogin, '');
     et.setInputValue(form.tbPassword, '');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeDefined();
     expect(et.ne('span.help-block.psw')).toBeDefined();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
     et.setInputValue(form.tbLogin, 'name');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeFalsy();
     expect(et.ne('span.help-block.psw')).toBeDefined();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
     et.setInputValue(form.tbPassword, 'password');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeFalsy();
     expect(et.ne('span.help-block.psw')).toBeFalsy();
     expect(et.ne('div.alert.alert-danger')).toBeDefined();
 
     et.setInputValue(form.tbPassword, 'name');
-    form.button.click();
-    fixture.detectChanges();
+    et.clickElement(form.button);
     expect(et.ne('span.help-block.un')).toBeFalsy();
     expect(et.ne('span.help-block.psw')).toBeFalsy();
     expect(et.ne('div.alert.alert-danger')).toBeFalsy();
 
-    expect(et.ne('button > i.fa.fa-spinner')).toBeDefined();
+    expect(et.ne('button > div > i.fa.fa-spinner')).toBeDefined();
     AuthenticationServiceStub.logout();
     fixture.detectChanges();
-    expect(et.ne('button > i.fa.fa-spinner')).toBeFalsy();
+    expect(et.ne('button > div > i.fa.fa-spinner')).toBeFalsy();
   }));
 });

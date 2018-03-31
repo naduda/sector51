@@ -3,18 +3,20 @@ import { HttpClient } from '@angular/common/http';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { ModalService, IModalProperties } from '../services/modal.service';
+import { ModalService } from '../services/modal.service';
 import { CommonService } from '../services/common.service';
 
 import { MainComponent } from './main.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { Profile } from '../entities/profile';
-import { ERole } from '../entities/common';
+import { ERole, IModalProperties } from '../entities/common';
 import { USERS_MOCK, ElementTools } from '../testing/commonTest';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { AngularSplitModule } from 'angular-split';
+import { of } from 'rxjs/observable/of';
+import { FormsModule } from '@angular/forms';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -22,17 +24,20 @@ describe('MainComponent', () => {
   let et: ElementTools<MainComponent>;
   let currentProfile = 0;
   let location: string;
+  let users: Profile[];
 
   class CommonServiceStub {
     get profile() {
-      return USERS_MOCK[currentProfile];
+      return users[currentProfile];
     }
+    fromStorage = (key: string) => undefined;
   }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ MainComponent, TranslatePipeStub ],
       imports: [
+        FormsModule,
         RouterTestingModule.withRoutes([
           { path: 'main', component: MainComponent },
           { path: 'registration/:idUser', component: MainComponent }
@@ -46,8 +51,13 @@ describe('MainComponent', () => {
             location = 'modal';
           }}
         },
-        { provide: HttpClient, useValue: {} },
-        { provide: TranslateService, useValue: { get: (key) => Observable.of(key) } },
+        { provide: HttpClient, useValue: {
+          get: (url: string) => {
+            if (url.endsWith('/api/users')) return of(USERS_MOCK);
+            return of([]);
+          }
+        }},
+        { provide: TranslateService, useValue: { get: (key) => of(key) } },
         { provide: CommonService, useClass: CommonServiceStub }
       ]
     })
@@ -57,8 +67,10 @@ describe('MainComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
-    component.users = USERS_MOCK;
-    component.users[1]['active'] = true;
+    users = [];
+    USERS_MOCK.forEach(u => users.push(Object.assign({}, u)));
+    component.common.users = users;
+    component.common.users[1]['active'] = true;
     et = new ElementTools(fixture);
   });
 
@@ -71,8 +83,8 @@ describe('MainComponent', () => {
     const selector = 'split-area ul > li';
     const users = et.all(selector);
     expect(users.length).toBe(7, 'all users should be 7');
-    expect(et.all(selector + '[hidden]').length).toBe(5, 'not active users should be 5');
-    component.users[5]['active'] = true;
+    expect(et.all(selector + '[hidden]').length).toBe(6, 'not active users should be 6');
+    component.common.users[5]['active'] = true;
     fixture.detectChanges();
     expect(et.all(selector + '[hidden]').length).toBe(4, 'not active users should be 4');
     et.click('div.mt-3 > label > input[type="checkbox"]');
@@ -80,31 +92,31 @@ describe('MainComponent', () => {
   }));
 
   it('check card functionality', fakeAsync(() => {
-    currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.OWNER);
+    currentProfile = users.findIndex(u => u.role === ERole.OWNER);
     fixture.detectChanges();
     const card = et.de('split-area div.card');
     expect(card).toBeDefined('card of logined user');
     et.click('split-area ul > li:nth-child(2)');
     expect(card).toBeDefined('card should be visible');
-    const buttons = et.de('div.card div.bg-faded');
+    const buttons = et.de('div.card div.bg-light');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
   }));
 
   it('check permissions for USER', fakeAsync(() => {
-    currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.USER);
+    currentProfile = users.findIndex(u => u.role === ERole.USER);
     fixture.detectChanges();
     const card = et.de('split-area div.card');
     et.click('split-area ul > li:first-child');
     expect(card).toBeDefined('card should be visible');
-    const buttons = et.de('div.bg-faded');
+    const buttons = et.de('div.bg-light');
     expect(buttons).toBe(null, 'buttons should not be visible for USER');
   }));
 
   it('check permissions for USER', fakeAsync(() => {
-    currentProfile = USERS_MOCK.findIndex(u => u.role === ERole.ADMIN);
+    currentProfile = users.findIndex(u => u.role === ERole.ADMIN);
     fixture.detectChanges();
     et.click('split-area ul > li:first-child');
-    const buttons = et.de('div.bg-faded');
+    const buttons = et.de('div.bg-light');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
     expect(location).toBeUndefined();
     et.click('button.btn-danger');

@@ -8,6 +8,8 @@ import { By } from '@angular/platform-browser';
 import { element, browser, by } from 'protractor';
 import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
+import { HttpClient } from '@angular/common/http';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -22,7 +24,10 @@ describe('LoginComponent', () => {
       declarations: [ LoginComponent, TranslatePipeStub ],
       imports: [ FormsModule ],
       providers: [
-        { provide: AuthenticationService, useValue: AuthenticationServiceStub }
+        { provide: AuthenticationService, useValue: AuthenticationServiceStub },
+        { provide: HttpClient, useValue: {
+          get: (url, params): Observable<boolean> => of(false)
+        }}
       ]
     })
     .compileComponents();
@@ -37,8 +42,8 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
     const debugElement = fixture.debugElement.query(By.css('form[name="loginForm"]'));
     expect(debugElement).toBeDefined();
-    const element = debugElement.nativeElement;
-    expect(element.offsetWidth).toBeGreaterThan(250);
-    expect(element.offsetWidth).toBeLessThan(365);
+    const nativeElement = debugElement.nativeElement;
+    expect(nativeElement.offsetWidth).toBeGreaterThan(250);
+    expect(nativeElement.offsetWidth).toBeLessThan(365);
   });
 });
