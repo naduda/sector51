@@ -29,7 +29,7 @@
 </div>
 <hr>
 <div class="d-flex flex-wrap p-5">
-  <div id="boxes" class="d-inline-flex m-2 p-3 rounded text-white pointer"
+  <div id="boxes" class="d-inline-flex justify-content-center w-rem-5 m-2 p-3 rounded text-white pointer"
     [ngClass]="{ 'bg-primary': !p.card, 'bg-danger': p.card }"
     placement="top" [ngbTooltip]="p.tooltip"
     *ngFor="let p of boxes;" (click)="updateBox(p)">
