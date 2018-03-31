@@ -69,7 +69,7 @@ public class UserDao extends CommonDao implements IUserMapper {
       return ESector51Result.USER_ALREADY_EXIST;
     }
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    UserSecurity currentUserSecurity = (UserSecurity) auth.getDetails();
+    UserSecurity currentUserSecurity = auth != null ? (UserSecurity) auth.getDetails() : null;
 
     boolean result = runTransaction(() -> {
       UserSecurity user = new UserSecurityBuilder()
@@ -77,7 +77,7 @@ public class UserDao extends CommonDao implements IUserMapper {
               .setRoles(userInfo.getRoles())
               .build();
 
-      if (user.getRole().value < currentUserSecurity.getRole().value) {
+      if (currentUserSecurity != null && user.getRole().value < currentUserSecurity.getRole().value) {
         return;
       }
       insertUserSecurity(user);
