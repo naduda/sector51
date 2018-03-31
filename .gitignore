@@ -1,6 +1,8 @@
-
 *.dll
 *.exe
 *.pdb
 *.rar
 sector51client/debug.log
+./docker/pr/*.jar
+sector51client/.vscode/tasks.json
+docker/test/
