@@ -37,7 +37,15 @@ public class BarcodeDao extends CommonDao {
       int count = product.getCount() - oldProduct.getCount();
       scanner.updateProduct(product);
       if (count != 0) {
-        History history = new History(count > 0 ? 4 : 5, idUser, product.getId() + "_" + Math.abs(count));
+        int idEvent = count > 0 ? 4 : 5;
+        int absCount = Math.abs(count);
+        History history = new History(idEvent, idUser, product.getId() + "_" + absCount);
+        int sum = product.getPrice() * absCount;
+        if (idEvent == 4) {
+          history.setOutcome(sum);
+        } else {
+          history.setIncome(sum);
+        }
         insert2history(history);
       }
     });

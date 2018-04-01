@@ -63,6 +63,7 @@ public class RestBarcodeController extends RestCommon {
       String[] products = body.get(1).toString().split("_");
       int cash = (int)body.get(2);
       UserInfo user = userDao.getUserInfoByCard(userId);
+      int oldBalance = user.getBalance();
       boolean success = barcode.runTransaction(() -> {
         user.setBalance(user.getBalance() + cash);
         for(String prod : products) {
@@ -74,6 +75,8 @@ public class RestBarcodeController extends RestCommon {
           barcode.updateProduct(product, user.getCreated());
           user.setBalance(user.getBalance() - product.getPrice() * count);
         }
+        int newBalance = user.getBalance() - oldBalance;
+        userDao.updateLastHistoryUsercome(newBalance);
         userDao.updateUser(user);
       });
       return new Sector51Result(success ? ESector51Result.OK : ESector51Result.ERROR);

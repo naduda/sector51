@@ -77,4 +77,8 @@ public class CommonDao {
     }
     commonMapper.insert2history(history);
   }
+
+  public void updateLastHistoryUsercome(int newBalance) {
+    commonMapper.updateLastHistoryUsercome(newBalance);
+  }
 }

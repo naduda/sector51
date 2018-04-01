@@ -30,8 +30,10 @@ export class CartComponent implements OnInit {
     this.http.post(REST_API.POST.userPay, [
       this.user.code, this.products.reduce((r, c) => r + c.id + ':' + c.count + '_', ''), this.cash * 100
     ]).subscribe((response: IResponse) => {
-      if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-        this.common.navigate('main', { user: this.user['created'] });
+      if (response && response.result === ERestResult[ERestResult.OK]) {
+        const userId = this.user['created'];
+        this.clear();
+        this.common.navigate('main', { user: userId });
       } else {
         alert('Error');
       }

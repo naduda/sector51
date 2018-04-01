@@ -10,6 +10,9 @@ public class History {
   private Timestamp idUser;
   private Timestamp time;
   private String desc;
+  private int income;
+  private int outcome;
+  private int usercome;
 
   public History() {}
 
@@ -65,5 +68,29 @@ public class History {
 
   public void setDesc(String desc) {
     this.desc = desc;
+  }
+
+  public int getIncome() {
+    return income;
+  }
+
+  public void setIncome(int income) {
+    this.income = income;
+  }
+
+  public int getOutcome() {
+    return outcome;
+  }
+
+  public void setOutcome(int outcome) {
+    this.outcome = outcome;
+  }
+
+  public int getUsercome() {
+    return usercome;
+  }
+
+  public void setUsercome(int usercome) {
+    this.usercome = usercome;
   }
 }

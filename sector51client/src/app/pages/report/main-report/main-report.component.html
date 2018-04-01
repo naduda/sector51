@@ -32,6 +32,15 @@
         <th class="text-center" pResizableColumn>{{ 'name' | translate | uppercase }}</th>
         <th class="text-center" pResizableColumn>{{ 'object' | translate | uppercase }}</th>
         <th class="text-center" pResizableColumn>{{ 'desc' | translate | uppercase }}</th>
+        <th class="text-center" pResizableColumn width="75">
+          <i class="fa fa-rw fa-arrow-circle-down"></i>
+        </th>
+        <th class="text-center" pResizableColumn width="75">
+          <i class="fa fa-rw fa-arrow-circle-up"></i>
+        </th>
+        <th class="text-center" pResizableColumn width="75">
+          <i class="fa fa-rw fa-user-circle"></i>
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-h>
@@ -40,6 +49,9 @@
         <td>{{ h['event'] }}</td>
         <td>{{ h['user'] }}</td>
         <td>{{ h.desc }}</td>
+        <td class="text-right">{{ h.income / 100 | number:'0.2' }}</td>
+        <td class="text-right">{{ h.outcome / 100 | number:'0.2' }}</td>
+        <td class="text-right">{{ h.usercome / 100 | number:'0.2' }}</td>
       </tr>
     </ng-template>
   </p-table>
