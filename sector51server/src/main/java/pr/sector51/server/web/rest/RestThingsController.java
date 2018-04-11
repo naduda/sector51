@@ -9,6 +9,8 @@ import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +112,12 @@ public class RestThingsController extends RestCommon {
           box.setCard(userInfo.getCard());
           thingsDao.updateBox(box, false);
         }
-        History history = new History(2, inserted.getIdUser(), inserted.getIdService() + "_" + userService.getDesc());
+        History history = new History(2, inserted.getIdUser(), inserted.getDesc());
+        if (userService.getIdService() == 1) {
+          Service51 service = services().stream().filter(s -> s.getId() == 1).findFirst().orElseGet(null);
+          history.setDesc((service == null ? "" : service.getName() + " ") + userService.getValue());
+        }
+        history.setIncome((int)Double.parseDouble(userService.getDesc()) * 100);
         thingsDao.insert2history(history);
         result.setMessage(inserted);
       });
@@ -146,7 +153,8 @@ public class RestThingsController extends RestCommon {
   public Sector51Result updateBox(@RequestBody UserServise51 userService) {
     boolean trResult = thingsDao.runTransaction(() -> {
       thingsDao.updateUserService(userService);
-      String historyDesc = userService.getIdService() + "_" + userService.getDesc();
+      DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+      String historyDesc = userService.getDesc() + " " + dateFormat.format(userService.getDtEnd());
       History history = new History(3, userService.getIdUser(), historyDesc);
       thingsDao.insert2history(history);
     });

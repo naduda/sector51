@@ -38,8 +38,8 @@ export class MainReportComponent implements OnInit {
 
   ngOnInit() {
     this.http.get<IProduct[]>(REST_API.GET.products)
-    .do(products => this.products = products)
-    .subscribe(products => this.changeDate(null));
+      .do(products => this.products = products)
+      .subscribe(products => this.changeDate(null));
   }
 
   changeDate(date: Date) {
@@ -68,11 +68,14 @@ export class MainReportComponent implements OnInit {
   private formatNumber = (value: number): string => value < 10 ? '0' + value : value.toString();
 
   private parseDescription(history: IHistory) {
-    const pars = history.desc.split('_');
+    const pars = history.desc ? history.desc.split('_') : history['event'];
     switch (history.idEvent) {
       case 2:
-        const service = this.common.services.find(s => s.id === +pars[0]);
-        history.desc = service.name + ' (' + pars[1] + ')';
+        if (history.desc.startsWith('TRAINER')) {
+          const idUser = +history.desc.substring(8);
+          const user = this.common.users.find(u => u['created'] === idUser);
+          history.desc = 'TRAINER ' + user.surname + ' ' + user.name;
+        }
         break;
       case 4:
       case 5:
