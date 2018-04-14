@@ -55,6 +55,7 @@ public class UserDao extends CommonDao implements IUserMapper {
 
   @Override
   public void insertUserInfo(UserInfo user) {
+    if (user.getEmail() == null) user.setEmail("");
     userMapper.insertUserInfo(user);
   }
 

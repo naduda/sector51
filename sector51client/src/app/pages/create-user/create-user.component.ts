@@ -40,7 +40,7 @@ export class CreateUserComponent implements OnInit {
   isFirst: boolean;
   private idUser: number;
   private isBack = true;
-
+  
   constructor(private http: HttpClient, private location: Location,
               private route: ActivatedRoute, public common: CommonService,
               private modalService: ModalService) {
@@ -92,7 +92,14 @@ export class CreateUserComponent implements OnInit {
       });
   }
 
-  genderText = (sex: ESex): string => ESex[sex];
+  get isEmailRequired(): boolean {
+    const role = this.user.authorities;
+    return role.includes(ERole[ERole.OWNER]) || role.includes(ERole[ERole.ADMIN]);
+  }
+
+  genderText(sex: ESex): string {
+    return ESex[sex];
+  }
   get genders(): ESex[] { return [ ESex.MAN, ESex.WOMAN ]; }
 
   get isNotTrainerOrSelder() {

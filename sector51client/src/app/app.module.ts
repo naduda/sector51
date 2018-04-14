@@ -41,6 +41,7 @@ import { ServicesComponent } from './pages/services/services.component';
 import { MainReportComponent } from './pages/report/main-report/main-report.component';
 import { UserServicesComponent } from './components/user-services/user-services.component';
 import { ComboComponent } from './components/combo/combo.component';
+import { ImportComponent } from './pages/import/import.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -65,7 +66,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ServicesComponent,
     MainReportComponent,
     UserServicesComponent,
-    ComboComponent
+    ComboComponent,
+    ImportComponent
   ],
   imports: [
     BrowserModule,
@@ -74,9 +76,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient]
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
       }
     }),
     NgbModule.forRoot(),

@@ -14,7 +14,16 @@ export class ComboComponent {
   @Output() onchange: EventEmitter<any> = new EventEmitter();
   @Input() itemToText: Function | string;
   @Input() itemToValue: Function | string;
-  @Input() selected;
+  @Input() set selected(value) {
+    this._selected = value;
+    if (value) {
+      this.selectedValue = value;
+    }
+  };
+  get selected() {
+    return this._selected;
+  }
+  private _selected: any;
   @Input() set items(value: any[]) {
     this._items = value;
     if (!value || value.length === 0) return;
@@ -41,17 +50,17 @@ export class ComboComponent {
     this.selectedValue = this.itemText(selectedItem);
     this.onchange.emit(selectedItem);
   }
-
+  
   itemText(item): string {
     return typeof this.itemToText === 'string' ?
-      item[this.itemToText as string] : this.itemToText(item);
+    item[this.itemToText as string] : this.itemToText(item);
   }
-
+  
   itemValue(item) {
     return typeof this.itemToValue === 'string' ?
-      item[this.itemToValue as string] : this.itemToValue(item);
+    item[this.itemToValue as string] : this.itemToValue(item);
   }
-
+  
   get valueToText() {
     return this.selectedValue;
   }

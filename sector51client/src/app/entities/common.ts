@@ -19,12 +19,29 @@ export interface IModalWindow {
   btCancelClick(reason: any, instance: any): any;
   init(props: any): void;
 }
+export interface ITableColumn { field: string; header: string; }
 export interface IBox { idtype: number; number: number; card?: string; time?: Date; }
 export interface IResponse { result: string; message: any; }
 export interface IService { id: number; name: string; desc: string; price: number; }
-export interface IUserService { idService: number; desc: string; idUser: number; dtBeg: Date; dtEnd: Date; value: string; }
-export interface IHistory { id: number; idEvent: number; idUser: number; time: number; desc: string; price: number;
-                            income: number; outcome: number; usercome: number; }
+export interface IUserService {
+  idService: number;
+  desc: string;
+  idUser: number;
+  dtBeg: Date;
+  dtEnd: Date;
+  value: string;
+}
+export interface IHistory {
+  id: number;
+  idEvent: number;
+  idUser: number;
+  time: number;
+  desc: string;
+  price: number;
+  income: number;
+  outcome: number;
+  usercome: number;
+}
 export interface IEvent { id: number; name: string; desc: string; email: string; }
 export interface ITableExport { header: string; field: string; }
 

@@ -28,8 +28,8 @@ export class MainComponent implements OnInit {
   private boxes: IBox[];
 
   constructor(private http: HttpClient, private route: ActivatedRoute,
-              private modalService: ModalService, public common: CommonService,
-              private translate: TranslateService) {
+    private modalService: ModalService, public common: CommonService,
+    private translate: TranslateService) {
     this.wWidth = window.innerWidth;
     this.isOwner = common.profile.role === ERole.OWNER;
   }
@@ -40,26 +40,26 @@ export class MainComponent implements OnInit {
       .filter(e => e.email ? e.email.includes(this.common.profile['created']) : false);
 
     this.route.queryParams
-    .do(params => {
-      this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
-    })
-    .flatMap(params => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
-    .do(boxes => {
-      this.boxes = boxes.filter(b => b.idtype < 3);
-      this.common.users.forEach(u => {
-        const boxes = this.boxes.filter(b => b.card === u.card);
-        if (boxes) {
-          u['box'] = boxes.map(b => b.number).join(', ');
-          u['time'] = new Date(Math.max.apply(Math, boxes.map(b => +b.time)));
-          u['active'] = boxes.length > 0;
-        }
+      .do(params => {
+        this.selectedUserId = params['user'] ? +params['user'] : +this.common.profile['created'];
+      })
+      .flatMap(params => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
+      .do(boxes => {
+        this.boxes = boxes.filter(b => b.idtype < 3);
+        this.common.users.forEach(u => {
+          const boxes = this.boxes.filter(b => b.card === u.card);
+          if (boxes) {
+            u['box'] = boxes.map(b => b.number).join(', ');
+            u['time'] = new Date(Math.max.apply(Math, boxes.map(b => +b.time)));
+            u['active'] = boxes.length > 0;
+          }
+        });
+        const spliter = this.common.fromStorage('spliter');
+        this.sizeValue = spliter ? spliter.size : [25, 75];
+      })
+      .subscribe(users => {
+        this.user = this.common.users.find(u => u['created'] === this.selectedUserId);
       });
-      const spliter = this.common.fromStorage('spliter');
-      this.sizeValue = spliter ? spliter.size : [ 25, 75 ];
-    })
-    .subscribe(users => {
-      this.user = this.common.users.find(u => u['created'] === this.selectedUserId);
-    });
   }
 
   get activeUsers(): Profile[] {

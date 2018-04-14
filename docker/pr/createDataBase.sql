@@ -48,8 +48,7 @@ CREATE TABLE box (
 	CONSTRAINT pk_uniqe_box_key UNIQUE (idtype, "number")
 );
 
-CREATE TABLE product
-(
+CREATE TABLE product (
 	id integer NOT NULL,
 	name character varying(25) NOT NULL,
 	"desc" character varying(100) NOT NULL,
@@ -80,6 +79,9 @@ CREATE TABLE history (
 	idUser timestamp without time zone,
 	time timestamp without time zone NOT NULL DEFAULT now(),
 	"desc" character varying(50),
+	income integer,
+	outcome integer,
+	usercome integer,
 	CONSTRAINT pk_history PRIMARY KEY (id)
 );
 

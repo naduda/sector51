@@ -24,19 +24,20 @@
       <div ngbDropdown class="d-inline-block mr-4">
         <i class="nav-item nav-link" ngbDropdownToggle>{{ 'settings' | translate | uppercase }}</i>
         <div ngbDropdownMenu>
-            <a routerLink="/boxes" class="dropdown-item fa fa-fw fa-inbox" *ngIf="permissions">
-              {{ 'boxes' | translate | titlecase }}
-            </a>
+          <a routerLink="/boxes" class="dropdown-item fa fa-fw fa-inbox" *ngIf="permissions">
+            {{ 'boxes' | translate | titlecase }}
+          </a>
           <a routerLink="/services" class="dropdown-item fa fa-fw fa-cogs">{{ 'services' | translate | titlecase }}</a>
+          <a routerLink="/import" class="dropdown-item fa fa-fw fa-file-excel-o">{{ 'import' | translate | titlecase }}</a>
         </div>
       </div>
 
       <div ngbDropdown class="d-inline-block mr-4">
-          <i class="nav-item nav-link" ngbDropdownToggle>{{ 'reports' | translate | uppercase }}</i>
-          <div ngbDropdownMenu>
-            <a routerLink="/main-report" class="dropdown-item fa fa-fw fa-file">{{ 'main-report' | translate | titlecase }}</a>
-          </div>
+        <i class="nav-item nav-link" ngbDropdownToggle>{{ 'reports' | translate | uppercase }}</i>
+        <div ngbDropdownMenu>
+          <a routerLink="/main-report" class="dropdown-item fa fa-fw fa-file">{{ 'main-report' | translate | titlecase }}</a>
         </div>
+      </div>
     </div>
   </div>
 </nav>
