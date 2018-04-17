@@ -1,9 +1,11 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { WorkBook, read, WorkSheet, utils } from 'xlsx';
-import { ITableColumn, IResponse, ERole, ESex } from '../../entities/common';
+import { ITableColumn, IResponse, ERole, ESex, ERestResult } from '../../entities/common';
 import { HttpClient } from '@angular/common/http';
 import { REST_API } from '../../entities/rest-api';
 import { Profile } from '../../entities/profile';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
 
 @Component({
   selector: 'sector51-import',
@@ -58,22 +60,67 @@ export class ImportComponent implements OnInit, AfterViewInit {
   }
 
   import() {
-    const el = this.rowData[0];
+    this.insertUsers(this.rowData, 0);
+  }
+
+  private insertUsers(rowData, index: number) {
+    if (rowData.length === index) {
+      return;
+    }
+    const row = rowData[index];
     const user: Profile = {
       authorities: ERole[ERole.USER],
       balance: 0,
       role: ERole.USER,
-      email: el['email'] || '',
-      birthday: el['birthday'] || '',
-      surname: el['surname'],
-      name: el['name'],
-      phone: el['phone'],
-      sex: el['sex'] === 'M' ? ESex.MAN : ESex.WOMAN,
-      card: el['card']
+      email: row['email'] || '',
+      birthday: row['birthday'] || '',
+      surname: row['surname'],
+      name: row['name'],
+      phone: row['phone'],
+      sex: row['sex'] === 'M' ? ESex.MAN : ESex.WOMAN,
+      card: row['card']
     };
     user['password'] = user.card;
     user['roles'] = user.authorities;
     this.http.post(REST_API.POST.user, user)
-      .subscribe((response: IResponse) => console.log(response))
+      .subscribe((response: IResponse) => {
+        if (response.result === ERestResult[ERestResult.OK]) {
+          this.insertServices(row, response.message['created'])
+            .subscribe((response: IResponse) => {
+              if (response.result === ERestResult[ERestResult.OK]) {
+                row['success'] = true;
+                this.insertUsers(rowData, ++index);
+              }
+            });
+        }
+      });
+  }
+
+  private insertServices(row: any, userId: number): Observable<any> {
+    const abontype = row['abontype'].trim().toUpperCase();
+    const userServise = {
+      idService: abontype === 'M' ? 3 : abontype === 'E' ? 4 : 0,
+      idUser: userId,
+      dtBeg: this.getDate(row['dtbeg_a']),
+      dtEnd: this.getDate(row['dtend_a']),
+      desc: '0'
+    };
+    return this.http.post(REST_API.POST.userService, userServise)
+      .flatMap((response: IResponse) => {
+        if (response.result === ERestResult[ERestResult.OK]) {
+          userServise.idService = 2;
+          userServise.dtBeg = this.getDate(row['dtbeg_b']);
+          userServise.dtEnd = this.getDate(row['dtend_b']);
+          userServise['value'] = +row['box'];
+          return this.http.post(REST_API.POST.userService, userServise);
+        } else {
+          return of(response);
+        }
+      });
+  }
+
+  private getDate(value: string): Date {
+    const pars = value.split('.');
+    return new Date(+pars[2], +pars[1] - 1, +pars[0]);
   }
 }

@@ -15,7 +15,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
-      <tr>
+      <tr [ngClass]="{'bg-success': rowData['success']}">
         <td *ngFor="let column of columns">
           {{ rowData[column.field] }}
         </td>

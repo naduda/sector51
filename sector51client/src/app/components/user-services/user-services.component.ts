@@ -34,7 +34,7 @@ export class UserServicesComponent implements OnInit {
   allServices: IService[];
 
   constructor(private http: HttpClient, private common: CommonService,
-              private modalService: ModalService) {
+    private modalService: ModalService) {
     this.service = { id: -1, name: '', desc: '', price: 0 };
   }
 
@@ -64,6 +64,9 @@ export class UserServicesComponent implements OnInit {
           if (s.value && !isNaN(+s.value)) trainerId = +s.value;
           const trainer = this.common.users.find(u => u['created'] === trainerId);
           s['valueDesc'] = trainer ? trainer.surname + ' ' + trainer.name : undefined;
+          break;
+        case 2:
+          s['valueDesc'] = '№' + s.value;
           break;
         default: s['valueDesc'] = undefined;
       }

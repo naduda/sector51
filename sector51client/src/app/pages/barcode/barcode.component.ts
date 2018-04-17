@@ -46,9 +46,9 @@ export class BarcodeComponent implements OnInit, IModalWindow {
   private keyCodes: number[] = [13, 38, 40];
 
   constructor(public activeModal: NgbActiveModal,
-              private modalService: ModalService,
-              private http: HttpClient,
-              public common: CommonService) {
+    private modalService: ModalService,
+    private http: HttpClient,
+    public common: CommonService) {
     this.curCount = 1;
     this.isBuy = false;
     this.selder = new Profile(null, '-', '');
@@ -234,7 +234,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
         const url = REST_API.GET.userServices(instance.profile['created']);
         instance.http.get(url).subscribe((response: IResponse) => {
           const services = response.message;
-          const abonementService = services.find(s => s.idService === 0);
+          const abonementService = services.find(s => s.idService === 0 || s.idService === 3 || s.idService === 4);
           const dtBeg = abonementService ? abonementService.dtBeg : 0;
           const dtEnd = abonementService ? abonementService.dtEnd : 0;
           const now = new Date().getTime();

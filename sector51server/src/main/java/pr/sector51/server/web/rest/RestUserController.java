@@ -83,7 +83,11 @@ public class RestUserController extends RestCommon {
 
   @RequestMapping(value = "/add/user", method = RequestMethod.POST)
   public Sector51Result createUser(@RequestBody UserInfo user) {
-    return new Sector51Result(userDao.insertUser(user));
+    Sector51Result result = new Sector51Result(userDao.insertUser(user));
+    if (result.getResult() == ESector51Result.OK) {
+      result.setMessage(user);
+    }
+    return result;
   }
 
   @RequestMapping(value = "/public/add/firstUser", method = RequestMethod.POST)

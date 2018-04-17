@@ -40,10 +40,10 @@ export class CreateUserComponent implements OnInit {
   isFirst: boolean;
   private idUser: number;
   private isBack = true;
-  
+
   constructor(private http: HttpClient, private location: Location,
-              private route: ActivatedRoute, public common: CommonService,
-              private modalService: ModalService) {
+    private route: ActivatedRoute, public common: CommonService,
+    private modalService: ModalService) {
     this.buttonText = 'create';
     this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
   }
@@ -100,11 +100,11 @@ export class CreateUserComponent implements OnInit {
   genderText(sex: ESex): string {
     return ESex[sex];
   }
-  get genders(): ESex[] { return [ ESex.MAN, ESex.WOMAN ]; }
+  get genders(): ESex[] { return [ESex.MAN, ESex.WOMAN]; }
 
   get isNotTrainerOrSelder() {
     return this.user.authorities !== ERole[ERole.TRAINER] &&
-           this.user.authorities !== ERole[ERole.SELDER];
+      this.user.authorities !== ERole[ERole.SELDER];
   }
 
   get showPassword() {
