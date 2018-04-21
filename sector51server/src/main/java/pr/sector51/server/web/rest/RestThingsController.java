@@ -110,15 +110,8 @@ public class RestThingsController extends RestCommon {
           BoxNumber box = new BoxNumber(3, Integer.parseInt(userService.getValue()));
           UserInfo userInfo = userDao.getUserInfoById(userService.getIdUser());
           box.setCard(userInfo.getCard());
-          thingsDao.updateBox(box, false);
+          thingsDao.updateBox(box);
         }
-        History history = new History(2, inserted.getIdUser(), inserted.getDesc());
-        if (userService.getIdService() == 1) {
-          Service51 service = services().stream().filter(s -> s.getId() == 1).findFirst().orElseGet(null);
-          history.setDesc((service == null ? "" : service.getName() + " ") + userService.getValue());
-        }
-        history.setIncome((int)Double.parseDouble(userService.getDesc()) * 100);
-        thingsDao.insert2history(history);
         result.setMessage(inserted);
       });
       result.setResult(trResult ? ESector51Result.OK : ESector51Result.ERROR);
@@ -146,19 +139,13 @@ public class RestThingsController extends RestCommon {
   @RequestMapping(value = "/update/boxNumber", method = RequestMethod.PUT)
   public Sector51Result updateBox(@RequestBody BoxNumber boxNumber) {
     if (boxNumber.getIdtype() == 3) return new Sector51Result(ESector51Result.ERROR);
-    return thingsDao.updateBox(boxNumber, true);
+    return thingsDao.updateBox(boxNumber);
   }
 
   @RequestMapping(value = "/update/userservice", method = RequestMethod.PUT)
   public Sector51Result updateBox(@RequestBody UserServise51 userService) {
-    boolean trResult = thingsDao.runTransaction(() -> {
-      thingsDao.updateUserService(userService);
-      DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-      String historyDesc = userService.getDesc() + " " + dateFormat.format(userService.getDtEnd());
-      History history = new History(3, userService.getIdUser(), historyDesc);
-      thingsDao.insert2history(history);
-    });
-    return new Sector51Result(trResult ? ESector51Result.OK : ESector51Result.ERROR);
+    int result = thingsDao.updateUserService(userService);
+    return new Sector51Result(result > 0 ? ESector51Result.OK : ESector51Result.ERROR);
   }
 
   @RequestMapping(value = "/update/service", method = RequestMethod.PUT)

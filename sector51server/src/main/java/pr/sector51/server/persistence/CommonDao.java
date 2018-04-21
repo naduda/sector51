@@ -54,30 +54,6 @@ public class CommonDao {
     commonMapper.insertEvent(event);
   }
 
-  public void insert2history(History history) {
-    Event event = commonMapper.getEventById(history.getIdEvent());
-    if (event.getEmail() != null) {
-      String[] emails = event.getEmail().split(",");
-      for (String userId : emails) {
-        if (userId.trim().length() == 0) continue;
-        try {
-          Timestamp created = new Timestamp(Long.parseLong(userId));
-          UserInfo user = commonMapper.getUserInfoById(created);
-          new Thread(() -> {
-            try {
-              mailSender.send(user.getEmail(), event.getDesc(), history.toString());
-            } catch (MessagingException ex) {
-              ex.printStackTrace();
-            }
-          }).start();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
-      }
-    }
-    commonMapper.insert2history(history);
-  }
-
   public void updateLastHistoryUsercome(int newBalance) {
     commonMapper.updateLastHistoryUsercome(newBalance);
   }

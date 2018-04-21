@@ -51,29 +51,12 @@ public class ThingsDao extends CommonDao {
     return result;
   }
 
-  public Sector51Result updateBox(BoxNumber boxNumber, boolean withHistory) {
+  public Sector51Result updateBox(BoxNumber boxNumber) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
-      boolean res = runTransaction(() -> {
-        UserInfo user = null;
-        int number = 0;
-        if (boxNumber.getCard() != null) {
-          user = userDao.getUserInfoByCard(boxNumber.getCard());
-          number = boxNumber.getNumber();
-        } else {
-          BoxNumber old = thingsMapper.getBoxNumber(boxNumber.getIdtype(), boxNumber.getNumber());
-          user = userDao.getUserInfoByCard(old.getCard());
-          number = old.getNumber();
-        }
-        if (withHistory) {
-          History history = new History(boxNumber.getCard() != null ? 0 : 1, user.getCreated(), String.valueOf(number));
-          insert2history(history);
-        }
         long time = thingsMapper.updateBox(boxNumber);
         boxNumber.setTime(new Timestamp(time));
         result.setMessage(boxNumber);
-      });
-      result.setResult(res ? ESector51Result.OK : ESector51Result.ERROR);
     } catch (Exception ex) {
       result.setResult(ESector51Result.ERROR);
       result.setMessage(ex.getMessage());
@@ -98,18 +81,8 @@ public class ThingsDao extends CommonDao {
   }
 
   public int removeUserService(long idUser, int idService) {
-    int[] result = new int[1];
-    boolean res = runTransaction(() -> {
-      Timestamp userId = new Timestamp(idUser);
-      if (idService == 2) {
-        UserServise51 uService = getUserServices(userId).stream()
-                .filter(us -> us.getIdService() == idService).findFirst().get();
-        BoxNumber boxNumber = new BoxNumber(3, Integer.parseInt(uService.getValue()));
-        updateBox(boxNumber, false);
-      }
-      result[0] = thingsMapper.removeUserService(userId, idService);
-    });
-    return result[0];
+    Timestamp userId = new Timestamp(idUser);
+    return thingsMapper.removeUserService(userId, idService);
   }
 
   public Sector51Result updateService(Service51 servise) {

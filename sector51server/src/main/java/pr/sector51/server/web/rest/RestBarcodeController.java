@@ -72,7 +72,7 @@ public class RestBarcodeController extends RestCommon {
           int count = Integer.parseInt(prod.split(":")[1]);
           Product product = barcode.getPrpoductById(prodId).clone();
           product.setCount(product.getCount() - count);
-          barcode.updateProduct(product, user.getCreated());
+          barcode.updateProduct(product);
           user.setBalance(user.getBalance() - product.getPrice() * count);
         }
         int newBalance = user.getBalance() - oldBalance;
@@ -90,8 +90,7 @@ public class RestBarcodeController extends RestCommon {
   public Sector51Result updateProduct(@RequestBody Product product) {
     Sector51Result response = new Sector51Result(ESector51Result.ERROR);
     try {
-      Timestamp idUser = new Timestamp(Long.parseLong(product.getDesc()));
-      response = new Sector51Result(barcode.updateProduct(product, idUser));
+      response = new Sector51Result(barcode.updateProduct(product));
       response.setMessage(product);
     } catch (Exception ex) {
       response.setMessage(ex.getMessage());

@@ -31,29 +31,13 @@ public class BarcodeDao extends CommonDao {
         scanner.insertProduct(product, code) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
-  public ESector51Result updateProduct(Product product, Timestamp idUser) {
-    boolean trResult = runTransaction(() -> {
-      Product oldProduct = scanner.getPrpoductById(product.getId());
-      int count = product.getCount() - oldProduct.getCount();
-      scanner.updateProduct(product);
-      if (count != 0) {
-        int idEvent = count > 0 ? 4 : 5;
-        int absCount = Math.abs(count);
-        History history = new History(idEvent, idUser, product.getId() + "_" + absCount);
-        int sum = product.getPrice() * absCount;
-        if (idEvent == 4) {
-          history.setOutcome(sum);
-        } else {
-          history.setIncome(sum);
-        }
-        insert2history(history);
-      }
-    });
-    return trResult ? ESector51Result.OK : ESector51Result.ERROR;
+  public ESector51Result updateProduct(Product product) {
+    int result = scanner.updateProduct(product);
+    return result > 0 ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
   public ESector51Result removeProduct(int id) {
-    return scanner.removeProduct(id) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
+    return scanner.removeProduct(id) > 0 ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
   public Product getLastProduct() {

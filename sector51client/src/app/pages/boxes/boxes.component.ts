@@ -29,9 +29,9 @@ export class BoxesComponent implements OnInit, OnDestroy {
   private user: Profile;
 
   constructor(private http: HttpClient,
-              private modalService: ModalService,
-              private route: ActivatedRoute,
-              private common: CommonService) {
+    private modalService: ModalService,
+    private route: ActivatedRoute,
+    private common: CommonService) {
     this.types = [];
     this.boxNumbers = [];
   }
@@ -42,23 +42,23 @@ export class BoxesComponent implements OnInit, OnDestroy {
       if (this.type && this.type.name === 'new') this.type = this.types[0];
     });
     this.route.queryParams
-    .flatMap(params => params.code ? this.http.get<Profile>(REST_API.GET.userByCard(params.code)) : of(new Profile()))
-    .do(user => this.user = user)
-    .flatMap(user => this.http.get<IRole[]>(REST_API.GET.boxtypes))
-    .do(boxtypes => {
-      this.types = boxtypes;
-      if (!this.user.card) {
-        this.type = boxtypes[0];
-      } else {
-        this.type = boxtypes.find(t => this.user['sex'] ? t.id === 1 : t.id === 2);
-      }
-      this.type = this.type || { id: -1, name: 'new' };
-    })
-    .flatMap(boxtypes => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
-    .subscribe(boxnumbers => {
-      this.boxNumbers = boxnumbers;
-      this.refreshBoxes();
-    });
+      .flatMap(params => params.code ? this.http.get<Profile>(REST_API.GET.userByCard(params.code)) : of(new Profile()))
+      .do(user => this.user = user)
+      .flatMap(user => this.http.get<IRole[]>(REST_API.GET.boxtypes))
+      .do(boxtypes => {
+        this.types = boxtypes;
+        if (!this.user.card) {
+          this.type = boxtypes[0];
+        } else {
+          this.type = boxtypes.find(t => this.user['sex'] ? t.id === 1 : t.id === 2);
+        }
+        this.type = this.type || { id: -1, name: 'new' };
+      })
+      .flatMap(boxtypes => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
+      .subscribe(boxnumbers => {
+        this.boxNumbers = boxnumbers;
+        this.refreshBoxes();
+      });
   }
 
   ngOnDestroy(): void {
@@ -87,7 +87,7 @@ export class BoxesComponent implements OnInit, OnDestroy {
   }
 
   insertOrEditBoxType(insert: boolean) {
-    this.modalService.open(BoxtypeComponent, { boxtype: insert ? undefined : this.type});
+    this.modalService.open(BoxtypeComponent, { boxtype: insert ? undefined : this.type });
   }
 
   removeBoxType() {

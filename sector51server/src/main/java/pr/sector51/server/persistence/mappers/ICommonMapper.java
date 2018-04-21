@@ -23,13 +23,6 @@ public interface ICommonMapper {
   @Insert("INSERT INTO event (id, name, description) VALUES(#{id}, #{name}, #{description});")
   void insertEvent(Event event);
 
-  @Insert("INSERT INTO history(idEvent, idUser, \"desc\", income, outcome, usercome) " +
-          "VALUES(#{idEvent}, #{idUser}, #{desc}, #{income}, #{outcome}, #{usercome});")
-  void insert2history(History history);
-
-  @Select("SELECT * FROM event WHERE id = #{id};")
-  Event getEventById(@Param("id") int id);
-
   @Update("UPDATE history SET usercome = #{usercome} WHERE id IN(SELECT max(id) FROM history);")
   void updateLastHistoryUsercome(@Param("usercome") int newBalance);
 }

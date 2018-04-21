@@ -32,7 +32,7 @@ public interface IScannerMapper {
   @Select("SELECT * FROM product WHERE id > 100 ORDER BY id DESC LIMIT 1;")
   Product getLastProduct();
 
-  @Delete("DELETE FROM product WHERE id = #{id}; DELETE FROM barcode WHERE productid = #{id};")
+  @Delete("DELETE FROM product WHERE id = #{id};")
   int removeProduct(int id);
 
   @Insert("INSERT INTO barcode(productId, code) VALUES(#{productId}, #{code});")

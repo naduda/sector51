@@ -22,8 +22,8 @@ export class MainReportComponent implements OnInit {
 
   constructor(private http: HttpClient, private common: CommonService) {
     this.history = [];
-    this.selectedEvents = [ 5 ];
-    this.events = this.common.events.map(function(e) { return { label: e.desc, value: e.id }; });
+    this.selectedEvents = [2, 5];
+    this.events = this.common.events.map(function (e) { return { label: e.desc, value: e.id }; });
     this.dtEnd = new Date();
     this.dtBeg = new Date(this.dtEnd.getFullYear(), this.dtEnd.getMonth(), this.dtEnd.getDate());
     this.dtEnd = new Date(this.dtBeg.getTime() + 24 * 60 * 60 * 1000);
@@ -33,6 +33,9 @@ export class MainReportComponent implements OnInit {
       { field: 'event', header: 'name' },
       { field: 'user', header: 'object' },
       { field: 'desc', header: 'desc' },
+      { field: 'income', header: 'income' },
+      { field: 'outcome', header: 'outcome' },
+      { field: 'usercome', header: 'usercome' }
     ];
   }
 
@@ -45,17 +48,17 @@ export class MainReportComponent implements OnInit {
   changeDate(date: Date) {
     this.history = [];
     this.http.get<IHistory[]>(REST_API.GET.history(this.dtBeg, this.dtEnd))
-    .subscribe(result => {
-      result.forEach(h => {
-        const user = h.idUser ? this.common.users.find(u => u['created'] === h.idUser) : undefined;
-        const event = this.common.events.find(e => e.id === h.idEvent);
-        h['event'] = event ? event.desc : '';
-        h['user'] = user ? user.surname + ' ' + user.name : '';
-        h['formatTime'] = this.formatDateTime(h.time);
-        this.parseDescription(h);
-        this.history.push(h);
+      .subscribe(result => {
+        result.forEach(h => {
+          const user = h.idUser ? this.common.users.find(u => u['created'] === h.idUser) : undefined;
+          const event = this.common.events.find(e => e.id === h.idEvent);
+          h['event'] = event ? event.desc : '';
+          h['user'] = user ? user.surname + ' ' + user.name : '';
+          h['formatTime'] = this.formatDateTime(h.time);
+          this.parseDescription(h);
+          this.history.push(h);
+        });
       });
-    });
   }
 
   private formatDateTime(value: number): string {
@@ -71,16 +74,11 @@ export class MainReportComponent implements OnInit {
     const pars = history.desc ? history.desc.split('_') : history['event'];
     switch (history.idEvent) {
       case 2:
-        if (history.desc.startsWith('TRAINER')) {
+        if (history.desc && history.desc.startsWith('TRAINER')) {
           const idUser = +history.desc.substring(8);
           const user = this.common.users.find(u => u['created'] === idUser);
           history.desc = 'TRAINER ' + user.surname + ' ' + user.name;
         }
-        break;
-      case 4:
-      case 5:
-        const product = this.products.find(p => p.id === +pars[0]);
-        history.desc = product.name + ' (' + pars[1] + ')';
         break;
     }
   }
