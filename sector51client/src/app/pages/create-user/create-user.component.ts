@@ -1,14 +1,22 @@
-import { Component, OnInit, Input } from '@angular/core';
 import { Location } from '@angular/common';
-import { NgModel } from '@angular/forms/src/forms';
 import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnInit } from '@angular/core';
+import { NgModel } from '@angular/forms/src/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { CommonService } from '../../services/common.service';
-import { Profile } from '../../entities/profile';
-import { IRole, ERole, ESex, ERestResult, IService, IUserService, IResponse } from '../../entities/common';
 import { of } from 'rxjs/observable/of';
+import {
+  ERestResult,
+  ERole,
+  ESex,
+  IResponse,
+  IRole,
+  IService,
+  IUserService
+  } from '../../entities/common';
+import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 import { ModalService } from '../../services/modal.service';
 import { AbonementComponent } from '../modal/abonement/abonement.component';
 
@@ -30,6 +38,8 @@ export class CreateUserComponent implements OnInit {
     this.buttonText = this.user.name ? 'update' : 'create';
     this.user['password'] = this.user['password2'] = '';
     this.isBack = false;
+    this.selectedGender = this.genders.find(g => g.value === this.user.sex);
+    this.selectedAuthority = this.allRoles.find(r => this.user.authorities.includes(r.name));
   }
   allRoles: IRole[];
   created: boolean;
@@ -38,6 +48,9 @@ export class CreateUserComponent implements OnInit {
   usersNotExist: boolean;
   buttonText: string;
   isFirst: boolean;
+  genders: any[];
+  selectedGender: any;
+  selectedAuthority: any;
   private idUser: number;
   private isBack = true;
 
@@ -46,6 +59,12 @@ export class CreateUserComponent implements OnInit {
     private modalService: ModalService) {
     this.buttonText = 'create';
     this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
+    this.genders = [
+      { name: ESex[ESex.MAN], value: ESex.MAN },
+      { name: ESex[ESex.WOMAN], value: ESex.WOMAN }
+    ];
+    this.selectedGender = this.genders[0];
+    this.selectedAuthority = this.allRoles.find(r => r.name === ERole[ERole.USER]);
   }
 
   ngOnInit() {
@@ -96,11 +115,6 @@ export class CreateUserComponent implements OnInit {
     const role = this.user.authorities;
     return role.includes(ERole[ERole.OWNER]) || role.includes(ERole[ERole.ADMIN]);
   }
-
-  genderText(sex: ESex): string {
-    return ESex[sex];
-  }
-  get genders(): ESex[] { return [ESex.MAN, ESex.WOMAN]; }
 
   get isNotTrainerOrSelder() {
     return this.user.authorities !== ERole[ERole.TRAINER] &&

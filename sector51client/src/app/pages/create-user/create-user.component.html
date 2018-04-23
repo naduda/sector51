@@ -44,14 +44,16 @@
 
     <div class="form-group row pr-3">
       <label class="col-2 col-form-label" *ngIf="!isFirst">{{ 'user.role' | translate | titlecase }}</label>
-      <sector51-combo class="col-4 p-0" *ngIf="!isFirst" [items]="allRoles" [itemToText]="'name'" [itemToValue]="'name'" [selected]="user.authorities"
-        (onchange)="user.authorities = $event.name">
-      </sector51-combo>
+      <div class="col-4 p-0">
+        <p-dropdown [style]="{'width': '100%'}" [options]="allRoles" [(ngModel)]="selectedAuthority" name="authority" optionLabel="name"
+          (onChange)="user.authorities = $event.value.name"></p-dropdown>
+      </div>
 
       <label class="col-2 col-form-label">{{ 'user.gender' | translate | titlecase }}</label>
-      <sector51-combo class="col-4 p-0" [items]="genders" [itemToText]="genderText" [itemToValue]="genderText" [selected]="!user.sex"
-        (onchange)="user.sex = $event">
-      </sector51-combo>
+      <div class="col-4 p-0">
+        <p-dropdown [style]="{'width': '100%'}" [options]="genders" [(ngModel)]="selectedGender" name="gender" optionLabel="name"
+          (onChange)="user.sex = selectedGender.value"></p-dropdown>
+      </div>
     </div>
     <hr>
     <div class="form-group row justify-content-end mb-0" [hidden]="!usersNotExist && common.profile && !common.profile['permited']">
