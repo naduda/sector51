@@ -20,16 +20,18 @@
     <div class="d-inline w-80 mb-2">
       <input type="number" class="form-control" style="width: 7em!important;" [(ngModel)]="cash" name="cash" disabled required>
     </div>
-    <sector51-combo class="d-inline-block w-100" *ngIf="service.id === 1" [items]="trainers" [itemToText]="trainerText" [itemToValue]="'created'"
-      (onchange)="trainer = $event">
-    </sector51-combo>
+    <div class="d-inline-block w-100" *ngIf="service.id === 1">
+      <p-dropdown [style]="{'width': '100%', 'text-align': 'right', 'padding-right': '0.5rem'}" [options]="trainers" [(ngModel)]="trainer"
+        name="services" optionLabel="fullName"></p-dropdown>
+    </div>
 
     <label class="d-inline-block text-right pr-4 w-20" *ngIf="service.id === 2" for="trainer">
       <strong>{{ 'box' | translate | titlecase }}:</strong>
     </label>
-    <sector51-combo class="d-inline-block w-80" *ngIf="service.id === 2" [items]="boxes" [itemToText]="'number'" [itemToValue]="'number'"
-      (onchange)="boxNumber = $event.number">
-    </sector51-combo>
+    <div class="d-inline-block w-100" *ngIf="service.id === 2">
+      <p-dropdown [style]="{'width': '100%', 'text-align': 'right', 'padding-right': '0.5rem'}" [options]="boxes" [(ngModel)]="boxNumber"
+        name="boxNumber" optionLabel="number"></p-dropdown>
+    </div>
   </form>
 </div>
 <div class="modal-footer">

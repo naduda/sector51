@@ -16,7 +16,6 @@ import { TabViewModule } from 'primeng/tabview';
 import { TooltipModule } from 'primeng/tooltip';
 import { Sector51RoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ComboComponent } from './components/combo/combo.component';
 import { UserServicesComponent } from './components/user-services/user-services.component';
 import { FocusDirective } from './directives/focus.directive';
 import { LoginComponent } from './login/login.component';
@@ -64,7 +63,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     ServicesComponent,
     MainReportComponent,
     UserServicesComponent,
-    ComboComponent,
     ImportComponent
   ],
   imports: [

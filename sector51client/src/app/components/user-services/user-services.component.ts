@@ -1,11 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Profile } from '../../entities/profile';
 import { HttpClient } from '@angular/common/http';
-import { CommonService } from '../../services/common.service';
-import { IService, IUserService, IResponse, ERestResult, ERole } from '../../entities/common';
+import { Component, Input, OnInit } from '@angular/core';
+import {
+  ERestResult,
+  ERole,
+  IResponse,
+  IService,
+  IUserService
+  } from '../../entities/common';
+import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
-import { ModalService } from '../../services/modal.service';
 import { AbonementComponent } from '../../pages/modal/abonement/abonement.component';
+import { CommonService } from '../../services/common.service';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'sector51-user-services',

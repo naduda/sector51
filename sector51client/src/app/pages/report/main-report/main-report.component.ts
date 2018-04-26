@@ -1,6 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { IHistory, IProduct, ITableExport } from '../../../entities/common';
-import { HttpClient } from '@angular/common/http';
 import { REST_API } from '../../../entities/rest-api';
 import { CommonService } from '../../../services/common.service';
 
@@ -55,7 +55,6 @@ export class MainReportComponent implements OnInit {
           h['event'] = event ? event.desc : '';
           h['user'] = user ? user.surname + ' ' + user.name : '';
           h['formatTime'] = this.formatDateTime(h.time);
-          this.parseDescription(h);
           this.history.push(h);
         });
       });
@@ -69,17 +68,4 @@ export class MainReportComponent implements OnInit {
   }
 
   private formatNumber = (value: number): string => value < 10 ? '0' + value : value.toString();
-
-  private parseDescription(history: IHistory) {
-    const pars = history.desc ? history.desc.split('_') : history['event'];
-    switch (history.idEvent) {
-      case 2:
-        if (history.desc && history.desc.startsWith('TRAINER')) {
-          const idUser = +history.desc.substring(8);
-          const user = this.common.users.find(u => u['created'] === idUser);
-          history.desc = 'TRAINER ' + user.surname + ' ' + user.name;
-        }
-        break;
-    }
-  }
 }

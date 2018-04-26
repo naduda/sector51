@@ -1,14 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { IModalWindow, ERestResult, IService, IResponse, IUserService, ERole, IBox } from '../../../entities/common';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { request } from 'http';
+import { of } from 'rxjs/observable/of';
+import {
+  ERestResult,
+  ERole,
+  IBox,
+  IModalWindow,
+  IResponse,
+  IService,
+  IUserService
+  } from '../../../entities/common';
 import { Profile } from '../../../entities/profile';
 import { REST_API } from '../../../entities/rest-api';
-import { of } from 'rxjs/observable/of';
-import { request } from 'http';
-import { ModalComponent } from '../modal.component';
-import { ModalService } from '../../../services/modal.service';
 import { CommonService } from '../../../services/common.service';
+import { ModalService } from '../../../services/modal.service';
+import { ModalComponent } from '../modal.component';
 
 @Component({
   selector: 'sector51-abonement',
@@ -20,7 +28,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
   dtEnd: Date;
   cash: number;
   boxes: IBox[];
-  boxNumber: number;
+  boxNumber: IBox;
   trainer: Profile;
   trainers: Profile[];
   service: IService;
@@ -30,9 +38,8 @@ export class AbonementComponent implements OnInit, IModalWindow {
   private profile: Profile;
 
   constructor(public activeModal: NgbActiveModal, private http: HttpClient,
-              private common: CommonService, private modalService: ModalService) {
+    private common: CommonService, private modalService: ModalService) {
     this.cash = 0;
-    this.boxNumber = 1;
   }
 
   ngOnInit() {
@@ -42,6 +49,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
     });
     this.trainers = this.common.users.filter(u => u['roles'] === ERole[ERole.TRAINER]);
     this.trainers.unshift(new Profile(null, 'Select trainer...', ''));
+    this.trainers.forEach(trainer => trainer['fullName'] = (trainer.surname + ' ' + trainer.name).toUpperCase());
     const oldTrainer = this.service.id === 1 ? this.common.users.find(u => u['created'] === +this.service['value']) : undefined;
     const oldTrainerId = oldTrainer ? oldTrainer['created'] : 0;
     this.trainer = this.trainers.find(t => t['created'] === oldTrainerId);
@@ -85,7 +93,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
       userService.idService = instance.service['idService'];
       switch (userService.idService) {
         case 1: userService.value = instance.trainer !== instance.trainers[0] ? instance.trainer['created'] : undefined; break;
-        case 2: userService.value = instance.boxNumber; break;
+        case 2: userService.value = instance.boxNumber.number; break;
       }
       instance.http.put(REST_API.PUT.userService, userService)
         .subscribe((response: IResponse) => {
@@ -96,7 +104,7 @@ export class AbonementComponent implements OnInit, IModalWindow {
     } else {
       switch (userService.idService) {
         case 1: userService.value = instance.trainer !== instance.trainers[0] ? instance.trainer['created'] : undefined; break;
-        case 2: userService.value = instance.boxNumber; break;
+        case 2: userService.value = instance.boxNumber.number; break;
       }
       instance.http.post(REST_API.POST.userService, userService)
         .subscribe((response: IResponse) => {
@@ -120,9 +128,5 @@ export class AbonementComponent implements OnInit, IModalWindow {
       this.dtEnd = new Date(this.service['dtEnd']);
       this.service.name = this.service['desc'];
     }
-  }
-
-  trainerText(trainer: Profile) {
-    return (trainer.surname + ' ' + trainer.name).toUpperCase();
   }
 }
