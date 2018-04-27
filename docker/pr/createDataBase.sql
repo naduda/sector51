@@ -22,9 +22,6 @@ CREATE TABLE userinfo (
   sex boolean,
   birthday timestamp without time zone,
   CONSTRAINT pk_user_info PRIMARY KEY (created),
-  CONSTRAINT fk_user_info FOREIGN KEY (created)
-      REFERENCES public.usersecurity (created) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT pk_uniqe_ui_key UNIQUE (email, phone),
   CONSTRAINT uk_userinfo_card UNIQUE (card)
 );
@@ -108,10 +105,7 @@ CREATE TABLE user_service (
   dtbeg timestamp without time zone,
   dtend timestamp without time zone,
   value character varying(50),
-  CONSTRAINT pk_user_service PRIMARY KEY (idservice, iduser),
-  CONSTRAINT fk_user_service_user FOREIGN KEY (iduser)
-      REFERENCES public.userinfo (created) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE CASCADE
+  CONSTRAINT pk_user_service PRIMARY KEY (idservice, iduser)
 );
 
 
@@ -166,7 +160,8 @@ ALTER FUNCTION public."afterUpdateProduct"()
 CREATE OR REPLACE FUNCTION public."afterUserDelete"()
   RETURNS trigger AS
 $BODY$BEGIN
-  DELETE FROM user_service where iduser = OLD.created;
+  DELETE FROM usersecurity WHERE created = OLD.created;
+  DELETE FROM user_service WHERE iduser = OLD.created;
   DELETE FROM barcode WHERE code = OLD.card;
   RETURN OLD;
 END$BODY$

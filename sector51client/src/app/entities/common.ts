@@ -19,7 +19,7 @@ export interface IModalWindow {
   btCancelClick(reason: any, instance: any): any;
   init(props: any): void;
 }
-export interface ITableColumn { field: string; header: string; }
+export interface ITableColumn { field: string; header: string; width?: number; }
 export interface IBox { idtype: number; number: number; card?: string; time?: Date; }
 export interface IResponse { result: string; message: any; }
 export interface IService { id: number; name: string; desc: string; price: number; }

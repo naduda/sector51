@@ -31,6 +31,11 @@ public class RestUserController extends RestCommon {
     return userDao.removeUser(created);
   }
 
+  @RequestMapping(value = "/delete/removeAllUsers", method = RequestMethod.DELETE)
+  public Sector51Result removeAllUsers() {
+    return new Sector51Result(userDao.removeAllUsersExceptOwners());
+  }
+
   // GET ==============================================================================
   @RequestMapping("/profileByName/{name}")
   public UserInfo profile(@PathVariable("name") String login) {

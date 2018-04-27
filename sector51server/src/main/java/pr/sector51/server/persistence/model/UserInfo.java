@@ -13,8 +13,6 @@ public class UserInfo {
   private int balance;
   private boolean sex;
   private  String password;
-  private Timestamp dtBeg;
-  private Timestamp dtEnd;
   private Timestamp birthday;
 
   public UserInfo() {}
@@ -100,21 +98,5 @@ public class UserInfo {
 
   public boolean isSex() {
     return sex;
-  }
-
-  public Timestamp getDtBeg() {
-    return dtBeg;
-  }
-
-  public void setDtBeg(Timestamp dtBeg) {
-    this.dtBeg = dtBeg;
-  }
-
-  public Timestamp getDtEnd() {
-    return dtEnd;
-  }
-
-  public void setDtEnd(Timestamp dtEnd) {
-    this.dtEnd = dtEnd;
   }
 }

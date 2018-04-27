@@ -17,7 +17,7 @@
 
       <label for="card" class="col-2 col-form-label">{{ 'user.card' | translate | titlecase }}</label>
       <input class="col-4 form-control" [ngClass]="{'ng-touched': userForm.submitted}" type="text" name="card" [(ngModel)]="user.card"
-        pattern="[0-9]{1,15}" [readOnly]="cardRedonly" [required]="isNotTrainerOrSelder">
+        pattern="[0-9]{1,15}" [readOnly]="cardRedonly" [required]="isUser">
     </div>
     <div class="form-group row pr-3">
       <label for="email" class="col-4 col-form-label">E-mail</label>
@@ -44,7 +44,7 @@
 
     <div class="form-group row pr-3">
       <label class="col-2 col-form-label" *ngIf="!isFirst">{{ 'user.role' | translate | titlecase }}</label>
-      <div class="col-4 p-0">
+      <div class="col-4 p-0" *ngIf="!isFirst">
         <p-dropdown [style]="{'width': '100%'}" [options]="allRoles" [(ngModel)]="selectedAuthority" name="authority" optionLabel="name"
           (onChange)="user.authorities = $event.value.name"></p-dropdown>
       </div>

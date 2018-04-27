@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.*;
+import pr.sector51.server.persistence.model.ESector51Result;
 import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
@@ -38,7 +39,7 @@ public interface IUserMapper {
   @Select("SELECT * FROM usersecurity WHERE created = #{value}")
   UserSecurity getUserSecurityById(Timestamp value);
 
-  @Select("SELECT ui.*, us.roles, box.number, box.time FROM usersecurity AS us, userinfo AS ui " +
+  @Select("SELECT ui.*, us.roles, us.password, box.number, box.time FROM usersecurity AS us, userinfo AS ui " +
           "LEFT JOIN box ON ui.card = box.card AND box.idtype < 3 WHERE us.created = ui.created;")
   List<UserInfo> getUsersInfo();
 
@@ -54,4 +55,7 @@ public interface IUserMapper {
 
   @Select("SELECT count(*) FROM usersecurity;")
   int getUsersCount();
+
+  @Delete("DELETE FROM userinfo WHERE created IN (SELECT created FROM usersecurity WHERE roles <> 'OWNER');")
+  int removeAllUsers();
 }

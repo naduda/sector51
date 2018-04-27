@@ -64,7 +64,7 @@ export class CreateUserComponent implements OnInit {
       { name: ESex[ESex.WOMAN], value: ESex.WOMAN }
     ];
     this.selectedGender = this.genders[0];
-    this.selectedAuthority = this.allRoles.find(r => r.name === ERole[ERole.USER]);
+    this.selectedAuthority = this.allRoles ? this.allRoles.find(r => r.name === ERole[ERole.USER]) : null;
   }
 
   ngOnInit() {
@@ -116,9 +116,8 @@ export class CreateUserComponent implements OnInit {
     return role.includes(ERole[ERole.OWNER]) || role.includes(ERole[ERole.ADMIN]);
   }
 
-  get isNotTrainerOrSelder() {
-    return this.user.authorities !== ERole[ERole.TRAINER] &&
-      this.user.authorities !== ERole[ERole.SELDER];
+  get isUser() {
+    return this.user.authorities === ERole[ERole.USER];
   }
 
   get showPassword() {
@@ -147,7 +146,7 @@ export class CreateUserComponent implements OnInit {
       this.http.post(REST_API.POST.firstUser, this.user)
         .subscribe(result => this.onResult(result));
     } else if (this.idUser < 0 && !this.usersNotExist) {
-      this.user.card = this.user.card || ERole[ERole.TRAINER];
+      this.user.card = this.user.card || new Date().getTime().toString();
       if (!this.showPassword) this.user['password'] = this.user.card;
       this.http.post(REST_API.POST.user, this.user)
         .subscribe(result => this.onResult(result));

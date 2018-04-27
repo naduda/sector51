@@ -25,6 +25,7 @@ import { BarcodeComponent } from './pages/barcode/barcode.component';
 import { BoxesComponent } from './pages/boxes/boxes.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
+import { ExportComponent } from './pages/export/export.component';
 import { ImportComponent } from './pages/import/import.component';
 import { AbonementComponent } from './pages/modal/abonement/abonement.component';
 import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
@@ -32,6 +33,7 @@ import { ModalComponent } from './pages/modal/modal.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { MainReportComponent } from './pages/report/main-report/main-report.component';
 import { ServicesComponent } from './pages/services/services.component';
+import { SortusersPipe } from './pipes/sortusers.pipe';
 import { CanActivateAuthGuard } from './services/auth-guard.service';
 import { AuthInterceptor } from './services/auth-interceptor';
 import { AuthenticationService } from './services/authentication.service';
@@ -63,7 +65,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     ServicesComponent,
     MainReportComponent,
     UserServicesComponent,
-    ImportComponent
+    ImportComponent,
+    ExportComponent,
+    SortusersPipe
   ],
   imports: [
     BrowserModule,

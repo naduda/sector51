@@ -1,11 +1,23 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { WorkBook, read, WorkSheet, utils } from 'xlsx';
-import { ITableColumn, IResponse, ERole, ESex, ERestResult } from '../../entities/common';
 import { HttpClient } from '@angular/common/http';
-import { REST_API } from '../../entities/rest-api';
-import { Profile } from '../../entities/profile';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import {
+  read,
+  utils,
+  WorkBook,
+  WorkSheet
+  } from 'xlsx';
+import {
+  ERestResult,
+  ERole,
+  ESex,
+  IResponse,
+  ITableColumn
+  } from '../../entities/common';
+import { Profile } from '../../entities/profile';
+import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 
 @Component({
   selector: 'sector51-import',
@@ -18,7 +30,7 @@ export class ImportComponent implements OnInit, AfterViewInit {
   rowData: any[];
   private tableHeight: number;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private common: CommonService) {
   }
 
   ngOnInit() {
@@ -30,6 +42,14 @@ export class ImportComponent implements OnInit, AfterViewInit {
     const div: any = document.getElementsByClassName('outlet col p-0')[0];
     const header: any = document.querySelector('sector51-import > div');
     this.tableHeight = div.offsetHeight - header.offsetHeight - 40;
+  }
+
+  removeAllUsers() {
+    this.http.delete(REST_API.DELETE.removeAllUsers).subscribe((response: IResponse) => {
+      if (response.result === ERestResult[ERestResult.OK]) {
+        this.common.profile = undefined;
+      }
+    });
   }
 
   onFileChange(evt: any) {
@@ -61,6 +81,7 @@ export class ImportComponent implements OnInit, AfterViewInit {
 
   import() {
     this.insertUsers(this.rowData, 0);
+    this.common.profile = undefined;
   }
 
   private insertUsers(rowData, index: number) {
@@ -68,19 +89,24 @@ export class ImportComponent implements OnInit, AfterViewInit {
       return;
     }
     const row = rowData[index];
+    const role = row['roles'] || ERole[ERole.USER];
     const user: Profile = {
-      authorities: ERole[ERole.USER],
+      authorities: role.toUpperCase(),
       balance: 0,
-      role: ERole.USER,
+      role: role.toUpperCase(),
       email: row['email'] || '',
-      birthday: row['birthday'] || '',
+      birthday: row['birthday'] ? this.getDate(row['birthday']) : null,
       surname: row['surname'],
       name: row['name'],
       phone: row['phone'],
-      sex: row['sex'] === 'M' ? ESex.MAN : ESex.WOMAN,
-      card: row['card']
+      sex: row['sex'].toUpperCase() === 'M' ? ESex.MAN : ESex.WOMAN,
+      card: row['card'] || new Date().getTime()
     };
-    user['password'] = user.card;
+    if (row['password']) {
+      user['password'] = '|' + row['password'];
+    } else {
+      user['password'] = user.card;
+    }
     user['roles'] = user.authorities;
     this.http.post(REST_API.POST.user, user)
       .subscribe((response: IResponse) => {
@@ -97,7 +123,8 @@ export class ImportComponent implements OnInit, AfterViewInit {
   }
 
   private insertServices(row: any, userId: number): Observable<any> {
-    const abontype = row['abontype'].trim().toUpperCase();
+    if (!row['dtbeg_a']) return of({ result: ERestResult[ERestResult.OK], message: '' });
+    const abontype = row['abontype'] ? row['abontype'].trim().toUpperCase() : '';
     const userServise = {
       idService: abontype === 'M' ? 3 : abontype === 'E' ? 4 : 0,
       idUser: userId,

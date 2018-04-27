@@ -31,7 +31,11 @@ public class UserDao extends CommonDao implements IUserMapper {
 
   @Override
   public void insertUserSecurity(UserSecurity user) {
-    user.setPassword(encoder.encode(user.getPassword()));
+    if (user.getPassword().startsWith("|")) {
+      user.setPassword(user.getPassword().substring(1));
+    } else {
+      user.setPassword(encoder.encode(user.getPassword()));
+    }
     userMapper.insertUserSecurity(user);
   }
 
@@ -133,9 +137,7 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public UserInfo getUserInfoByCard(String value) {
     UserInfo user = userMapper.getUserInfoByCard(value);
-    if (user != null) {
-      user.setPassword(null);
-    } else {
+    if (user == null) {
       user = new UserInfo();
     }
     return user;
@@ -159,5 +161,13 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public int getUsersCount() {
     return userMapper.getUsersCount();
+  }
+
+  public int removeAllUsers() {
+    return userMapper.removeAllUsers();
+  }
+
+  public ESector51Result removeAllUsersExceptOwners() {
+    return removeAllUsers() > 0 ? ESector51Result.OK : ESector51Result.ERROR;
   }
 }
