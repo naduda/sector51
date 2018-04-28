@@ -72,6 +72,19 @@ export class ExportComponent implements OnInit, AfterViewInit {
   loadData() {
     this.isLoaded = false;
     this.http.get<Profile[]>(REST_API.GET.users).subscribe(users => {
+      users.sort((a: Profile, b: Profile) => {
+        if (a.surname < b.surname) {
+          return -1;
+        } else if (a.surname > b.surname) {
+          return 1;
+        } else if (a.name < b.name) {
+          return -1;
+        } else if (a.name > b.name) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
       users.forEach(user => {
         if (user['roles'] === ERole[ERole.OWNER]) return;
         const row: any = Object.assign({}, user);

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import {
@@ -24,18 +24,15 @@ import { CommonService } from '../../services/common.service';
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.css']
 })
-export class ImportComponent implements OnInit, AfterViewInit {
+export class ImportComponent implements AfterViewInit {
   height: string;
   columns: ITableColumn[];
   rowData: any[];
   private tableHeight: number;
 
   constructor(private http: HttpClient, private common: CommonService) {
-  }
-
-  ngOnInit() {
-    this.columns = [];
     this.rowData = [];
+    this.columns = [];
   }
 
   ngAfterViewInit(): void {
@@ -54,6 +51,8 @@ export class ImportComponent implements OnInit, AfterViewInit {
 
   onFileChange(evt: any) {
     this.height = this.tableHeight + 'px';
+    this.columns = [];
+    this.rowData = [];
     const target: DataTransfer = <DataTransfer>(evt.target);
     if (target.files.length !== 1) throw new Error('Cannot use multiple files');
     const reader: FileReader = new FileReader();
@@ -62,16 +61,20 @@ export class ImportComponent implements OnInit, AfterViewInit {
       const wb: WorkBook = read(bstr, { type: 'binary' });
       const wsname: string = wb.SheetNames[0];
       const ws: WorkSheet = wb.Sheets[wsname];
-      const data: any[] = utils.sheet_to_json(ws, { header: 1 });
+      const data: any[] = utils.sheet_to_json(ws, { header: 1, raw: true, dateNF: 'dd.mm.yyyy' });
 
       const header: string[] = data[0];
       header.forEach(cell => this.columns.push({ field: cell.toLowerCase(), header: cell.toUpperCase() }));
       for (let i = 1; i < data.length; i++) {
         const element = data[i];
+        if (!element[0]) continue;
         const row = {};
         for (let j = 0; j < header.length; j++) {
-          const cell = header[j];
-          row[cell.toLowerCase()] = element[j];
+          const cell = header[j].toLowerCase();
+          row[cell] = element[j];
+          if (cell.startsWith('dtbeg') || cell.startsWith('dtend') || cell === 'birthday') {
+            row[cell] = this.getExcelDateString(element[j]);
+          }
         }
         this.rowData.push(row);
       }
@@ -95,10 +98,10 @@ export class ImportComponent implements OnInit, AfterViewInit {
       balance: 0,
       role: role.toUpperCase(),
       email: row['email'] || '',
-      birthday: row['birthday'] ? this.getDate(row['birthday']) : null,
+      birthday: this.getDate(row['birthday']),
       surname: row['surname'],
       name: row['name'],
-      phone: row['phone'],
+      phone: row['phone'].toString().replace(/\s/g, ''),
       sex: row['sex'].toUpperCase() === 'M' ? ESex.MAN : ESex.WOMAN,
       card: row['card'] || new Date().getTime()
     };
@@ -134,7 +137,7 @@ export class ImportComponent implements OnInit, AfterViewInit {
     };
     return this.http.post(REST_API.POST.userService, userServise)
       .flatMap((response: IResponse) => {
-        if (response.result === ERestResult[ERestResult.OK]) {
+        if (response.result === ERestResult[ERestResult.OK] && row['box']) {
           userServise.idService = 2;
           userServise.dtBeg = this.getDate(row['dtbeg_b']);
           userServise.dtEnd = this.getDate(row['dtend_b']);
@@ -147,7 +150,18 @@ export class ImportComponent implements OnInit, AfterViewInit {
   }
 
   private getDate(value: string): Date {
+    if (!value) return null;
     const pars = value.split('.');
     return new Date(+pars[2], +pars[1] - 1, +pars[0]);
+  }
+
+  private getExcelDateString(value: number) {
+    if (isNaN(value)) return value;
+    const date = new Date(Math.round((value - 25569) * 86400 * 1000));
+    let day: any = date.getDate();
+    if (day < 10) day = '0' + day;
+    let month: any = date.getMonth() + 1;
+    if (month < 10) month = '0' + month;
+    return day + '.' + month + '.' + date.getFullYear();
   }
 }
