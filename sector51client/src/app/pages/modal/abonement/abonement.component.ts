@@ -1,17 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { request } from 'http';
-import { of } from 'rxjs/observable/of';
-import {
-  ERestResult,
-  ERole,
-  IBox,
-  IModalWindow,
-  IResponse,
-  IService,
-  IUserService
-  } from '../../../entities/common';
+import { ERestResult, ERole, IBox, IModalWindow, IResponse, IService, IUserService } from '../../../entities/common';
 import { Profile } from '../../../entities/profile';
 import { REST_API } from '../../../entities/rest-api';
 import { CommonService } from '../../../services/common.service';

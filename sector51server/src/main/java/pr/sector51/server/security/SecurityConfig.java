@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/").permitAll()
         .antMatchers("/api/delete/**").hasAuthority(ERole.ADMIN.getAuthority())
         .antMatchers("/api/add/**").hasAuthority(ERole.ADMIN.getAuthority())
+        .antMatchers("/api/update/events/**").hasAuthority(ERole.OWNER.getAuthority())
         .antMatchers("/api/update/**").hasAuthority(ERole.ADMIN.getAuthority())
         .anyRequest().authenticated()
         .and()

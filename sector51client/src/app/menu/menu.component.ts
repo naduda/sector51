@@ -1,9 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Profile } from '../entities/profile';
-import { ModalService } from '../services/modal.service';
-import { BarcodeComponent } from '../pages/barcode/barcode.component';
-import { CommonService } from '../services/common.service';
+import { Component, Input, OnInit } from '@angular/core';
 import { ERole } from '../entities/common';
+import { Profile } from '../entities/profile';
+import { BarcodeComponent } from '../pages/barcode/barcode.component';
+import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'sector51-menu',
@@ -14,10 +13,14 @@ export class MenuComponent implements OnInit {
   @Input() currentUser: Profile;
   public permissions: boolean;
 
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   ngOnInit() {
     this.permissions = this.currentUser.role < ERole.USER;
+  }
+
+  get isOwner(): boolean {
+    return this.currentUser.role === ERole.OWNER;
   }
 
   createProduct() {
