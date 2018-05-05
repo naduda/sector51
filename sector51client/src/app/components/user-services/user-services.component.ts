@@ -1,12 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  ERestResult,
-  ERole,
-  IResponse,
-  IService,
-  IUserService
-  } from '../../entities/common';
+import { ConfirmationService } from 'primeng/api';
+import { ERestResult, ERole, IResponse, IService, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { AbonementComponent } from '../../pages/modal/abonement/abonement.component';
@@ -16,7 +11,8 @@ import { ModalService } from '../../services/modal.service';
 @Component({
   selector: 'sector51-user-services',
   templateUrl: './user-services.component.html',
-  styleUrls: ['./user-services.component.css']
+  styleUrls: ['./user-services.component.css'],
+  providers: [ConfirmationService]
 })
 export class UserServicesComponent implements OnInit {
   @Input() set user(value: Profile) {
@@ -38,9 +34,12 @@ export class UserServicesComponent implements OnInit {
   userServices: IUserService[];
   userService: IUserService;
   allServices: IService[];
+  dtBeg: Date;
+  dtEnd: Date;
+  cash: number;
 
   constructor(private http: HttpClient, private common: CommonService,
-    private modalService: ModalService) {
+    private modalService: ModalService, private confirmationService: ConfirmationService) {
     this.service = { id: -1, name: '', desc: '', price: 0 };
   }
 
@@ -52,12 +51,21 @@ export class UserServicesComponent implements OnInit {
   private getAllServices() {
     const all = [];
     if (!this.userServices) return all;
-    this.common.services.forEach(s => {
+    this.common.services.filter(s => s.id === 1 || s.id === 2).forEach(s => {
       if (!this.userServices.find(us => us.idService === s.id)) all.push(s);
     });
     if (this.service.id < 0 && this.userServices)
       this.service = all.length > 0 ? all[0] : undefined;
     return all;
+  }
+
+  get withAbon(): boolean {
+    if (!this.userServices) return false;
+    const abonIds = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    for (const us of this.userServices) {
+      if (abonIds.includes(us.idService)) return true;
+    }
+    return false;
   }
 
   private modifyServices(services: IUserService[]) {
@@ -84,6 +92,48 @@ export class UserServicesComponent implements OnInit {
     const trainer = this.trainers[trainerIndex];
     service.value = trainer['created'];
     service['valueDesc'] = trainer ? trainer.surname + ' ' + trainer.name : undefined;
+  }
+
+  addAbonement(period: number, idService: number) {
+    this.dtBeg = new Date();
+    this.dtEnd = new Date();
+    if (this.dtEnd.getMonth() + period < 12) {
+      this.dtEnd.setMonth(this.dtEnd.getMonth() + period);
+    } else {
+      this.dtEnd.setFullYear(this.dtEnd.getFullYear() + 1);
+      this.dtEnd.setMonth(this.dtEnd.getMonth() + period - 12);
+    }
+    const service = this.common.services.find(s => s.id === idService);
+    this.cash = service ? service.price : -1;
+    this.confirmationService.confirm({
+      header: service ? service.name : '',
+      message: null,
+      accept: () => {
+        const userService = {
+          idService: idService,
+          idUser: this._user['created'],
+          dtBeg: this.dtBeg,
+          dtEnd: this.dtEnd,
+          desc: this.cash
+        };
+        this.http.post(REST_API.POST.userService, userService)
+          .subscribe((response: IResponse) => {
+            if (ERestResult[ERestResult.OK] === response.result) {
+              const userService: IUserService = {
+                idService: service.id,
+                idUser: this._user['created'],
+                dtBeg: this.dtBeg,
+                dtEnd: this.dtEnd,
+                desc: service.name,
+                value: this.cash + ''
+              };
+              this.userServices.push(userService);
+              this.service = { id: -1, name: '', desc: '', price: 0 };
+              this.modifyServices(this.userServices);
+            }
+          });
+      }
+    });
   }
 
   addService() {

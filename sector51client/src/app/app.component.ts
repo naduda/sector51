@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { CommonService } from './services/common.service';
-import { ILocale, STORAGE_NAME } from './entities/common';
 import { HttpClient } from '@angular/common/http';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { ILocale } from './entities/common';
 import { REST_API } from './entities/rest-api';
+import { CommonService } from './services/common.service';
 
 @Component({
   selector: 'sector51-root',
@@ -28,13 +28,13 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translate.get('locale')
       .subscribe(locales => this.locales = locales);
-    document.onkeypress = (event) => this.readBarcode(event);
   }
 
   onLangChange(lang: string) {
     this.translate.use(lang);
   }
 
+  @HostListener('document:keypress', ['$event'])
   readBarcode(event: KeyboardEvent) {
     if (event.keyCode === 13) {
       if (this.barcode.length < 13) {
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
       }
       this.barcode = this.barcode.substring(this.barcode.length - 13);
       this.http.post(REST_API.POST.scanner(this.barcode), {})
-          .subscribe(response => this.barcode = '');
+        .subscribe(response => this.barcode = '');
     } else if (47 < event.keyCode && event.keyCode < 58) {
       this.barcode += event.key;
     } else {

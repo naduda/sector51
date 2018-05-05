@@ -98,6 +98,15 @@ INSERT INTO service VALUES(1, 'TRAINER', '-', 0);
 INSERT INTO service VALUES(2, 'BOX', '-', 50);
 INSERT INTO service VALUES(3, 'ABONEMENT (Morning)', '-', 450);
 INSERT INTO service VALUES(4, 'ABONEMENT (Evening)', '-', 500);
+INSERT INTO service VALUES(5, 'ABONEMENT 3', '-', 0);
+INSERT INTO service VALUES(6, 'ABONEMENT (Morning) 3', '-', 0);
+INSERT INTO service VALUES(7, 'ABONEMENT (Evening) 3', '-', 0);
+INSERT INTO service VALUES(8, 'ABONEMENT 6', '-', 0);
+INSERT INTO service VALUES(9, 'ABONEMENT (Morning) 6', '-', 0);
+INSERT INTO service VALUES(10, 'ABONEMENT (Evening) 6', '-', 0);
+INSERT INTO service VALUES(11, 'ABONEMENT 12', '-', 0);
+INSERT INTO service VALUES(12, 'ABONEMENT (Morning) 12', '-', 0);
+INSERT INTO service VALUES(13, 'ABONEMENT (Evening) 12', '-', 0);
 
 CREATE TABLE user_service (
   idservice integer NOT NULL,
