@@ -42,7 +42,7 @@ public class RestUserController extends RestCommon {
     UserInfo userInfo = getUserInfoByLogin(login);
     return userDao.getUserInfoById(userInfo.getCreated());
   }
-
+  
   @RequestMapping(value = "/public/roles", method = RequestMethod.GET)
   public List<KeyValuePair> getRoles() {
     return Arrays.asList(ERole.values()).stream().filter(r -> r != ERole.SCANNER)

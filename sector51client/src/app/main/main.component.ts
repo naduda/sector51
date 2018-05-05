@@ -1,16 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonService } from '../services/common.service';
-import { Profile } from '../entities/profile';
-import { ModalComponent } from '../pages/modal/modal.component';
-import { ModalService } from '../services/modal.service';
-import { ERole, IBox, ERestResult, IResponse, IEvent } from '../entities/common';
-import { REST_API } from '../entities/rest-api';
 import { TranslateService } from '@ngx-translate/core';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
-import { of } from 'rxjs/observable/of';
+import { ERole, IBox } from '../entities/common';
+import { Profile } from '../entities/profile';
+import { REST_API } from '../entities/rest-api';
+import { ModalComponent } from '../pages/modal/modal.component';
+import { CommonService } from '../services/common.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'sector51-main',
@@ -24,7 +23,7 @@ export class MainComponent implements OnInit {
   public wWidth: number;
   public sizeValue: number[];
   public isOwner: boolean;
-  public selectedEvents: IEvent[];
+  public searchText: string;
   private boxes: IBox[];
 
   constructor(private http: HttpClient, private route: ActivatedRoute,
@@ -36,8 +35,6 @@ export class MainComponent implements OnInit {
 
   ngOnInit() {
     this.permissions = this.common.profile.role < ERole.USER;
-    this.selectedEvents = this.common.events
-      .filter(e => e.email ? e.email.includes(this.common.profile['created']) : false);
 
     this.route.queryParams
       .do(params => {
@@ -64,6 +61,15 @@ export class MainComponent implements OnInit {
 
   get activeUsers(): Profile[] {
     return this.common.users.filter(u => u['active'] === true);
+  }
+
+  get users(): Profile[] {
+    return this.common.users.filter(u => {
+      if (!this.searchText) return true;
+      return u.name.toUpperCase().includes(this.searchText.toUpperCase()) ||
+        u.surname.toUpperCase().includes(this.searchText.toUpperCase()) ||
+        u.card.includes(this.searchText) || u.phone.includes(this.searchText);
+    });
   }
 
   onDragEnd(columnindex: number, e: { gutterNum: number, sizes: Array<number> }) {
@@ -97,14 +103,5 @@ export class MainComponent implements OnInit {
           }
         })
     );
-  }
-
-  applyNotifications() {
-    this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents.map(e => e.id) })
-      .subscribe((response: IResponse) => {
-        if (ERestResult[ERestResult.OK] !== response.result) {
-          alert('Something wrong...');
-        }
-      });
   }
 }

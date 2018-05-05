@@ -2,19 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import {
-  read,
-  utils,
-  WorkBook,
-  WorkSheet
-  } from 'xlsx';
-import {
-  ERestResult,
-  ERole,
-  ESex,
-  IResponse,
-  ITableColumn
-  } from '../../entities/common';
+import { WorkBook, WorkSheet, read, utils } from 'xlsx';
+import { ERestResult, ERole, ESex, IResponse, ITableColumn } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
