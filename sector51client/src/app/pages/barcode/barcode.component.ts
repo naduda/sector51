@@ -1,18 +1,14 @@
-import { Component, OnInit, HostListener, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
-import { CommonService } from '../../services/common.service';
-import { IProduct, IBarcode, IModalWindow, IModalProperties, ERestResult } from '../../entities/common';
-import { IResponse, RESERVED_PRODUCTS_ID, ERole, IUserService } from '../../entities/common';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { of } from 'rxjs/observable/of';
-import { ModalService } from '../../services/modal.service';
-import { REST_API } from '../../entities/rest-api';
-import { element } from 'protractor';
-import { inspect, isUndefined } from 'util';
+import { ERestResult, ERole, IBarcode, IModalWindow, IProduct, IResponse, IUserService, RESERVED_PRODUCTS_ID } from '../../entities/common';
 import { Profile } from '../../entities/profile';
+import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
+import { ModalService } from '../../services/modal.service';
 import { AbonementComponent } from '../modal/abonement/abonement.component';
 
 @Component({

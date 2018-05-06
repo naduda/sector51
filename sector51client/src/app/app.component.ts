@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { ILocale } from './entities/common';
+import { EConfirmType, ILocale } from './entities/common';
 import { REST_API } from './entities/rest-api';
 import { CommonService } from './services/common.service';
 
@@ -28,6 +28,14 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translate.get('locale')
       .subscribe(locales => this.locales = locales);
+  }
+
+  isAbonType(confirmation: any): boolean {
+    return confirmation.type === EConfirmType.ABON;
+  }
+
+  isMessageType(confirmation: any): boolean {
+    return confirmation.type === EConfirmType.YES;
   }
 
   onLangChange(lang: string) {

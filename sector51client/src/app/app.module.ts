@@ -8,6 +8,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
+import { ConfirmationService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DropdownModule } from 'primeng/dropdown';
@@ -108,7 +109,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CanActivateAuthGuard,
     AuthenticationService,
     CommonService,
-    WebsocketService
+    WebsocketService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })

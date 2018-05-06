@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
-import { ERestResult, ERole, IResponse, IService, IUserService } from '../../entities/common';
+import { EConfirmType, ERestResult, ERole, IResponse, IService, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { AbonementComponent } from '../../pages/modal/abonement/abonement.component';
@@ -11,8 +10,7 @@ import { ModalService } from '../../services/modal.service';
 @Component({
   selector: 'sector51-user-services',
   templateUrl: './user-services.component.html',
-  styleUrls: ['./user-services.component.css'],
-  providers: [ConfirmationService]
+  styleUrls: ['./user-services.component.css']
 })
 export class UserServicesComponent implements OnInit {
   @Input() set user(value: Profile) {
@@ -39,7 +37,7 @@ export class UserServicesComponent implements OnInit {
   cash: number;
 
   constructor(private http: HttpClient, private common: CommonService,
-    private modalService: ModalService, private confirmationService: ConfirmationService) {
+    private modalService: ModalService) {
     this.service = { id: -1, name: '', desc: '', price: 0 };
   }
 
@@ -105,28 +103,25 @@ export class UserServicesComponent implements OnInit {
     }
     const service = this.common.services.find(s => s.id === idService);
     this.cash = service ? service.price : -1;
-    this.confirmationService.confirm({
+    this.common.confirm({
+      type: EConfirmType.ABON,
+      data: { dtBeg: this.dtBeg, dtEnd: this.dtEnd, cash: this.cash },
       header: service ? service.name : '',
-      message: null,
       accept: () => {
+        const data = this.common.confirmationData;
         const userService = {
           idService: idService,
           idUser: this._user['created'],
-          dtBeg: this.dtBeg,
-          dtEnd: this.dtEnd,
-          desc: this.cash
+          dtBeg: data.dtBeg,
+          dtEnd: data.dtEnd,
+          desc: data.cash,
+          value: ''
         };
         this.http.post(REST_API.POST.userService, userService)
           .subscribe((response: IResponse) => {
             if (ERestResult[ERestResult.OK] === response.result) {
-              const userService: IUserService = {
-                idService: service.id,
-                idUser: this._user['created'],
-                dtBeg: this.dtBeg,
-                dtEnd: this.dtEnd,
-                desc: service.name,
-                value: this.cash + ''
-              };
+              userService.desc = service.name;
+              userService.value = data.cash;
               this.userServices.push(userService);
               this.service = { id: -1, name: '', desc: '', price: 0 };
               this.modifyServices(this.userServices);
