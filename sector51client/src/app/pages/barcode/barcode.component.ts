@@ -230,7 +230,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
         const url = REST_API.GET.userServices(instance.profile['created']);
         instance.http.get(url).subscribe((response: IResponse) => {
           const services = response.message;
-          const abonementService = services.find(s => s.idService === 0 || s.idService === 3 || s.idService === 4);
+          const abonementService = services.find(s => s.idService !== 1 && s.idService !== 2);
           const dtBeg = abonementService ? abonementService.dtBeg : 0;
           const dtEnd = abonementService ? abonementService.dtEnd : 0;
           const now = new Date().getTime();
