@@ -1,18 +1,14 @@
-import { Component, OnInit, HostListener, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
-import { CommonService } from '../../services/common.service';
-import { IProduct, IBarcode, IModalWindow, IModalProperties, ERestResult } from '../../entities/common';
-import { IResponse, RESERVED_PRODUCTS_ID, ERole, IUserService } from '../../entities/common';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { of } from 'rxjs/observable/of';
-import { ModalService } from '../../services/modal.service';
-import { REST_API } from '../../entities/rest-api';
-import { element } from 'protractor';
-import { inspect, isUndefined } from 'util';
+import { ERestResult, ERole, IBarcode, IModalWindow, IProduct, IResponse, IUserService, RESERVED_PRODUCTS_ID } from '../../entities/common';
 import { Profile } from '../../entities/profile';
+import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
+import { ModalService } from '../../services/modal.service';
 import { AbonementComponent } from '../modal/abonement/abonement.component';
 
 @Component({
@@ -234,7 +230,7 @@ export class BarcodeComponent implements OnInit, IModalWindow {
         const url = REST_API.GET.userServices(instance.profile['created']);
         instance.http.get(url).subscribe((response: IResponse) => {
           const services = response.message;
-          const abonementService = services.find(s => s.idService === 0 || s.idService === 3 || s.idService === 4);
+          const abonementService = services.find(s => s.idService !== 1 && s.idService !== 2);
           const dtBeg = abonementService ? abonementService.dtBeg : 0;
           const dtEnd = abonementService ? abonementService.dtEnd : 0;
           const now = new Date().getTime();
