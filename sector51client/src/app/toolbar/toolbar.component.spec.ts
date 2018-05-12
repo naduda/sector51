@@ -1,17 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-
-import { ToolbarComponent } from './toolbar.component';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Profile } from '../entities/profile';
 import { MenuComponent } from '../menu/menu.component';
 import { AuthenticationService } from '../services/authentication.service';
 import { CommonService } from '../services/common.service';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateServiceStub } from '../testing/TranslateServiceStub';
-import { ModalService } from '../services/modal.service';
+import { ToolbarComponent } from './toolbar.component';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -24,14 +20,13 @@ describe('ToolbarComponent', () => {
         MenuComponent,
         TranslatePipeStub
       ],
-      imports: [ RouterTestingModule ],
+      imports: [RouterTestingModule],
       providers: [
         { provide: AuthenticationService, useValue: { username: '' } },
-        { provide: ModalService, useValue: { } },
         { provide: CommonService, useValue: { user: new BehaviorSubject(null), profile: new Profile() } }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

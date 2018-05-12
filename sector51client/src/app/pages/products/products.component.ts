@@ -1,13 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IProduct, ERestResult, RESERVED_PRODUCTS_ID, ERole, IResponse } from '../../entities/common';
-import { ModalService } from '../../services/modal.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ModalComponent } from '../modal/modal.component';
-import { BarcodeComponent } from '../barcode/barcode.component';
-import { CommonService } from '../../services/common.service';
-import { REST_API } from '../../entities/rest-api';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { EConfirmType, ERestResult, ERole, IProduct, IResponse, RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 
 @Component({
   selector: 'sector51-products',
@@ -26,9 +22,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     btCancel: 'cancel'
   };
 
-  constructor(private http: HttpClient,
-              private modalService: ModalService,
-              private common: CommonService) { }
+  constructor(private http: HttpClient, private common: CommonService) { }
 
   ngOnInit() {
     this.permissions = this.common.profile.role < ERole.USER;
@@ -49,9 +43,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   removeProduct(product: IProduct) {
-    this.modalService.open(ModalComponent, this.modalProperties, (result) => {
-      this.http.delete(REST_API.DELETE.productById(product.id))
-        .subscribe(r => r === ERestResult[ERestResult.OK] && this.products.splice(this.products.indexOf(product), 1));
+    this.common.confirm({
+      type: EConfirmType.YES_NO,
+      headerClass: 'bg-danger',
+      icon: 'fa fa-question-circle-o fa-2x text-danger',
+      message: 'prompt.RemoveItemQuestion',
+      accept: () => this.http.delete(REST_API.DELETE.productById(product.id))
+        .subscribe(r => r === ERestResult[ERestResult.OK] && this.products.splice(this.products.indexOf(product), 1))
     });
   }
 

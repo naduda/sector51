@@ -1,22 +1,21 @@
-import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import 'rxjs/add/operator/map';
+import { Injectable, Injector } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { WebsocketService } from './websocket.service';
-import { CommonService } from './common.service';
+import 'rxjs/add/operator/map';
 import { REST_API } from '../entities/rest-api';
+import { CommonService } from './common.service';
+import { WebsocketService } from './websocket.service';
 
 @Injectable()
 export class AuthenticationService {
   private http: HttpClient;
 
   constructor(public common: CommonService,
-              private injector: Injector,
-              private websocket: WebsocketService
-  ) {}
+    private injector: Injector,
+    private websocket: WebsocketService
+  ) { }
 
-  initWebsocket = (token: string) => this.websocket.initWebSocket(token, this.http);
+  initWebsocket = (token: string, http?: HttpClient) => this.websocket.initWebSocket(token, http || this.http);
 
   login(username: string, password: string): Observable<boolean> {
     this.http = this.injector.get(HttpClient);

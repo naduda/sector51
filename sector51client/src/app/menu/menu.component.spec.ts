@@ -1,14 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-
+import { RouterTestingModule } from '@angular/router/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { MenuComponent } from './menu.component';
-import { CreateUserComponent } from '../pages/create-user/create-user.component';
 import { Profile } from '../entities/profile';
+import { CreateUserComponent } from '../pages/create-user/create-user.component';
 import { TranslatePipeStub } from '../testing/TranslatePipeStub';
-import { ModalService } from '../services/modal.service';
+import { MenuComponent } from './menu.component';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -21,9 +18,7 @@ describe('MenuComponent', () => {
         CreateUserComponent,
         TranslatePipeStub
       ],
-      providers: [
-        { provide: ModalService, useValue: {} },
-      ],
+      providers: [],
       imports: [
         FormsModule,
         RouterTestingModule.withRoutes([
@@ -32,7 +27,7 @@ describe('MenuComponent', () => {
         NgbModule.forRoot()
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

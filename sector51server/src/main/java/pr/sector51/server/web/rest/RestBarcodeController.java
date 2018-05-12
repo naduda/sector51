@@ -7,7 +7,6 @@ import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 import pr.sector51.server.web.socket.ScannerService;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @RequestMapping("/api")

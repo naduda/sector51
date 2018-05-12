@@ -3,22 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgModel } from '@angular/forms/src/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import {
-  ERestResult,
-  ERole,
-  ESex,
-  IResponse,
-  IRole,
-  IService,
-  IUserService
-  } from '../../entities/common';
+import { ERestResult, ERole, ESex, IRole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
-import { ModalService } from '../../services/modal.service';
-import { AbonementComponent } from '../modal/abonement/abonement.component';
 
 @Component({
   selector: 'sector51-create-user',
@@ -55,8 +44,7 @@ export class CreateUserComponent implements OnInit {
   private isBack = true;
 
   constructor(private http: HttpClient, private location: Location,
-    private route: ActivatedRoute, public common: CommonService,
-    private modalService: ModalService) {
+    private route: ActivatedRoute, public common: CommonService) {
     this.buttonText = 'create';
     this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
     this.genders = [

@@ -13,15 +13,14 @@
         </div>
       </div>
     </div>
-    <i class="fa fa-fw fa-edit fa-lg text-warning pointer" (click)="insertOrEditBoxType(false)"></i>
   </div>
   <div class="d-inline-block">
     <form class="form-inline d-inline-flex align-items-center">
       <label for="name" class="text-right pr-2">
         <strong>{{ 'name' | translate | titlecase }}:</strong>
       </label>
-      <input type="text" class="form-control mr-2 w-50" name="name" [(ngModel)]="number"
-        #nModel="ngModel" pattern="[0-9]{1,2}([\-][0-9]{1,2})*" required>
+      <input type="text" class="form-control mr-2 w-50" name="name" [(ngModel)]="number" #nModel="ngModel" pattern="[0-9]{1,2}([\-][0-9]{1,2})*"
+        required>
       <i class="fa fa-fw fa-lg fa-plus-square text-primary pointer" (click)="insertOrRemoveBoxNumber(true)" *ngIf="nModel.valid"></i>
       <i class="fa fa-fw fa-lg fa-trash text-danger pointer" (click)="insertOrRemoveBoxNumber(false)" *ngIf="nModel.valid"></i>
     </form>
@@ -29,10 +28,8 @@
 </div>
 <hr>
 <div class="d-flex flex-wrap p-5">
-  <div id="boxes" class="d-inline-flex justify-content-center w-rem-5 m-2 p-3 rounded text-white pointer"
-    [ngClass]="{ 'bg-primary': !p.card, 'bg-danger': p.card }"
-    placement="top" [ngbTooltip]="p.tooltip"
-    *ngFor="let p of boxes;" (click)="updateBox(p)">
+  <div id="boxes" class="d-inline-flex justify-content-center w-rem-5 m-2 p-3 rounded text-white pointer" [ngClass]="{ 'bg-primary': !p.card, 'bg-danger': p.card }"
+    placement="top" [ngbTooltip]="p.tooltip" *ngFor="let p of boxes;" (click)="updateBox(p)">
     {{ p.number | number:'2.0-0' }}
   </div>
 </div>

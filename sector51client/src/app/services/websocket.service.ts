@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EConfirmType, ERole } from '../entities/common';
+import { EConfirmType, ERestResult, ERole, IProduct, IResponse, RESERVED_PRODUCTS_ID } from '../entities/common';
+import { REST_API } from '../entities/rest-api';
 import { CommonService } from '../services/common.service';
-import { ModalService } from '../services/modal.service';
 
 @Injectable()
 export class WebsocketService {
@@ -10,7 +10,7 @@ export class WebsocketService {
   private http: HttpClient;
   private token: string;
 
-  constructor(private modalService: ModalService, private common: CommonService) { }
+  constructor(private common: CommonService) { }
 
   public disconnect() {
     this.token = undefined;
@@ -30,20 +30,97 @@ export class WebsocketService {
 
     this.ws.onmessage = (evt) => {
       const data = JSON.parse(evt.data);
-      if (data.code && !location.href.includes('/#/registration')) {
-        // this.modalService.open(BarcodeComponent, { code: data.code });
+      if (data.user !== undefined && data.service !== undefined) {
+        if (this.common.router.url === '/cart') {
+          const virtualProduct: IProduct = {
+            id: RESERVED_PRODUCTS_ID,
+            name: data.user.name,
+            desc: data.user.surname,
+            price: data.user.balance,
+            code: data.user.card,
+            count: 1
+          };
+          const oldUser = this.common.cartProducts.find(p => p.id === virtualProduct.id);
+          if (oldUser) {
+            this.common.cartProducts.splice(this.common.cartProducts.indexOf(oldUser), 1);
+          }
+          this.common.cartProducts.push(virtualProduct);
+        } else if (data.service === null) {
+          this.common.confirm({
+            type: EConfirmType.YES,
+            message: 'Check you servicies',
+            header: 'Warning',
+            headerClass: 'bg-warning',
+            icon: 'fa fa-bell text-warning',
+          });
+        } else {
+          this.common.navigate('boxes', { code: data.user.card });
+        }
+      } else if (data.product !== undefined) {
+        data.count = 1;
         this.common.confirm({
-          type: EConfirmType.YES,
-          data: { message: 'Check you servicies' },
-          header: 'Warning',
-          icon: 'fa fa-bell',
-          rejectVisible: false,
-          accept: () => { }
+          type: EConfirmType.PRODUCT,
+          data: data,
+          header: data.product.name,
+          acceptBtn: 'seld',
+          rejectBtn: 'buy',
+          accept: () => {
+            data.product.count = data.count;
+            this.common.cartProducts.push(data.product);
+            this.common.navigate('cart');
+          },
+          reject: () => {
+            data.product.count += data.count;
+            this.http.put(REST_API.PUT.product, data.product).subscribe((response: IResponse) => {
+              if (response.message === ERestResult[ERestResult.OK]) {
+
+              }
+            });
+          }
         });
-      } else if (data.code && location.href.includes('/#/registration')) {
-        // const input: any = document.querySelector('input[name="card"]');
-        // input.value = data.code;
-        // alert('Card was changed.');
+      } else if (data.barcode) {
+        data.curType = { type: 'USER' };
+        data.name = 'New product';
+        data.selders = [];
+        this.common.users.filter(u => u.authorities === ERole[ERole.SELDER] || u.authorities === ERole[ERole.OWNER]).forEach(u => {
+          const selder: any = Object.assign({}, u);
+          selder.fullName = u.surname + ' ' + u.name;
+          data.selders.push(selder);
+        });
+        data.selder = Object.assign({}, this.common.profile);
+        data.selder.fullName = data.selder.surname + ' ' + data.selder.name;
+        if (data.selders.length === 0) {
+          data.selders.push(data.selder);
+        }
+        data.price = 0;
+        this.common.confirm({
+          type: EConfirmType.BARCODE,
+          data: data,
+          width: 350,
+          header: 'Unknown barcode',
+          headerClass: 'bg-warning',
+          accept: () => {
+            if (data.curType.type === 'USER') {
+              this.common.navigate('registration', { code: data.barcode });
+            } else {
+              const product: IProduct = {
+                id: 0,
+                name: data.name,
+                code: data.barcode,
+                count: 1,
+                price: data.price * 100,
+                desc: data.selder['created']
+              };
+              this.http.post(REST_API.POST.product, product, { params: { code: data.barcode } })
+                .subscribe((response: IResponse) => {
+                  if (response && response.result === ERestResult[ERestResult.OK]) {
+                    this.common.newProduct.observers && this.common.newProduct.next(response.message);
+                    this.common.navigate('products');
+                  }
+                });
+            }
+          }
+        });
       }
     };
 

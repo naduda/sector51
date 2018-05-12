@@ -1,16 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { BoxesComponent } from './boxes.component';
-import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
 import { HttpClient } from '@angular/common/http';
-import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalService } from '../../services/modal.service';
-import { IModalProperties } from '../../entities/common';
-import { CommonService } from '../../services/common.service';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { of } from 'rxjs/observable/of';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { of } from 'rxjs/observable/of';
+import { CommonService } from '../../services/common.service';
+import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
+import { BoxesComponent } from './boxes.component';
 
 describe('BoxesComponent', () => {
   let component: BoxesComponent;
@@ -18,26 +15,27 @@ describe('BoxesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BoxesComponent, TranslatePipeStub ],
+      declarations: [BoxesComponent, TranslatePipeStub],
       imports: [
         FormsModule,
-        RouterTestingModule.withRoutes([ ]),
+        RouterTestingModule.withRoutes([]),
         NgbModule.forRoot()
       ],
       providers: [
         NgbActiveModal,
-        { provide: HttpClient, useValue: {
-          get: (url: string, params) => of([])
-        }},
-        { provide: ModalService, useValue: {
-          open: (props: IModalProperties, callbackOK: any, callbackDismiss?: any) => {}
-        }},
-        { provide: CommonService, useValue: {
-          newBoxtype: new BehaviorSubject(null)
-        }}
+        {
+          provide: HttpClient, useValue: {
+            get: (url: string, params) => of([])
+          }
+        },
+        {
+          provide: CommonService, useValue: {
+            newBoxtype: new BehaviorSubject(null)
+          }
+        }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

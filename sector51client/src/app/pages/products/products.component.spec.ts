@@ -1,14 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ProductsComponent } from './products.component';
 import { HttpClient } from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
-import { ModalService } from '../../services/modal.service';
-import { TranslateService } from '@ngx-translate/core';
-import { CommonService } from '../../services/common.service';
-import { RESERVED_PRODUCTS_ID, ERole } from '../../entities/common';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { of } from 'rxjs/observable/of';
+import { ERole, RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { CommonService } from '../../services/common.service';
+import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
+import { ProductsComponent } from './products.component';
 
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
@@ -16,21 +13,24 @@ describe('ProductsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProductsComponent, TranslatePipeStub ],
+      declarations: [ProductsComponent, TranslatePipeStub],
       providers: [
-        { provide: HttpClient, useValue: {
-          get: (idUser: string) => of([
-            { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user', price: 0 }
-          ]),
-        }},
-        { provide: CommonService, useValue: {
-          profile: { role: ERole.ADMIN },
-          newProduct: new BehaviorSubject(null)
-        }},
-        { provide: ModalService, useValue: { open: () => {} } }
+        {
+          provide: HttpClient, useValue: {
+            get: (idUser: string) => of([
+              { id: 0, name: 'NEW', desc: '-' }, { id: RESERVED_PRODUCTS_ID, name: 'USER', desc: 'user', price: 0 }
+            ]),
+          }
+        },
+        {
+          provide: CommonService, useValue: {
+            profile: { role: ERole.ADMIN },
+            newProduct: new BehaviorSubject(null)
+          }
+        }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

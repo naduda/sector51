@@ -7,9 +7,7 @@ import 'rxjs/add/operator/mergeMap';
 import { ERole, IBox } from '../entities/common';
 import { Profile } from '../entities/profile';
 import { REST_API } from '../entities/rest-api';
-import { ModalComponent } from '../pages/modal/modal.component';
 import { CommonService } from '../services/common.service';
-import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'sector51-main',
@@ -27,8 +25,7 @@ export class MainComponent implements OnInit {
   private boxes: IBox[];
 
   constructor(private http: HttpClient, private route: ActivatedRoute,
-    private modalService: ModalService, public common: CommonService,
-    private translate: TranslateService) {
+    public common: CommonService, private translate: TranslateService) {
     this.wWidth = window.innerWidth;
     this.isOwner = common.profile.role === ERole.OWNER;
   }
@@ -83,25 +80,5 @@ export class MainComponent implements OnInit {
       newparams[name] = value;
       this.common.navigate('main', newparams);
     }).unsubscribe();
-  }
-
-  removeUser(idUser) {
-    const props = {
-      header: 'attention',
-      headerParam: { end: '!' },
-      headerClass: 'alert alert-danger',
-      body: 'prompt.RemoveUserQuestion',
-      btOK: 'apply',
-      btCancel: 'cancel'
-    };
-    this.modalService.open(ModalComponent, props, (result) =>
-      this.http.delete(REST_API.DELETE.userById(idUser))
-        .subscribe((response: any) => {
-          if (response === 'OK') {
-            this.common.users.splice(this.common.users.indexOf(this.user), 1);
-            this.user = undefined;
-          }
-        })
-    );
   }
 }

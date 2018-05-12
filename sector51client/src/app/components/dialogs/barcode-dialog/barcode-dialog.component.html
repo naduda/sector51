@@ -1,0 +1,39 @@
+<div *ngIf="input && isBarcodeType()">
+  <div class="row align-items-center">
+    <div class="col-3">
+      <label for="type" class="m-0">{{ 'type' | translate | titlecase }}:</label>
+    </div>
+    <div class="col-9">
+      <p-dropdown [style]="{'width': '100%', 'text-align': 'right', 'padding-right': '0.5rem'}" [options]="types" [(ngModel)]="input.data.curType"
+        name="type" optionLabel="type"></p-dropdown>
+    </div>
+  </div>
+
+  <div *ngIf="input.data.curType.type === 'PRODUCT'" class="row align-items-center mt-2">
+    <div class="col-3">
+      <label for="name" class="m-0">{{ 'name' | translate | titlecase }}:</label>
+    </div>
+    <div class="col-9">
+      <input type="text" class="form-control" id="name" [(ngModel)]="input.data.name">
+    </div>
+  </div>
+
+  <div *ngIf="input.data.curType.type === 'PRODUCT'" class="row align-items-center mt-2">
+    <div class="col-3">
+      <label for="type" class="m-0">{{ 'selder' | translate | titlecase }}:</label>
+    </div>
+    <div class="col-9">
+      <p-dropdown [style]="{'width': '100%', 'text-align': 'right', 'padding-right': '0.5rem'}" [options]="input.data.selders"
+        [(ngModel)]="input.data.selder" name="selder" optionLabel="fullName"></p-dropdown>
+    </div>
+  </div>
+
+  <div *ngIf="input.data.curType.type === 'PRODUCT'" class="row align-items-center mt-2">
+    <div class="col-3">
+      <label for="price" class="m-0">{{ 'price' | translate | titlecase }}:</label>
+    </div>
+    <div class="col-9">
+      <input type="number" min="0" class="form-control" id="price" [(ngModel)]="input.data.price">
+    </div>
+  </div>
+</div>

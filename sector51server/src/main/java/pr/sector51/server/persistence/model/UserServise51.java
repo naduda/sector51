@@ -1,5 +1,8 @@
 package pr.sector51.server.persistence.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.sql.Timestamp;
 
 public class UserServise51 {
@@ -19,6 +22,15 @@ public class UserServise51 {
     this.dtBeg = dtBeg;
     this.dtEnd = dtEnd;
     this.value = value;
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return new ObjectMapper().writeValueAsString(this);
+    } catch (JsonProcessingException e) {
+      return "{}";
+    }
   }
 
   public int getIdService() {

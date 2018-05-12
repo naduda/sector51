@@ -67,7 +67,7 @@
   "cart": "cart",
   "clear": "clear",
   "pay": "pay",
-  "key": "key",
+  "key": "key №{{number}}",
   "settings": "settings",
   "services": "services",
   "reports": "reports",

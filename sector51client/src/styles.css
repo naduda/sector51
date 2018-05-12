@@ -7,6 +7,9 @@ html { font-size: 14px; }
 
 label.ui-multiselect-label { margin: 0 !important; }
 sector51-user-services .ui-table-resizable>.ui-table-wrapper { overflow-x: visible; }
+
+p-confirmDialog.bg-danger .ui-dialog-titlebar { background-color: #dc3545!important; }
+p-confirmDialog.bg-warning .ui-dialog-titlebar { background-color: #ffc107!important; }
 .ui-dialog-content { display: none!important; }
 
 button:hover { cursor: pointer; }

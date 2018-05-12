@@ -1,5 +1,8 @@
 package pr.sector51.server.persistence.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class Product {
   private int id;
   private String name;
@@ -8,7 +11,8 @@ public class Product {
   private Integer price;
   private String code;
 
-  public Product() {}
+  public Product() {
+  }
 
   public Product(int id, String name, String desc, Integer count, Integer price, String code) {
     this.id = id;
@@ -22,6 +26,15 @@ public class Product {
   @Override
   public Product clone() {
     return new Product(id, name, desc, count, price, code);
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return new ObjectMapper().writeValueAsString(this);
+    } catch (JsonProcessingException e) {
+      return "{}";
+    }
   }
 
   public int getId() {

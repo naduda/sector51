@@ -1,24 +1,26 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import { of } from 'rxjs/observable/of';
+import { ERole, IEvent, IRole, IService } from '../entities/common';
+import { Profile } from '../entities/profile';
+import { REST_API } from '../entities/rest-api';
 import { AuthenticationService } from './authentication.service';
 import { CommonService } from './common.service';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { Profile } from '../entities/profile';
-import { IRole, ERole, IService, IEvent } from '../entities/common';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/operator/catch';
-import { REST_API } from '../entities/rest-api';
 
 @Injectable()
 export class CanActivateAuthGuard implements CanActivate {
   private iroles: IRole[];
 
   constructor(private auth: AuthenticationService,
-              private http: HttpClient,
-              private common: CommonService) {}
+    private http: HttpClient,
+    private common: CommonService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
+    this.auth.initWebsocket(this.auth.token, this.http);
+
     if (this.auth.token.length > 0) {
       if (this.common.profile && this.common.profile['permited'] !== undefined) {
         this.setPermissions(route, state, this.common.profile);
@@ -39,7 +41,6 @@ export class CanActivateAuthGuard implements CanActivate {
         .flatMap(services => this.http.get<Profile>(REST_API.GET.profileByName(this.auth.username.replace(/\./g, ','))))
         .do(user => of(this.setPermissions(route, state, user)))
         .map(user => {
-          this.auth.initWebsocket(this.auth.token);
           this.common.profile = user;
           this.common.profile['iroles'] = this.iroles;
           if (!user['permited']) {

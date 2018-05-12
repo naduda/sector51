@@ -1,46 +1,33 @@
-import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IRole, IResponse, ERestResult, IBox } from '../../entities/common';
-import { REST_API } from '../../entities/rest-api';
-import { ModalService } from '../../services/modal.service';
-import { BoxtypeComponent } from '../modal/boxtype/boxtype.component';
-import { Subscription } from 'rxjs/Subscription';
-import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
-import { CommonService } from '../../services/common.service';
-import { ModalComponent } from '../modal/modal.component';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { EConfirmType, ERestResult, IBox, IResponse, IRole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
+import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 
 @Component({
   selector: 'sector51-boxes',
   templateUrl: './boxes.component.html',
   styleUrls: ['./boxes.component.css']
 })
-export class BoxesComponent implements OnInit, OnDestroy {
+export class BoxesComponent implements OnInit {
   types: IRole[];
   type: IRole;
   boxNumbers: IBox[];
   boxes: IBox[];
   number: string;
   tooltip: string;
-  private subscription: Subscription;
   private user: Profile;
 
-  constructor(private http: HttpClient,
-    private modalService: ModalService,
-    private route: ActivatedRoute,
-    private common: CommonService) {
+  constructor(private http: HttpClient, private route: ActivatedRoute, private common: CommonService) {
     this.types = [];
     this.boxNumbers = [];
   }
 
   ngOnInit() {
-    this.subscription = this.common.newBoxtype.subscribe(boxtype => {
-      this.types.push(boxtype);
-      if (this.type && this.type.name === 'new') this.type = this.types[0];
-    });
     this.route.queryParams
       .flatMap(params => params.code ? this.http.get<Profile>(REST_API.GET.userByCard(params.code)) : of(new Profile()))
       .do(user => this.user = user)
@@ -59,10 +46,6 @@ export class BoxesComponent implements OnInit, OnDestroy {
         this.boxNumbers = boxnumbers;
         this.refreshBoxes();
       });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   private refreshBoxes() {
@@ -84,31 +67,6 @@ export class BoxesComponent implements OnInit, OnDestroy {
   changeType(type: IRole) {
     this.type = type;
     this.refreshBoxes();
-  }
-
-  insertOrEditBoxType(insert: boolean) {
-    this.modalService.open(BoxtypeComponent, { boxtype: insert ? undefined : this.type });
-  }
-
-  removeBoxType() {
-    const props = {
-      header: 'attention',
-      headerParam: { end: '!' },
-      headerClass: 'alert alert-danger',
-      body: 'prompt.RemoveItemQuestion',
-      btOK: 'apply',
-      btCancel: 'cancel'
-    };
-    this.modalService.open(ModalComponent, props, (result) =>
-      this.http.delete(REST_API.DELETE.boxtype(this.type.id)).subscribe((response: IResponse) => {
-        if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-          this.types.splice(this.types.indexOf(this.type), 1);
-          this.type = this.types.length > 0 ? this.types[0] : { id: -1, name: 'new' };
-        } else {
-          alert('Error');
-        }
-      })
-    );
   }
 
   insertOrRemoveBoxNumber(insert: boolean) {
@@ -138,23 +96,23 @@ export class BoxesComponent implements OnInit, OnDestroy {
 
   updateBox(box: IBox) {
     if (box.idtype === 3) return;
-    const props = {
+
+    this.common.confirm({
+      type: EConfirmType.YES,
       header: this.user.surname + ' ' + this.user.name,
-      headerParam: { end: '!' },
-      headerClass: 'alert alert-info fa fa-key fa-2x',
-      body: 'key',
-      btOK: 'apply',
-      btCancel: 'cancel'
-    };
-    this.modalService.open(ModalComponent, props, (result) => {
-      const b = Object.assign({}, box);
-      b.card = b.card ? undefined : this.user.card;
-      this.http.put(REST_API.PUT.boxnumber, b)
-        .subscribe((response: any) => {
-          if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-            this.common.navigate('main', { user: this.user['created'] });
-          }
-        });
+      icon: 'fa fa-key fa-2x',
+      message: 'key',
+      messageParam: { number: box.number },
+      accept: () => {
+        const b = Object.assign({}, box);
+        b.card = b.card ? undefined : this.user.card;
+        this.http.put(REST_API.PUT.boxnumber, b)
+          .subscribe((response: any) => {
+            if (response && response.result === ERestResult[ERestResult.OK].toString()) {
+              this.common.navigate('main', { user: this.user['created'] });
+            }
+          });
+      }
     });
   }
 }

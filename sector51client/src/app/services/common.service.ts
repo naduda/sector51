@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { IEvent, IProduct, IRole, IService, STORAGE_NAME } from '../entities/common';
+import { EConfirmType, IEvent, IProduct, IService, STORAGE_NAME } from '../entities/common';
 import { Profile } from '../entities/profile';
 
 @Injectable()
@@ -13,7 +13,6 @@ export class CommonService {
   events: IEvent[];
   currentUser: BehaviorSubject<Profile>;
   newProduct: BehaviorSubject<IProduct>;
-  newBoxtype: BehaviorSubject<IRole>;
   sidenavVisible: boolean;
   cartProducts: IProduct[];
 
@@ -21,7 +20,6 @@ export class CommonService {
     this.cartProducts = [];
     this.currentUser = new BehaviorSubject(null);
     this.newProduct = new BehaviorSubject(null);
-    this.newBoxtype = new BehaviorSubject(null);
     router.events.subscribe(val => {
       if (val instanceof NavigationStart) {
         this.sidenavVisible = false;
@@ -29,10 +27,9 @@ export class CommonService {
     });
   }
 
-  confirmationData: any;
-  confirm(confirmation) {
-    this.confirmationData = confirmation.data;
-    this.confirmationService.confirm(confirmation);
+  confirm(confirmation): ConfirmationService {
+    confirmation.rejectVisible = confirmation.type !== EConfirmType.YES;
+    return this.confirmationService.confirm(confirmation);
   }
 
   get isLogin(): boolean {

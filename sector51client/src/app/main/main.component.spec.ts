@@ -1,29 +1,23 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
-
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { ModalService } from '../services/modal.service';
-import { CommonService } from '../services/common.service';
-
-import { MainComponent } from './main.component';
+import { ComponentFixture, TestBed, async, fakeAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { TranslatePipeStub } from '../testing/TranslatePipeStub';
-import { Profile } from '../entities/profile';
-import { ERole, IModalProperties } from '../entities/common';
-import { USERS_MOCK, ElementTools } from '../testing/commonTest';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 import { AngularSplitModule } from 'angular-split';
 import { of } from 'rxjs/observable/of';
-import { FormsModule } from '@angular/forms';
+import { ERole } from '../entities/common';
+import { Profile } from '../entities/profile';
+import { CommonService } from '../services/common.service';
+import { TranslatePipeStub } from '../testing/TranslatePipeStub';
+import { ElementTools, USERS_MOCK } from '../testing/commonTest';
+import { MainComponent } from './main.component';
 
 describe('MainComponent', () => {
   let component: MainComponent;
   let fixture: ComponentFixture<MainComponent>;
   let et: ElementTools<MainComponent>;
   let currentProfile = 0;
-  let location: string;
   let users: Profile[];
 
   class CommonServiceStub {
@@ -35,7 +29,7 @@ describe('MainComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MainComponent, TranslatePipeStub ],
+      declarations: [MainComponent, TranslatePipeStub],
       imports: [
         FormsModule,
         RouterTestingModule.withRoutes([
@@ -46,22 +40,19 @@ describe('MainComponent', () => {
         AngularSplitModule
       ],
       providers: [
-        { provide: ModalService, useValue: {
-          open: (props: IModalProperties, callbackOK: any, callbackDismiss?: any) => {
-            location = 'modal';
-          }}
-        },
-        { provide: HttpClient, useValue: {
-          get: (url: string) => {
-            if (url.endsWith('/api/users')) return of(USERS_MOCK);
-            return of([]);
+        {
+          provide: HttpClient, useValue: {
+            get: (url: string) => {
+              if (url.endsWith('/api/users')) return of(USERS_MOCK);
+              return of([]);
+            }
           }
-        }},
+        },
         { provide: TranslateService, useValue: { get: (key) => of(key) } },
         { provide: CommonService, useClass: CommonServiceStub }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -118,8 +109,6 @@ describe('MainComponent', () => {
     et.click('split-area ul > li:first-child');
     const buttons = et.de('div.bg-light');
     expect(buttons).toBeDefined('buttons should be visible for OWNER');
-    expect(location).toBeUndefined();
     et.click('button.btn-danger');
-    expect(location).toEqual('modal');
   }));
 });

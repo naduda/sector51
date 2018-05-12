@@ -1,5 +1,8 @@
 package pr.sector51.server.persistence.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.sql.Timestamp;
 
 public class UserInfo {
@@ -30,6 +33,15 @@ public class UserInfo {
     this.balance = balance;
     this.created = id;
     this.sex = sex;
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return new ObjectMapper().writeValueAsString(this);
+    } catch (JsonProcessingException e) {
+      return "{}";
+    }
   }
 
   public String getPassword() {

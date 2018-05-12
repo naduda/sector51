@@ -9,6 +9,8 @@ div.row {
   flex-direction: column;
 }
 
+p-confirmDialog button { width: 10rem; }
+
 @media (max-width: 576px) {
   .outlet {
     height: calc(100% - 4rem);

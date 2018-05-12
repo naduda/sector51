@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { EConfirmType, ERestResult, ERole, IResponse, IService, IUserService } from '../../entities/common';
+import { EConfirmType, ERestResult, ERole, IBox, IResponse, IService, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
-import { AbonementComponent } from '../../pages/modal/abonement/abonement.component';
 import { CommonService } from '../../services/common.service';
-import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'sector51-user-services',
@@ -28,6 +26,7 @@ export class UserServicesComponent implements OnInit {
   }
   _user: Profile;
   trainers: Profile[];
+  trainer: Profile;
   service: IService;
   userServices: IUserService[];
   userService: IUserService;
@@ -35,15 +34,24 @@ export class UserServicesComponent implements OnInit {
   dtBeg: Date;
   dtEnd: Date;
   cash: number;
+  boxes: IBox[];
+  boxNumber: IBox;
 
-  constructor(private http: HttpClient, private common: CommonService,
-    private modalService: ModalService) {
+  constructor(private http: HttpClient, private common: CommonService) {
     this.service = { id: -1, name: '', desc: '', price: 0 };
   }
 
   ngOnInit() {
     this.trainers = this.common.users.filter(u => u['roles'] === ERole[ERole.TRAINER]);
-    this.trainers.unshift(new Profile(null, '-', ''));
+    this.trainers.unshift(new Profile(null, 'Select trainer...', ''));
+    this.trainers.forEach(trainer => trainer['fullName'] = (trainer.surname + ' ' + trainer.name).toUpperCase());
+    this.http.get(REST_API.GET.boxnumbers).subscribe((boxes: IBox[]) => {
+      this.boxes = boxes.filter(b => b.idtype === 3 && (!b.card || b.card.length === 0));
+      if (this.boxes.length > 0) {
+        this.boxes.sort((a, b) => a.number - b.number);
+        this.boxNumber = this.boxes[0];
+      }
+    });
   }
 
   private getAllServices() {
@@ -93,6 +101,14 @@ export class UserServicesComponent implements OnInit {
   }
 
   addAbonement(period: number, idService: number) {
+    const service = this.common.services.find(s => s.id === idService);
+    this.addService(service, period);
+  }
+
+  addService(service?: IService, period?: number) {
+    service = service || this.service;
+    period = period || 1;
+
     this.dtBeg = new Date();
     this.dtEnd = new Date();
     if (this.dtEnd.getMonth() + period < 12) {
@@ -101,44 +117,62 @@ export class UserServicesComponent implements OnInit {
       this.dtEnd.setFullYear(this.dtEnd.getFullYear() + 1);
       this.dtEnd.setMonth(this.dtEnd.getMonth() + period - 12);
     }
-    const service = this.common.services.find(s => s.id === idService);
+
     this.cash = service ? service.price : -1;
+    const data: any = { dtBeg: this.dtBeg, dtEnd: this.dtEnd, cash: this.cash };
+    if (service.id === 1) {
+      data.trainers = this.trainers;
+      data.trainer = this.trainer;
+    }
+    if (service.id === 2) {
+      data.boxes = this.boxes;
+      data.boxNumber = this.boxNumber;
+    }
     this.common.confirm({
-      type: EConfirmType.ABON,
-      data: { dtBeg: this.dtBeg, dtEnd: this.dtEnd, cash: this.cash },
+      type: service.id === 1 ? EConfirmType.TRAINER : service.id === 2 ? EConfirmType.BOX : EConfirmType.ABON,
+      data: data,
       header: service ? service.name : '',
       accept: () => {
-        const data = this.common.confirmationData;
-        const userService = {
-          idService: idService,
+        const userService: any = {
+          idService: service.id,
           idUser: this._user['created'],
           dtBeg: data.dtBeg,
           dtEnd: data.dtEnd,
-          desc: data.cash,
-          value: ''
+          desc: data.cash
         };
-        this.http.post(REST_API.POST.userService, userService)
-          .subscribe((response: IResponse) => {
-            if (ERestResult[ERestResult.OK] === response.result) {
-              userService.desc = service.name;
-              userService.value = data.cash;
-              this.userServices.push(userService);
-              this.service = { id: -1, name: '', desc: '', price: 0 };
-              this.modifyServices(this.userServices);
+        switch (userService.idService) {
+          case 1:
+            if (!data.trainer) {
+              data.error = 'Select trainer.';
+            } else {
+              userService.value = data.trainer !== data.trainers[0] ? data.trainer['created'] : undefined;
             }
-          });
+            break;
+          case 2: userService.value = data.boxNumber.number; break;
+        }
+        if (data.error) {
+          setTimeout(() =>
+            this.common.confirm({
+              type: EConfirmType.YES,
+              message: data.error,
+              accept: () => setTimeout(() => this.addService(service, period), 100)
+            }), 100);
+          return;
+        }
+        this.http.post(REST_API.POST.userService, userService).subscribe((response: IResponse) => {
+          if (ERestResult[ERestResult.OK] === response.result) {
+            userService.desc = service.name;
+            this.userServices.push(userService);
+            this.service = { id: -1, name: '', desc: '', price: 0 };
+            this.modifyServices(this.userServices);
+            if (userService.idService === 2) {
+              this.boxes.splice(this.boxes.indexOf(data.boxNumber), 1);
+              this.boxes.sort((a, b) => a.number - b.number);
+              this.boxNumber = this.boxes[0];
+            }
+          }
+        });
       }
-    });
-  }
-
-  addService() {
-    this.modalService.open(AbonementComponent, {
-      service: this.service, idUser: this._user['created']
-    }, (userService: IUserService) => {
-      userService.desc = this.common.services.find(s => s.id === userService.idService).name;
-      this.userServices.push(userService);
-      this.service = { id: -1, name: '', desc: '', price: 0 };
-      this.modifyServices(this.userServices);
     });
   }
 
@@ -146,6 +180,11 @@ export class UserServicesComponent implements OnInit {
     this.http.delete(REST_API.DELETE.userService(uService))
       .subscribe((response: IResponse) => {
         if (ERestResult[ERestResult.OK] === response.result) {
+          if (uService.idService === 2) {
+            this.boxes.push({ idtype: 3, number: +uService.value });
+            this.boxes.sort((a, b) => a.number - b.number);
+            this.boxNumber = this.boxes[0];
+          }
           this.userServices.splice(this.userServices.indexOf(uService), 1);
           this.service = { id: -1, name: '', desc: '', price: 0 };
           this.modifyServices(this.userServices);

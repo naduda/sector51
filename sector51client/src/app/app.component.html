@@ -1,31 +1,20 @@
 <div class="container-fluid">
-  <p-confirmDialog #cd width="300">
-    <p-footer>
-      <div *ngIf="cd.confirmation && isAbonType(cd.confirmation)">
-        <div class="form-inline justify-content align-items-baseline">
-          <label for="dtBeg" class="text-right pr-4 w-30 justify-content-end">
-            <strong>{{ 'Since' | translate | titlecase }}:</strong>
-          </label>
-          <p-calendar class="mb-2 w-70" [(ngModel)]="cd.confirmation.data.dtBeg" name="dtBeg" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
-          <label for="dtEnd" class="text-right pr-4 w-30 justify-content-end">
-            <strong>{{ 'Till' | translate | titlecase }}:</strong>
-          </label>
-          <p-calendar class="mb-2 w-70" [(ngModel)]="cd.confirmation.data.dtEnd" name="dtEnd" dateFormat="dd.mm.yy" [inputStyle]="{ 'width':'7rem' }"></p-calendar>
-          <label for="cash" class="text-right pr-4 w-30 justify-content-end">
-            <strong>{{ 'Cash' | translate | titlecase }}:</strong>
-          </label>
-          <div class="d-inline w-70 mb-2">
-            <input type="number" class="form-control" style="width: 7em!important;" [(ngModel)]="cd.confirmation.data.cash" name="cash"
-              disabled required>
-          </div>
+  <p-confirmDialog #cd [width]="cd.confirmation && cd.confirmation.width || 320" [ngClass]="cd.confirmation && cd.confirmation.headerClass">
+    <p-footer *ngIf="cd.confirmation">
+      <div *ngIf="cd.confirmation && isMessageType(cd.confirmation)" class="row flex-row align-items-baseline">
+        <div class="col-2">
+          <i class="fa fa-fw" [ngClass]="cd.confirmation.icon"></i>
+        </div>
+        <div class="col-10 text-left">
+          <h6>{{ cd.confirmation.message | translate:cd.confirmation.messageParam | titlecase }}</h6>
         </div>
       </div>
-      <div *ngIf="cd.confirmation && isMessageType(cd.confirmation)">
-        <h6>{{ cd.confirmation.data.message }}</h6>
-      </div>
+      <sector51-abonement-dialog [input]="cd.confirmation"></sector51-abonement-dialog>
+      <sector51-barcode-dialog [input]="cd.confirmation"></sector51-barcode-dialog>
+      <sector51-product-dialog [input]="cd.confirmation"></sector51-product-dialog>
       <hr>
-      <button class="btn btn-sm btn-outline-primary" (click)="cd.accept()">{{ 'apply' | translate | uppercase }}</button>
-      <button *ngIf="cd.rejectVisible" class="btn btn-sm btn-outline-danger" (click)="cd.reject()">{{ 'cancel' | translate | uppercase }}</button>
+      <button class="btn btn-sm btn-outline-primary text-uppercase" (click)="cd.accept()" [translate]="cd.confirmation.acceptBtn || 'apply'"></button>
+      <button *ngIf="cd.rejectVisible" class="btn btn-sm btn-outline-danger text-uppercase" (click)="cd.reject()" [translate]="cd.confirmation.rejectBtn || 'cancel'"></button>
     </p-footer>
   </p-confirmDialog>
   <div class="row" *ngIf="locales && currentLang">

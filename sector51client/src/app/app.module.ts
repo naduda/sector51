@@ -18,20 +18,19 @@ import { TabViewModule } from 'primeng/tabview';
 import { TooltipModule } from 'primeng/tooltip';
 import { Sector51RoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AbonementDialogComponent } from './components/dialogs/abonement-dialog/abonement-dialog.component';
+import { BarcodeDialogComponent } from './components/dialogs/barcode-dialog/barcode-dialog.component';
+import { ProductDialogComponent } from './components/dialogs/product-dialog/product-dialog.component';
 import { UserServicesComponent } from './components/user-services/user-services.component';
 import { FocusDirective } from './directives/focus.directive';
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
-import { BarcodeComponent } from './pages/barcode/barcode.component';
 import { BoxesComponent } from './pages/boxes/boxes.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ExportComponent } from './pages/export/export.component';
 import { ImportComponent } from './pages/import/import.component';
-import { AbonementComponent } from './pages/modal/abonement/abonement.component';
-import { BoxtypeComponent } from './pages/modal/boxtype/boxtype.component';
-import { ModalComponent } from './pages/modal/modal.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { MainReportComponent } from './pages/report/main-report/main-report.component';
@@ -41,7 +40,6 @@ import { CanActivateAuthGuard } from './services/auth-guard.service';
 import { AuthInterceptor } from './services/auth-interceptor';
 import { AuthenticationService } from './services/authentication.service';
 import { CommonService } from './services/common.service';
-import { ModalService } from './services/modal.service';
 import { WebsocketService } from './services/websocket.service';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
@@ -57,21 +55,20 @@ export function HttpLoaderFactory(http: HttpClient) {
     ToolbarComponent,
     MenuComponent,
     CreateUserComponent,
-    ModalComponent,
-    BarcodeComponent,
     ProductsComponent,
     FocusDirective,
     CartComponent,
     BoxesComponent,
-    BoxtypeComponent,
-    AbonementComponent,
     ServicesComponent,
     MainReportComponent,
     UserServicesComponent,
     ImportComponent,
     ExportComponent,
     SortusersPipe,
-    NotificationsComponent
+    NotificationsComponent,
+    AbonementDialogComponent,
+    BarcodeDialogComponent,
+    ProductDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -96,16 +93,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     ConfirmDialogModule,
     Sector51RoutingModule
   ],
-  entryComponents: [
-    ModalComponent,
-    AbonementComponent,
-    BarcodeComponent,
-    BoxtypeComponent,
-  ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    ModalService,
     CanActivateAuthGuard,
     AuthenticationService,
     CommonService,

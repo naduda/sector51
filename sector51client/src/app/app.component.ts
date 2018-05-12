@@ -30,12 +30,8 @@ export class AppComponent implements OnInit {
       .subscribe(locales => this.locales = locales);
   }
 
-  isAbonType(confirmation: any): boolean {
-    return confirmation.type === EConfirmType.ABON;
-  }
-
   isMessageType(confirmation: any): boolean {
-    return confirmation.type === EConfirmType.YES;
+    return confirmation.type === EConfirmType.YES || confirmation.type === EConfirmType.YES_NO;
   }
 
   onLangChange(lang: string) {
