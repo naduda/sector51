@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
     const digit = +this.barcode[12];
 
     for (let i = 0; i < 12; i++) {
-      if (i % 2 == 0)
+      if (i % 2 === 0)
         sum1 += +this.barcode[i];
       else
         sum2 += +this.barcode[i];
