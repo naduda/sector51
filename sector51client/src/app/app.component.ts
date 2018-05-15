@@ -40,18 +40,33 @@ export class AppComponent implements OnInit {
 
   @HostListener('document:keypress', ['$event'])
   readBarcode(event: KeyboardEvent) {
-    if (event.keyCode === 13) {
-      if (this.barcode.length < 13) {
-        this.barcode = '';
-        return;
-      }
-      this.barcode = this.barcode.substring(this.barcode.length - 13);
-      this.http.post(REST_API.POST.scanner(this.barcode), {})
-        .subscribe(response => this.barcode = '');
-    } else if (47 < event.keyCode && event.keyCode < 58) {
+    if (47 < event.keyCode && event.keyCode < 58) {
       this.barcode += event.key;
+      if (this.isBarcode(this.barcode)) {
+        this.barcode = this.barcode.substring(this.barcode.length - 13);
+        this.http.post(REST_API.POST.scanner(this.barcode), {})
+          .subscribe(response => this.barcode = '');
+      }
     } else {
       this.barcode = '';
     }
+  }
+
+  private isBarcode(code: string): boolean {
+    if (this.barcode.length < 13) return false;
+    this.barcode = this.barcode.substring(this.barcode.length - 13);
+    let sum1 = 0;
+    let sum2 = 0;
+    const digit = +this.barcode[12];
+
+    for (let i = 0; i < 12; i++) {
+      if (i % 2 == 0)
+        sum1 += +this.barcode[i];
+      else
+        sum2 += +this.barcode[i];
+    }
+    sum1 += sum2 * 3;
+    sum1 %= 10;
+    return sum1 + digit === 10;
   }
 }
