@@ -1,6 +1,6 @@
 <div class="col">
   <div class="row d-flex justify-content-between m-0 mt-2">
-    <input class="btn btn-primary" type="file" (change)="onFileChange($event)" multiple="false" />
+    <button class="btn btn-primary" (click)="getGoogleValues()">{{ 'load' | translate | uppercase }}</button>
     <button class="btn btn-danger" (click)="removeAllUsers()">{{ 'remove' | translate | uppercase }}</button>
     <button class="btn btn-primary" *ngIf="rowData.length > 0" (click)="import()">
       {{ 'import' | translate | titlecase }}

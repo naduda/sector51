@@ -1,19 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import {
-  read,
-  utils,
-  WorkBook,
-  WorkSheet,
-  writeFile
-  } from 'xlsx';
-import {
-  ERestResult,
-  ERole,
-  IResponse,
-  ITableColumn,
-  IUserService
-  } from '../../entities/common';
+import { ERestResult, ERole, IResponse, ITableColumn, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 
@@ -60,13 +47,7 @@ export class ExportComponent implements OnInit, AfterViewInit {
   }
 
   export() {
-    const ws: WorkSheet = utils.json_to_sheet(this.rowData, {
-      header: ['surname', 'name', 'phone', 'sex', 'card', 'abontype', 'dtbeg_a', 'dtend_a',
-        'box', 'dtbeg_b', 'dtend_b', 'birthday', 'roles', 'email', 'password']
-    });
-    const wb: WorkBook = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Users');
-    writeFile(wb, 'export.xlsx');
+
   }
 
   loadData() {

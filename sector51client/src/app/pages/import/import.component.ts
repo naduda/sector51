@@ -2,11 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { WorkBook, WorkSheet, read, utils } from 'xlsx';
 import { ERestResult, ERole, ESex, IResponse, ITableColumn } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
+import { GoogleSheetsService } from '../../services/google-sheets.service';
 
 @Component({
   selector: 'sector51-import',
@@ -19,15 +19,36 @@ export class ImportComponent implements AfterViewInit {
   rowData: any[];
   private tableHeight: number;
 
-  constructor(private http: HttpClient, private common: CommonService) {
+  constructor(private http: HttpClient, private common: CommonService, private googleService: GoogleSheetsService) {
     this.rowData = [];
     this.columns = [];
+  }
+
+  getGoogleValues() {
+    this.googleService.getValues('Clients', 'A:O', this.onGoogleAuth);
   }
 
   ngAfterViewInit(): void {
     const div: any = document.getElementsByClassName('outlet col p-0')[0];
     const header: any = document.querySelector('sector51-import > div');
     this.tableHeight = div.offsetHeight - header.offsetHeight - 40;
+    this.googleService.init('1wl0E300r15yTHyw5uHM1sfrHLCWq1h2c5armNcel7l4', this);
+  }
+
+  private onGoogleAuth(values: string[][]) {
+    const that = this['target'];
+    that.columns = [];
+    values[0].forEach(cell => that.columns.push({ field: cell.toLowerCase(), header: cell.toUpperCase() }));
+    for (let i = 1; i < values.length; i++) {
+      const element = values[i];
+      if (!element[0]) continue;
+      const row = {};
+      for (let j = 0; j < that.columns.length; j++) {
+        const cell = that.columns[j].field;
+        row[cell] = element[j];
+      }
+      that.rowData.push(row);
+    }
   }
 
   removeAllUsers() {
@@ -38,42 +59,25 @@ export class ImportComponent implements AfterViewInit {
     });
   }
 
-  onFileChange(evt: any) {
-    this.height = this.tableHeight + 'px';
-    this.columns = [];
-    this.rowData = [];
-    const target: DataTransfer = <DataTransfer>(evt.target);
-    if (target.files.length !== 1) throw new Error('Cannot use multiple files');
-    const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
-      const bstr: string = e.target.result;
-      const wb: WorkBook = read(bstr, { type: 'binary' });
-      const wsname: string = wb.SheetNames[0];
-      const ws: WorkSheet = wb.Sheets[wsname];
-      const data: any[] = utils.sheet_to_json(ws, { header: 1, raw: true, dateNF: 'dd.mm.yyyy' });
-
-      const header: string[] = data[0];
-      header.forEach(cell => this.columns.push({ field: cell.toLowerCase(), header: cell.toUpperCase() }));
-      for (let i = 1; i < data.length; i++) {
-        const element = data[i];
-        if (!element[0]) continue;
-        const row = {};
-        for (let j = 0; j < header.length; j++) {
-          const cell = header[j].toLowerCase();
-          row[cell] = element[j];
-          if (cell.startsWith('dtbeg') || cell.startsWith('dtend') || cell === 'birthday') {
-            row[cell] = this.getExcelDateString(element[j]);
-          }
-        }
-        this.rowData.push(row);
-      }
-    };
-    reader.readAsBinaryString(target.files[0]);
+  import() {
+    console.time('import');
+    this.import100(0);
   }
 
-  import() {
-    this.insertUsers(this.rowData, 0);
-    this.common.profile = undefined;
+  private import100(start: number) {
+    const end = start + 100 < this.rowData.length ? 100 + start : this.rowData.length;
+    this.http.post(REST_API.POST.userWithServices, this.rowData.slice(start, end)).subscribe((response: IResponse) => {
+      const status: number[] = response.message;
+      for (let i = 0; i < status.length; i++) {
+        this.rowData[i + start].success = status[i] > 0;
+      }
+      if (end === this.rowData.length) {
+        this.common.profile = undefined;
+        console.timeEnd('import');
+      } else {
+        this.import100(end);
+      }
+    });
   }
 
   private insertUsers(rowData, index: number) {
@@ -81,7 +85,7 @@ export class ImportComponent implements AfterViewInit {
       return;
     }
     const row = rowData[index];
-    const role = row['roles'] || ERole[ERole.USER];
+    const role = row['user_type'] || ERole[ERole.USER];
     const user: Profile = {
       authorities: role.toUpperCase(),
       balance: 0,
@@ -100,18 +104,18 @@ export class ImportComponent implements AfterViewInit {
       user['password'] = user.card;
     }
     user['roles'] = user.authorities;
-    this.http.post(REST_API.POST.user, user)
-      .subscribe((response: IResponse) => {
-        if (response.result === ERestResult[ERestResult.OK]) {
-          this.insertServices(row, response.message['created'])
-            .subscribe((response: IResponse) => {
-              if (response.result === ERestResult[ERestResult.OK]) {
-                row['success'] = true;
-                this.insertUsers(rowData, ++index);
-              }
-            });
-        }
-      });
+    this.http.post(REST_API.POST.user, user).subscribe((response: IResponse) => {
+      if (response.result === ERestResult[ERestResult.OK]) {
+        this.insertServices(row, response.message['created']).subscribe((response: IResponse) => {
+          if (response.result === ERestResult[ERestResult.OK]) {
+            row['success'] = true;
+            this.insertUsers(rowData, ++index);
+          }
+        });
+      } else {
+        console.timeEnd('import');
+      }
+    });
   }
 
   private insertServices(row: any, userId: number): Observable<any> {
@@ -142,15 +146,5 @@ export class ImportComponent implements AfterViewInit {
     if (!value) return null;
     const pars = value.split('.');
     return new Date(+pars[2], +pars[1] - 1, +pars[0]);
-  }
-
-  private getExcelDateString(value: number) {
-    if (isNaN(value)) return value;
-    const date = new Date(Math.round((value - 25569) * 86400 * 1000));
-    let day: any = date.getDate();
-    if (day < 10) day = '0' + day;
-    let month: any = date.getMonth() + 1;
-    if (month < 10) month = '0' + month;
-    return day + '.' + month + '.' + date.getFullYear();
   }
 }
