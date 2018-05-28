@@ -46,6 +46,8 @@ export const REST_API = {
     events: '/api/events'
   },
   POST: {
+    /** /api/userWithServices { body: row }*/
+    userWithServices: '/api/add/userWithServices',
     /** /api/scanner?code=1234567898765 */
     scanner: (code) => '/api/scanner?code=' + code,
     /** /api/login { body: UserSecurity }*/
@@ -58,8 +60,6 @@ export const REST_API = {
     firstUser: '/api/public/add/firstUser',
     /** /api/add/userPay { body: [user, products, cash] }*/
     userPay: '/api/add/userPay',
-    /** /api/add/boxType { body: name }*/
-    boxtype: '/api/add/boxType',
     /** /api/add/boxNumber { body: name }*/
     boxnumber: '/api/add/boxNumber',
     /** /api/add/userservice { userService: value }*/

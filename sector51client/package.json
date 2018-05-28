@@ -39,7 +39,6 @@
     "font-awesome": "^4.7.0",
     "primeng": "^5.2.5",
     "rxjs": "^5.5.10",
-    "xlsx": "^0.12.11",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

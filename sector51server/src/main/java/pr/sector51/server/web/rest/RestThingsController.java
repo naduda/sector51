@@ -9,8 +9,10 @@ import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,12 +94,79 @@ public class RestThingsController extends RestCommon {
   }
 
   // POST ============================================================================
-  @RequestMapping(value = "/add/boxType", method = RequestMethod.POST)
-  public Sector51Result insertBoxType(@RequestBody String boxTypeName) {
+  @RequestMapping(value = "/add/userWithServices", method = RequestMethod.POST)
+  public Sector51Result insertUserWithServices(@RequestBody List<Map<String, String>> rows) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
-    int id = thingsDao.insertBoxType(boxTypeName);
-    result.setMessage(id);
+    List<Integer> status = new ArrayList<>(rows.size());
+    for (int i = 0; i < rows.size(); i++) {
+      Map<String, String> data = rows.get(i);
+      status.add(1);
+
+      try {
+        String birthday = data.get("birthday");
+
+        UserInfo userInfo = new UserInfoBuilder()
+                .setRoles(data.getOrDefault("user_type", "USER"))
+                .setBalance(0)
+                .setEmail(data.getOrDefault("email", ""))
+                .setName(data.get("name"))
+                .setSurname(data.get("surname"))
+                .setPhone(data.get("phone"))
+                .setSex(data.get("sex").toUpperCase() == "M" || data.get("sex").toUpperCase() == "М")
+                .setCard(data.get("card"))
+                .setPassword(data.getOrDefault("password", data.get("card")))
+                .build();
+
+        if (birthday != null) {
+          userInfo.setBirthday(getTimestampFromString(birthday));
+        }
+        ESector51Result userResult = userDao.insertUser(userInfo);
+
+        if (userResult != ESector51Result.OK) {
+          status.set(i, 0);
+          continue;
+        }
+
+        boolean servicesResult = userDao.runTransaction(() -> {
+          String abonDate = data.get("dtbeg_a");
+          if (abonDate != null) {
+            String abontype = data.getOrDefault("abontype", "M");
+            UserServise51 service = new UserServise51();
+            service.setIdService(abontype == "M" ? 3 : abonDate == "E" ? 4 : 0);
+            service.setIdUser(userInfo.getCreated());
+            service.setDtBeg(getTimestampFromString(data.get("dtbeg_a")));
+            service.setDtEnd(getTimestampFromString(data.get("dtend_a")));
+            userService(service);
+          }
+
+          String boxDate = data.get("dtbeg_b");
+          if (boxDate != null) {
+            String boxNumber = data.getOrDefault("box", "0");
+            UserServise51 service = new UserServise51();
+            service.setIdService(2);
+            service.setIdUser(userInfo.getCreated());
+            service.setDtBeg(getTimestampFromString(data.get("dtbeg_b")));
+            service.setDtEnd(getTimestampFromString(data.get("dtend_b")));
+            service.setValue(boxNumber);
+            userService(service);
+          }
+        });
+
+        if (!servicesResult) {
+          userDao.removeUser(userInfo.getCreated().getTime());
+          status.set(i, 0);
+        }
+      } catch (Exception ex) {
+        status.set(i, 0);
+      }
+    }
+    result.setMessage(status);
     return result;
+  }
+
+  private Timestamp getTimestampFromString(String value) {
+    return new Timestamp(LocalDate.parse(value, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli());
   }
 
   @RequestMapping(value = "/add/userservice", method = RequestMethod.POST)

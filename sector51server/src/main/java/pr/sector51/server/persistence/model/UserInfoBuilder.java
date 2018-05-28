@@ -14,6 +14,7 @@ public class UserInfoBuilder {
   private String card;
   private int balance;
   private boolean sex;
+  private Timestamp birthday;
 
   public UserInfoBuilder setLogin(String login) {
     this.login = login;
@@ -27,6 +28,11 @@ public class UserInfoBuilder {
 
   public UserInfoBuilder setCreated(Timestamp created) {
     this.created = created;
+    return this;
+  }
+
+  public UserInfoBuilder setBirthday(Timestamp value) {
+    this.birthday = value;
     return this;
   }
 
@@ -71,6 +77,8 @@ public class UserInfoBuilder {
   }
 
   public UserInfo build() {
-    return new UserInfo(password, created, name, surname, phone, email, roles, card, balance, sex);
+    UserInfo userInfo = new UserInfo(password, created, name, surname, phone, email, roles, card, balance, sex);
+    userInfo.setBirthday(birthday);
+    return userInfo;
   }
 }
