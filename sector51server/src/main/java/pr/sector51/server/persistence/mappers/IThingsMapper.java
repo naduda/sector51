@@ -1,6 +1,9 @@
 package pr.sector51.server.persistence.mappers;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
@@ -32,7 +35,7 @@ public interface IThingsMapper {
   int removeBoxNumber(BoxNumber boxNumber);
 
   @Select("UPDATE box set card = #{card}, time = now() WHERE idtype = #{idtype} AND number = #{number} " +
-      "RETURNING extract(epoch from now()) * 1000;")
+          "RETURNING extract(epoch from now()) * 1000;")
   long updateBox(BoxNumber boxNumber);
 
   @Select("SELECT * FROM box WHERE idtype = #{idtype} and \"number\" = #{number};")

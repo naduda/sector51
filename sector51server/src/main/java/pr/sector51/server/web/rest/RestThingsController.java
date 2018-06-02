@@ -10,6 +10,7 @@ import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -96,70 +97,69 @@ public class RestThingsController extends RestCommon {
   // POST ============================================================================
   @RequestMapping(value = "/add/userWithServices", method = RequestMethod.POST)
   public Sector51Result insertUserWithServices(@RequestBody List<Map<String, String>> rows) {
-    Sector51Result result = new Sector51Result(ESector51Result.OK);
     List<Integer> status = new ArrayList<>(rows.size());
     for (int i = 0; i < rows.size(); i++) {
-      Map<String, String> data = rows.get(i);
       status.add(1);
+      Map<String, String> row = rows.get(i);
+      String password = row.getOrDefault("password", row.get("card"));
+      String roles = row.getOrDefault("user_type", "USER");
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+      String created = formatter.format(LocalDateTime.now());
+      String name = row.get("name");
+      String surname = row.get("surname");
+      String phone = row.getOrDefault("phone", "");
+      String email = row.getOrDefault("email", "");
+      String card = row.get("card");
+      boolean sex = row.get("sex").toUpperCase().equals("M") || row.get("sex").toUpperCase().equals("М");
+      String birthday = row.getOrDefault("birthday", "01.01.1870");
+      LocalDate bd = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+      birthday = formatter.format(bd.atStartOfDay());
+
+      String dtbeg_a = formatter.format(getTimestampFromString(row.getOrDefault("dtbeg_a", "01.01.1970")).toLocalDateTime());
+      String dtend_a = formatter.format(getTimestampFromString(row.getOrDefault("dtend_a", "01.01.1970")).toLocalDateTime());
+      String abontype = row.getOrDefault("abontype", "M");
+      int abonServiceId = abontype == "M" || abontype == "М" ? 3 : abontype == "E" || abontype == "Е" ? 4 : 0;
+      String boxNumber = row.getOrDefault("box", "0");
+
+      String dtbeg_b = formatter.format(getTimestampFromString(row.getOrDefault("dtbeg_b", "01.01.1970")).toLocalDateTime());
+      String dtend_b = formatter.format(getTimestampFromString(row.getOrDefault("dtend_b", "01.01.1970")).toLocalDateTime());
 
       try {
-        String birthday = data.get("birthday");
-
-        UserInfo userInfo = new UserInfoBuilder()
-                .setRoles(data.getOrDefault("user_type", "USER"))
-                .setBalance(0)
-                .setEmail(data.getOrDefault("email", ""))
-                .setName(data.get("name"))
-                .setSurname(data.get("surname"))
-                .setPhone(data.get("phone"))
-                .setSex(data.get("sex").toUpperCase() == "M" || data.get("sex").toUpperCase() == "М")
-                .setCard(data.get("card"))
-                .setPassword(data.getOrDefault("password", data.get("card")))
-                .build();
-
-        if (birthday != null) {
-          userInfo.setBirthday(getTimestampFromString(birthday));
-        }
-        ESector51Result userResult = userDao.insertUser(userInfo);
-
-        if (userResult != ESector51Result.OK) {
-          status.set(i, 0);
-          continue;
-        }
-
-        boolean servicesResult = userDao.runTransaction(() -> {
-          String abonDate = data.get("dtbeg_a");
-          if (abonDate != null) {
-            String abontype = data.getOrDefault("abontype", "M");
-            UserServise51 service = new UserServise51();
-            service.setIdService(abontype == "M" ? 3 : abonDate == "E" ? 4 : 0);
-            service.setIdUser(userInfo.getCreated());
-            service.setDtBeg(getTimestampFromString(data.get("dtbeg_a")));
-            service.setDtEnd(getTimestampFromString(data.get("dtend_a")));
-            userService(service);
-          }
-
-          String boxDate = data.get("dtbeg_b");
-          if (boxDate != null) {
-            String boxNumber = data.getOrDefault("box", "0");
-            UserServise51 service = new UserServise51();
-            service.setIdService(2);
-            service.setIdUser(userInfo.getCreated());
-            service.setDtBeg(getTimestampFromString(data.get("dtbeg_b")));
-            service.setDtEnd(getTimestampFromString(data.get("dtend_b")));
-            service.setValue(boxNumber);
-            userService(service);
-          }
-        });
-
-        if (!servicesResult) {
-          userDao.removeUser(userInfo.getCreated().getTime());
-          status.set(i, 0);
-        }
+        String query =
+                "INSERT INTO usersecurity(password, roles, created) VALUES ('#{password}', '#{roles}', '#{created}');\n" +
+                        "INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday)" +
+                        "VALUES ('#{created}', '#{name}', '#{sname}', '#{phone}', '#{email}', '#{card}', #{sex}, '#{bd}');\n" +
+                        "INSERT INTO barcode VALUES(100, '#{card}');\n" +
+                        "INSERT INTO user_service VALUES(#{abonServiceId}, '#{created}', '#{dtBeg_a}', '#{dtEnd_a}', '');\n" +
+                        "INSERT INTO user_service VALUES(2, '#{created}', '#{dtBeg_b}', '#{dtEnd_b}', '#{boxNumber}');";
+        query = query.replace("#{password}", password);
+        query = query.replace("#{roles}", roles);
+        query = query.replace("#{created}", created);
+        query = query.replace("#{name}", name);
+        query = query.replace("#{sname}", surname);
+        query = query.replace("#{phone}", phone);
+        query = query.replace("#{email}", email);
+        query = query.replace("#{card}", card);
+        query = query.replace("#{sex}", Boolean.toString(sex));
+        query = query.replace("#{bd}", birthday);
+        query = query.replace("#{abonServiceId}", String.valueOf(abonServiceId));
+        query = query.replace("#{dtBeg_a}", dtbeg_a);
+        query = query.replace("#{dtEnd_a}", dtend_a);
+        query = query.replace("#{dtBeg_b}", dtbeg_b);
+        query = query.replace("#{dtEnd_b}", dtend_b);
+        query = query.replace("#{boxNumber}", boxNumber);
+        userDao.update(query);
       } catch (Exception ex) {
         status.set(i, 0);
       }
     }
+    try {
+      userDao.update("DELETE FROM user_service WHERE dtbeg < '2000-01-01';" +
+              "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';");
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    Sector51Result result = new Sector51Result(ESector51Result.OK);
     result.setMessage(status);
     return result;
   }

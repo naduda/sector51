@@ -8,13 +8,11 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pr.sector51.server.mail.SmtpMailSender;
 import pr.sector51.server.persistence.mappers.ICommonMapper;
 import pr.sector51.server.persistence.mappers.IThingsMapper;
-import pr.sector51.server.persistence.mappers.IUserMapper;
 import pr.sector51.server.persistence.model.Event;
-import pr.sector51.server.persistence.model.History;
 import pr.sector51.server.persistence.model.UserInfo;
 
-import javax.mail.MessagingException;
 import java.sql.Timestamp;
+import java.util.Map;
 
 public class CommonDao {
   @Autowired
@@ -25,6 +23,14 @@ public class CommonDao {
   protected IThingsMapper thingsMapper;
   @Autowired
   private SmtpMailSender mailSender;
+
+  public static String getQuery(Map<String, Object> params) {
+    return params.get("query").toString();
+  }
+
+  public void update(String query) {
+    commonMapper.update(query);
+  }
 
   public boolean runTransaction(Runnable method) {
     DefaultTransactionDefinition def = new DefaultTransactionDefinition();
