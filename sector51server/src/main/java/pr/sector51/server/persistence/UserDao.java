@@ -1,8 +1,5 @@
 package pr.sector51.server.persistence;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,12 +8,17 @@ import org.springframework.stereotype.Service;
 import pr.sector51.server.persistence.mappers.IScannerMapper;
 import pr.sector51.server.persistence.mappers.ISqlMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
-import pr.sector51.server.persistence.model.*;
-import pr.sector51.server.security.ERole;
+import pr.sector51.server.persistence.model.ESector51Result;
+import pr.sector51.server.persistence.model.UserInfo;
+import pr.sector51.server.persistence.model.UserSecurity;
+import pr.sector51.server.persistence.model.UserSecurityBuilder;
+
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserDao extends CommonDao implements IUserMapper {
-  public final static String TABLE_NAME = "usersecurity";
   public static final int RESERVED_PRODUCTS_ID = 100;
   public final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -28,6 +30,18 @@ public class UserDao extends CommonDao implements IUserMapper {
 
   @Autowired
   private IScannerMapper scannerMapper;
+
+  @Override
+  public void insertImportedUser(Timestamp created, String password, String roles, String name, String surname,
+                                 String phone, String email, String card, boolean sex, Timestamp birthday,
+                                 int abonServiceId, Timestamp dtBeg_a, Timestamp dtEnd_a, Timestamp dtBeg_b,
+                                 Timestamp dtEnd_b, String boxNumber) {
+    if (!password.startsWith("|")) {
+      password = encoder.encode(password);
+    }
+    userMapper.insertImportedUser(created, password, roles, name, surname, phone, email, card, sex, birthday,
+            abonServiceId, dtBeg_a, dtEnd_a, dtBeg_b, dtEnd_b, boxNumber);
+  }
 
   @Override
   public void insertUserSecurity(UserSecurity user) {
@@ -94,7 +108,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     return result ? ESector51Result.OK : ESector51Result.ERROR;
   }
 
-  public ESector51Result updateUser(UserInfo userInfo){
+  public ESector51Result updateUser(UserInfo userInfo) {
     UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
     if (userInfo.getPassword() == null) {
       userInfo.setPassword(userExist.getPassword());
@@ -128,8 +142,7 @@ public class UserDao extends CommonDao implements IUserMapper {
     try {
       long value = Long.parseLong(id);
       user = getUserSecurityById(new Timestamp(value));
-    }
-    finally {
+    } finally {
       return Optional.ofNullable(user);
     }
   }
@@ -151,10 +164,10 @@ public class UserDao extends CommonDao implements IUserMapper {
   @Override
   public List<UserInfo> getUserInfoByPnone(String value) {
     value = value
-        .replaceAll(" ", "")
-        .replaceAll("\\(", "")
-        .replaceAll("\\)", "")
-        .replaceAll("-", "");
+            .replaceAll(" ", "")
+            .replaceAll("\\(", "")
+            .replaceAll("\\)", "")
+            .replaceAll("-", "");
     return userMapper.getUserInfoByPnone("%" + value);
   }
 

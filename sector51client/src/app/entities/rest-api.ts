@@ -46,7 +46,7 @@ export const REST_API = {
     events: '/api/events'
   },
   POST: {
-    /** /api/userWithServices { body: row }*/
+    /** /api/userWithServices { body: rows }*/
     userWithServices: '/api/add/userWithServices',
     /** /api/scanner?code=1234567898765 */
     scanner: (code) => '/api/scanner?code=' + code,

@@ -2,7 +2,6 @@ package pr.sector51.server.persistence;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pr.sector51.server.persistence.mappers.IThingsMapper;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
@@ -54,9 +53,9 @@ public class ThingsDao extends CommonDao {
   public Sector51Result updateBox(BoxNumber boxNumber) {
     Sector51Result result = new Sector51Result(ESector51Result.OK);
     try {
-        long time = thingsMapper.updateBox(boxNumber);
-        boxNumber.setTime(new Timestamp(time));
-        result.setMessage(boxNumber);
+      long time = thingsMapper.updateBox(boxNumber);
+      boxNumber.setTime(new Timestamp(time));
+      result.setMessage(boxNumber);
     } catch (Exception ex) {
       result.setResult(ESector51Result.ERROR);
       result.setMessage(ex.getMessage());

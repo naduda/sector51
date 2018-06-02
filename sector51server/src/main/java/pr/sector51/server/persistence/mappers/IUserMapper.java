@@ -1,18 +1,31 @@
 package pr.sector51.server.persistence.mappers;
 
-import java.sql.Timestamp;
-import java.util.List;
-
 import org.apache.ibatis.annotations.*;
-import pr.sector51.server.persistence.model.ESector51Result;
 import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 public interface IUserMapper {
+  @Insert("INSERT INTO usersecurity(password, roles, created) VALUES (#{password}, #{roles}, #{created});\n" +
+          "INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday) \n" +
+          "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{birthday});" +
+          "INSERT INTO barcode VALUES(100, #{card});" +
+          "INSERT INTO user_service VALUES(#{abonServiceId}, #{created}, #{dtBeg_a}, #{dtEnd_a}, '');" +
+          "INSERT INTO user_service VALUES(2, #{created}, #{dtBeg_b}, #{dtEnd_b}, #{boxNumber});")
+  void insertImportedUser(@Param("created") Timestamp created, @Param("password") String password,
+                          @Param("roles") String roles, @Param("name") String name, @Param("surname") String surname,
+                          @Param("phone") String phone, @Param("email") String email, @Param("card") String card,
+                          @Param("sex") boolean sex, @Param("birthday") Timestamp birthday,
+                          @Param("abonServiceId") int abonServiceId, @Param("dtBeg_a") Timestamp dtBeg_a,
+                          @Param("dtEnd_a") Timestamp dtEnd_a, @Param("dtBeg_b") Timestamp dtBeg_b,
+                          @Param("dtEnd_b") Timestamp dtEnd_b, @Param("boxNumber") String boxNumber);
+
   @Insert("INSERT INTO usersecurity(password, roles, accountNonExpired, accountNonLocked,"
-      + "credentialsNonExpired, enabled, created) "
-      + "VALUES (#{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "
-      + "#{credentialsNonExpired}, #{enabled}, #{created})")
+          + "credentialsNonExpired, enabled, created) "
+          + "VALUES (#{password}, #{roles}, #{accountNonExpired}, #{accountNonLocked}, "
+          + "#{credentialsNonExpired}, #{enabled}, #{created})")
   void insertUserSecurity(UserSecurity user);
 
   @Update("UPDATE usersecurity SET password = #{password}, roles = #{roles}," +
@@ -25,7 +38,7 @@ public interface IUserMapper {
   int deleteUser(@Param("created") Timestamp created);
 
   @Insert("INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday) "
-      + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{birthday});")
+          + "VALUES (#{created}, #{name}, #{surname}, #{phone}, #{email}, #{card}, #{sex}, #{birthday});")
   void insertUserInfo(UserInfo user);
 
   @Update("UPDATE barcode SET code = #{card} WHERE code = (SELECT card FROM userinfo WHERE created = #{created});" +
@@ -44,7 +57,7 @@ public interface IUserMapper {
   List<UserInfo> getUsersInfo();
 
   @Select("SELECT ui.*, us.roles FROM usersecurity as us, userinfo as ui "
-      + "WHERE ui.card = #{value} AND us.created = ui.created")
+          + "WHERE ui.card = #{value} AND us.created = ui.created")
   UserInfo getUserInfoByCard(String value);
 
   @Select("SELECT * FROM userinfo WHERE email = #{value};")
