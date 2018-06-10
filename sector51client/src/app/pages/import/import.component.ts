@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, NgZone } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { ERestResult, ERole, ESex, IResponse, ITableColumn } from '../../entities/common';
@@ -14,12 +14,11 @@ import { GoogleSheetsService } from '../../services/google-sheets.service';
   styleUrls: ['./import.component.css']
 })
 export class ImportComponent implements AfterViewInit {
-  height: string;
   columns: ITableColumn[];
   rowData: any[];
-  private tableHeight: number;
 
-  constructor(private http: HttpClient, private common: CommonService, private googleService: GoogleSheetsService) {
+  constructor(private http: HttpClient, private common: CommonService,
+    private googleService: GoogleSheetsService, private zone: NgZone) {
     this.rowData = [];
     this.columns = [];
   }
@@ -29,9 +28,6 @@ export class ImportComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const div: any = document.getElementsByClassName('outlet col p-0')[0];
-    const header: any = document.querySelector('sector51-import > div');
-    this.tableHeight = div.offsetHeight - header.offsetHeight - 40;
     this.googleService.init('1wl0E300r15yTHyw5uHM1sfrHLCWq1h2c5armNcel7l4', this);
   }
 
@@ -49,14 +45,7 @@ export class ImportComponent implements AfterViewInit {
       }
       that.rowData.push(row);
     }
-  }
-
-  removeAllUsers() {
-    this.http.delete(REST_API.DELETE.removeAllUsers).subscribe((response: IResponse) => {
-      if (response.result === ERestResult[ERestResult.OK]) {
-        this.common.profile = undefined;
-      }
-    });
+    that.zone.run(() => console.log(that.rowData.length + ' rows was loaded.'));
   }
 
   import() {

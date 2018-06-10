@@ -97,6 +97,7 @@ public class RestThingsController extends RestCommon {
   // POST ============================================================================
   @RequestMapping(value = "/add/userWithServices", method = RequestMethod.POST)
   public Sector51Result insertUserWithServices(@RequestBody List<Map<String, String>> rows) {
+    userDao.removeAllUsers();
     List<Integer> status = new ArrayList<>(rows.size());
     for (int i = 0; i < rows.size(); i++) {
       status.add(1);
