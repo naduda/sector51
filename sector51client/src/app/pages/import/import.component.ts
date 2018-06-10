@@ -60,14 +60,12 @@ export class ImportComponent implements AfterViewInit {
   }
 
   import() {
-    console.time('import');
     this.http.post(REST_API.POST.userWithServices, this.rowData).subscribe((response: IResponse) => {
       const status: number[] = response.message;
       for (let i = 0; i < status.length; i++) {
         this.rowData[i].success = status[i] > 0;
       }
       this.common.profile = undefined;
-      console.timeEnd('import');
     });
   }
 

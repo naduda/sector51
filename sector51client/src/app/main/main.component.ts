@@ -41,7 +41,7 @@ export class MainComponent implements OnInit {
       .do(boxes => {
         this.boxes = boxes.filter(b => b.idtype < 3);
         this.common.users.forEach(u => {
-          const boxes = this.boxes.filter(b => b.card === u.card);
+          const boxes = this.boxes.filter(b => b.card === u.card && u.card);
           if (boxes) {
             u['box'] = boxes.map(b => b.number).join(', ');
             u['time'] = new Date(Math.max.apply(Math, boxes.map(b => +b.time)));
@@ -65,7 +65,7 @@ export class MainComponent implements OnInit {
       if (!this.searchText) return true;
       return u.name.toUpperCase().includes(this.searchText.toUpperCase()) ||
         u.surname.toUpperCase().includes(this.searchText.toUpperCase()) ||
-        u.card.includes(this.searchText) || u.phone.includes(this.searchText);
+        (u.card && u.card.includes(this.searchText)) || u.phone.includes(this.searchText);
     });
   }
 
