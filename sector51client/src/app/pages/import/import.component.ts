@@ -41,11 +41,37 @@ export class ImportComponent implements AfterViewInit {
       const row = {};
       for (let j = 0; j < that.columns.length; j++) {
         const cell = that.columns[j].field;
-        row[cell] = element[j];
+        if (cell === 'phone') {
+          row[cell] = that.fixPhoneNumber(element[j]);
+        } else {
+          row[cell] = element[j];
+        }
       }
       that.rowData.push(row);
     }
     that.zone.run(() => console.log(that.rowData.length + ' rows was loaded.'));
+  }
+
+  private fixPhoneNumber(text: string): string {
+    text = text || '';
+    if (text.length === 0) {
+      return text;
+    }
+
+    text = text.replace(/\s/, '');
+    text = text.replace(/\D/g, '');
+    if (text.startsWith('3')) {
+      text = '+' + text;
+    } else if (text.startsWith('8')) {
+      text = '+3' + text;
+    } else if (text.startsWith('0')) {
+      text = '+38' + text;
+    }
+    if (text.length === 13) {
+      text = text.substring(0, 3) + ' (' + text.substring(3, 6) + ') ' +
+        text.substring(6, 9) + '-' + text.substring(9, 11) + '-' + text.substring(11);
+    }
+    return text;
   }
 
   import() {
