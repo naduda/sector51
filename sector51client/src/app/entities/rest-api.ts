@@ -2,8 +2,6 @@ import { IUserService } from './common';
 
 export const REST_API = {
   DELETE: {
-    /** /api/delete/removeAllUsers */
-    removeAllUsers: '/api/delete/removeAllUsers',
     /** /api/delete/productById/{id} */
     productById: (id): string => '/api/delete/productById/' + id,
     /** /api/delete/userById/{idUser} */

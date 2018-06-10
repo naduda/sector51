@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, NgZone } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { ERestResult, ERole, ESex, IResponse, ITableColumn } from '../../entities/common';
@@ -14,12 +14,11 @@ import { GoogleSheetsService } from '../../services/google-sheets.service';
   styleUrls: ['./import.component.css']
 })
 export class ImportComponent implements AfterViewInit {
-  height: string;
   columns: ITableColumn[];
   rowData: any[];
-  private tableHeight: number;
 
-  constructor(private http: HttpClient, private common: CommonService, private googleService: GoogleSheetsService) {
+  constructor(private http: HttpClient, private common: CommonService,
+    private googleService: GoogleSheetsService, private zone: NgZone) {
     this.rowData = [];
     this.columns = [];
   }
@@ -29,9 +28,6 @@ export class ImportComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const div: any = document.getElementsByClassName('outlet col p-0')[0];
-    const header: any = document.querySelector('sector51-import > div');
-    this.tableHeight = div.offsetHeight - header.offsetHeight - 40;
     this.googleService.init('1wl0E300r15yTHyw5uHM1sfrHLCWq1h2c5armNcel7l4', this);
   }
 
@@ -45,29 +41,46 @@ export class ImportComponent implements AfterViewInit {
       const row = {};
       for (let j = 0; j < that.columns.length; j++) {
         const cell = that.columns[j].field;
-        row[cell] = element[j];
+        if (cell === 'phone') {
+          row[cell] = that.fixPhoneNumber(element[j]);
+        } else {
+          row[cell] = element[j];
+        }
       }
       that.rowData.push(row);
     }
+    that.zone.run(() => console.log(that.rowData.length + ' rows was loaded.'));
   }
 
-  removeAllUsers() {
-    this.http.delete(REST_API.DELETE.removeAllUsers).subscribe((response: IResponse) => {
-      if (response.result === ERestResult[ERestResult.OK]) {
-        this.common.profile = undefined;
-      }
-    });
+  private fixPhoneNumber(text: string): string {
+    text = text || '';
+    if (text.length === 0) {
+      return text;
+    }
+
+    text = text.replace(/\s/, '');
+    text = text.replace(/\D/g, '');
+    if (text.startsWith('3')) {
+      text = '+' + text;
+    } else if (text.startsWith('8')) {
+      text = '+3' + text;
+    } else if (text.startsWith('0')) {
+      text = '+38' + text;
+    }
+    if (text.length === 13) {
+      text = text.substring(0, 3) + ' (' + text.substring(3, 6) + ') ' +
+        text.substring(6, 9) + '-' + text.substring(9, 11) + '-' + text.substring(11);
+    }
+    return text;
   }
 
   import() {
-    console.time('import');
     this.http.post(REST_API.POST.userWithServices, this.rowData).subscribe((response: IResponse) => {
       const status: number[] = response.message;
       for (let i = 0; i < status.length; i++) {
         this.rowData[i].success = status[i] > 0;
       }
       this.common.profile = undefined;
-      console.timeEnd('import');
     });
   }
 

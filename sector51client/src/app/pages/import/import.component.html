@@ -1,13 +1,12 @@
 <div class="col">
   <div class="row d-flex justify-content-between m-0 mt-2">
     <button class="btn btn-primary" (click)="getGoogleValues()">{{ 'load' | translate | uppercase }}</button>
-    <button class="btn btn-danger" (click)="removeAllUsers()">{{ 'remove' | translate | uppercase }}</button>
     <button class="btn btn-primary" *ngIf="rowData.length > 0" (click)="import()">
       {{ 'import' | translate | titlecase }}
     </button>
   </div>
   <hr>
-  <p-table [columns]="columns" [value]="rowData" *ngIf="columns" [scrollable]="true" [scrollHeight]="height" [scrollable]="true">
+  <p-table [columns]="columns" [value]="rowData" *ngIf="columns" [scrollable]="true" [scrollable]="true">
     <ng-template pTemplate="header" let-columns>
       <tr>
         <th *ngFor="let column of columns">

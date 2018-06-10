@@ -169,9 +169,9 @@ ALTER FUNCTION public."afterUpdateProduct"()
 CREATE OR REPLACE FUNCTION public."afterUserDelete"()
   RETURNS trigger AS
 $BODY$BEGIN
-  DELETE FROM usersecurity WHERE created = OLD.created;
   DELETE FROM user_service WHERE iduser = OLD.created;
   DELETE FROM barcode WHERE code = OLD.card;
+  DELETE FROM usersecurity WHERE created = OLD.created;
   RETURN OLD;
 END$BODY$
   LANGUAGE plpgsql VOLATILE
