@@ -11,9 +11,6 @@ public class Product {
   private Integer price;
   private String code;
 
-  public Product() {
-  }
-
   public Product(int id, String name, String desc, Integer count, Integer price, String code) {
     this.id = id;
     this.name = name;

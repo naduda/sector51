@@ -6,8 +6,6 @@ public class Service51 {
   private String desc;
   private int price;
 
-  public Service51() {}
-
   public Service51(int id, String name, String desc, int price) {
     this.id = id;
     this.name = name;

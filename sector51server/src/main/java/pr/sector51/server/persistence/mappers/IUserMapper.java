@@ -1,6 +1,7 @@
 package pr.sector51.server.persistence.mappers;
 
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 

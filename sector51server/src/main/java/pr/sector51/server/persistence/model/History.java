@@ -14,8 +14,6 @@ public class History {
   private int outcome;
   private int usercome;
 
-  public History() {}
-
   public History(int idEvent, Timestamp idUser, String desc) {
     super();
     this.idEvent = idEvent;

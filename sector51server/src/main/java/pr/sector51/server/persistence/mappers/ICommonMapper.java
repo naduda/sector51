@@ -1,12 +1,14 @@
 package pr.sector51.server.persistence.mappers;
 
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 import pr.sector51.server.persistence.CommonDao;
 import pr.sector51.server.persistence.model.Event;
 import pr.sector51.server.persistence.model.UserInfo;
 
 import java.sql.Timestamp;
 
+@Component
 public interface ICommonMapper {
   @SelectProvider(type = CommonDao.class, method = "getQuery")
   void update(@Param("query") String query);

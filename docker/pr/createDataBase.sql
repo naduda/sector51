@@ -49,6 +49,17 @@ CREATE TABLE box (
 	CONSTRAINT pk_uniqe_box_key UNIQUE (idtype, "number")
 );
 
+DO
+$do$
+BEGIN 
+   FOR i IN 1..50 LOOP
+      INSERT INTO box VALUES (1, i, '', now());
+      INSERT INTO box VALUES (2, i, '', now());
+      INSERT INTO box VALUES (3, i, '', now());
+   END LOOP;
+END
+$do$;
+
 CREATE TABLE product (
 	id integer NOT NULL,
 	name character varying(25) NOT NULL,
@@ -127,10 +138,9 @@ $BODY$begin
 end$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."afterProductDelete"()
-  OWNER TO postgres;
+ALTER FUNCTION public."afterProductDelete"() OWNER TO postgres;
 
-CREATE OR REPLACE FUNCTION public."afterUpdateProduct"()
+CREATE OR REPLACE FUNCTION public."afterProductUpdate"()
   RETURNS trigger AS
 $BODY$
 declare
@@ -162,8 +172,7 @@ begin
 end$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."afterUpdateProduct"()
-  OWNER TO postgres;
+ALTER FUNCTION public."afterProductUpdate"() OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION public."afterUserDelete"()
@@ -176,8 +185,7 @@ $BODY$BEGIN
 END$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."afterUserDelete"()
-  OWNER TO postgres;
+ALTER FUNCTION public."afterUserDelete"() OWNER TO postgres;
 COMMENT ON FUNCTION public."afterUserDelete"() IS 'Clean Box before user delete.';
 
 CREATE OR REPLACE FUNCTION public."afterUserServiceDelete"()
@@ -189,8 +197,7 @@ $BODY$begin
 end$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."afterUserServiceDelete"()
-  OWNER TO postgres;
+ALTER FUNCTION public."afterUserServiceDelete"() OWNER TO postgres;
 
 CREATE OR REPLACE FUNCTION public."logOnProductInsert"()
   RETURNS trigger AS
@@ -201,8 +208,7 @@ $BODY$begin
 end$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."logOnProductInsert"()
-  OWNER TO postgres;
+ALTER FUNCTION public."logOnProductInsert"() OWNER TO postgres;
 
 CREATE OR REPLACE FUNCTION public."logOnUserServiceInsert"()
   RETURNS trigger AS
@@ -214,8 +220,17 @@ $BODY$begin
 end$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."logOnUserServiceInsert"()
-  OWNER TO postgres;
+ALTER FUNCTION public."logOnUserServiceInsert"() OWNER TO postgres;
+
+CREATE OR REPLACE FUNCTION public."afterUserInsert"()
+  RETURNS trigger AS
+$BODY$begin
+  INSERT INTO barcode(productId, code) VALUES(100, new.card);
+  return new;
+end$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public."afterUserInsert"() OWNER TO postgres;
 
 --Triggers
 CREATE TRIGGER tr_after_product_delete
@@ -234,7 +249,7 @@ CREATE TRIGGER tr_after_product_update
   AFTER UPDATE
   ON public.product
   FOR EACH ROW
-  EXECUTE PROCEDURE public."afterUpdateProduct"();
+  EXECUTE PROCEDURE public."afterProductUpdate"();
 
 CREATE TRIGGER tr_after_user_service_delete
   AFTER DELETE
@@ -253,3 +268,9 @@ CREATE TRIGGER tr_after_user_delete
   ON public.userinfo
   FOR EACH ROW
   EXECUTE PROCEDURE public."afterUserDelete"();
+
+CREATE TRIGGER tr_after_user_insert
+  AFTER INSERT
+  ON public.userinfo
+  FOR EACH ROW
+  EXECUTE PROCEDURE public."afterUserInsert"();

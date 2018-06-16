@@ -1,8 +1,11 @@
 package pr.sector51.server.persistence;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import pr.sector51.server.persistence.mappers.ICommonMapper;
 import pr.sector51.server.persistence.mappers.IScannerMapper;
+import pr.sector51.server.persistence.mappers.IThingsMapper;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
@@ -12,6 +15,10 @@ import java.util.List;
 public class BarcodeDao extends CommonDao {
   @Autowired
   private IScannerMapper scanner;
+
+  public BarcodeDao(ICommonMapper commonMapper, DataSourceTransactionManager transactionManager, IThingsMapper thingsMapper) {
+    super(commonMapper, transactionManager, thingsMapper);
+  }
 
   public Barcode getBarcodeByCode(String code) {
     return scanner.getBarcodeByCode(code);

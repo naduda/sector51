@@ -6,11 +6,6 @@ public class BoxType {
 
   public BoxType() {}
 
-  public BoxType(int id, String desc) {
-    this.id = id;
-    this.name = desc;
-  }
-
   public int getId() {
     return id;
   }

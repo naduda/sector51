@@ -13,10 +13,7 @@ public class UserServise51 {
   private Timestamp dtEnd;
   private String value;
 
-  public UserServise51() {}
-
   public UserServise51(int idService, Timestamp idUser, Timestamp dtBeg, Timestamp dtEnd, String value) {
-    this();
     this.idService = idService;
     this.idUser = idUser;
     this.dtBeg = dtBeg;

@@ -1,11 +1,13 @@
 package pr.sector51.server.persistence.mappers;
 
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 import pr.sector51.server.persistence.model.Barcode;
 import pr.sector51.server.persistence.model.Product;
 
 import java.util.List;
 
+@Component
 public interface IScannerMapper {
   @Select("SELECT * FROM barcode WHERE code = #{code};")
   Barcode getBarcodeByCode(@Param("code") String value);

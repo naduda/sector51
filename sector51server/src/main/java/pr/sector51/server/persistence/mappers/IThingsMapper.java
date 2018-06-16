@@ -4,11 +4,13 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Component;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
+@Component
 public interface IThingsMapper {
   @Select("SELECT * FROM boxtype;")
   List<BoxType> getBoxTypes();
