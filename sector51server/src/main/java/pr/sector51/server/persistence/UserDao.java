@@ -100,7 +100,7 @@ public class UserDao extends CommonDao implements IUserMapper {
             }
             insertUserSecurity(user);
             userInfo.setCreated(user.getCreated());
-            if (userInfo.getCard() == null || userInfo.getCard().isEmpty()) {
+            if (userInfo.getCard() == null || userInfo.getCard().trim().isEmpty()) {
                 userInfo.setCard(String.valueOf(System.currentTimeMillis()));
             }
             insertUserInfo(userInfo);
