@@ -77,7 +77,6 @@ public class UserDao extends CommonDao implements IUserMapper {
         }
         if (user.getCard() == null || user.getCard().trim().isEmpty()) {
             String card = String.valueOf(System.currentTimeMillis());
-            System.out.println("\n\n\n\n\t: " + card);
             user.setCard(card);
         }
         userMapper.insertUserInfo(user);
