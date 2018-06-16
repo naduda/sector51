@@ -133,7 +133,6 @@ public class RestThingsController extends RestCommon {
                         "INSERT INTO usersecurity(password, roles, created) VALUES ('#{password}', '#{roles}', '#{created}');\n" +
                                 "INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday)" +
                                 "VALUES ('#{created}', '#{name}', '#{sname}', '#{phone}', '#{email}', '#{card}', #{sex}, '#{bd}');\n" +
-                                "INSERT INTO barcode VALUES(100, '#{card}');\n" +
                                 "INSERT INTO user_service VALUES(#{abonServiceId}, '#{created}', '#{dtBeg_a}', '#{dtEnd_a}', '');\n" +
                                 "INSERT INTO user_service VALUES(2, '#{created}', '#{dtBeg_b}', '#{dtEnd_b}', '#{boxNumber}');";
                 query = query.replace("#{password}", password);

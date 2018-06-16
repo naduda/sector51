@@ -225,12 +225,13 @@ ALTER FUNCTION public."logOnUserServiceInsert"() OWNER TO postgres;
 CREATE OR REPLACE FUNCTION public."afterUserInsert"()
   RETURNS trigger AS
 $BODY$begin
-  INSERT INTO barcode(productId, code) VALUES(100, new.card);
+  INSERT INTO barcode(productId, code) VALUES(100, nullif(cast(extract(epoch from now()) * 1000 as bigint)::text, new.card));
   return new;
 end$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public."afterUserInsert"() OWNER TO postgres;
+ALTER FUNCTION public."afterUserInsert"()
+  OWNER TO postgres;
 
 --Triggers
 CREATE TRIGGER tr_after_product_delete

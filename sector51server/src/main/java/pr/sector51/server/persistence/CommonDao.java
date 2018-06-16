@@ -25,10 +25,6 @@ public class CommonDao {
         this.thingsMapper = thingsMapper;
     }
 
-    public static String getQuery(Map<String, Object> params) {
-        return params.get("query").toString();
-    }
-
     public void update(String query) {
         commonMapper.update(query);
     }
