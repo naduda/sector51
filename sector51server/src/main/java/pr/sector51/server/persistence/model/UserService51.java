@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.Timestamp;
 
-public class UserServise51 {
+public class UserService51 {
   private int idService;
   private String desc;
   private Timestamp idUser;
@@ -13,7 +13,12 @@ public class UserServise51 {
   private Timestamp dtEnd;
   private String value;
 
-  public UserServise51(int idService, Timestamp idUser, Timestamp dtBeg, Timestamp dtEnd, String value) {
+  public UserService51() {
+
+  }
+
+  public UserService51(int idService, Timestamp idUser, Timestamp dtBeg, Timestamp dtEnd, String value) {
+    this();
     this.idService = idService;
     this.idUser = idUser;
     this.dtBeg = dtBeg;

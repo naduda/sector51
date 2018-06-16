@@ -10,7 +10,7 @@ import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.Barcode;
 import pr.sector51.server.persistence.model.Product;
 import pr.sector51.server.persistence.model.UserInfo;
-import pr.sector51.server.persistence.model.UserServise51;
+import pr.sector51.server.persistence.model.UserService51;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ScannerService {
                     Barcode barcode = barcodeDao.getBarcodeByCode(message);
                     if (user.getPhone() != null) {
                         long curTime = System.currentTimeMillis();
-                        UserServise51 service = thingsDao.getUserServices(user.getCreated()).stream()
+                        UserService51 service = thingsDao.getUserServices(user.getCreated()).stream()
                                 .filter(us -> us.getIdService() != 1 && us.getIdService() != 2)
                                 .filter(us -> us.getDtBeg().getTime() <= curTime && curTime < us.getDtEnd().getTime())
                                 .findFirst().orElse(null);

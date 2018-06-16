@@ -48,14 +48,14 @@ public interface IThingsMapper {
 
   @Select("SELECT us.*, s.name as \"desc\" FROM user_service AS us LEFT JOIN service AS s ON s.id = us.idservice " +
           "WHERE us.idUser = #{idUser};")
-  List<UserServise51> getUserServices(@Param("idUser") Timestamp idUser);
+  List<UserService51> getUserServices(@Param("idUser") Timestamp idUser);
 
   @Select("INSERT INTO user_service VALUES(#{idService}, #{idUser}, #{dtBeg}, #{dtEnd}, #{value}) RETURNING *;")
-  UserServise51 insertUserService(UserServise51 userServise);
+  UserService51 insertUserService(UserService51 userServise);
 
   @Update("UPDATE user_service set dtbeg = #{dtBeg}, dtend = #{dtEnd}, value = #{value} " +
           "WHERE iduser = #{idUser} and idservice = #{idService};")
-  int updateUserService(UserServise51 userServise51);
+  int updateUserService(UserService51 userServise51);
 
   @Delete("DELETE FROM user_service WHERE iduser = #{idUser} AND idservice = #{idService};")
   int removeUserService(@Param("idUser") Timestamp idUser, @Param("idService") int idService);

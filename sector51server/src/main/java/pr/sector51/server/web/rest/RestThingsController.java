@@ -173,11 +173,11 @@ public class RestThingsController extends RestCommon {
     }
 
     @PostMapping("add/userservice")
-    public Sector51Result userService(@RequestBody UserServise51 userService) {
+    public Sector51Result userService(@RequestBody UserService51 userService) {
         Sector51Result result = new Sector51Result(ESector51Result.OK);
         try {
             boolean trResult = thingsDao.runTransaction(() -> {
-                UserServise51 inserted = thingsDao.insertUserService(userService);
+                UserService51 inserted = thingsDao.insertUserService(userService);
                 if (userService.getIdService() == 2) {
                     BoxNumber box = new BoxNumber(3, Integer.parseInt(userService.getValue()));
                     UserInfo userInfo = userDao.getUserInfoById(userService.getIdUser());
@@ -215,7 +215,7 @@ public class RestThingsController extends RestCommon {
     }
 
     @PutMapping("update/userservice")
-    public Sector51Result updateBox(@RequestBody UserServise51 userService) {
+    public Sector51Result updateBox(@RequestBody UserService51 userService) {
         int result = thingsDao.updateUserService(userService);
         return new Sector51Result(result > 0 ? ESector51Result.OK : ESector51Result.ERROR);
     }

@@ -67,15 +67,15 @@ public class ThingsDao extends CommonDao {
         return thingsMapper.getServices();
     }
 
-    public List<UserServise51> getUserServices(Timestamp idUser) {
+    public List<UserService51> getUserServices(Timestamp idUser) {
         return thingsMapper.getUserServices(idUser);
     }
 
-    public UserServise51 insertUserService(UserServise51 userServise) {
+    public UserService51 insertUserService(UserService51 userServise) {
         return thingsMapper.insertUserService(userServise);
     }
 
-    public int updateUserService(UserServise51 userServise51) {
+    public int updateUserService(UserService51 userServise51) {
         return thingsMapper.updateUserService(userServise51);
     }
 
