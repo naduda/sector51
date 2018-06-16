@@ -72,7 +72,13 @@ public class UserDao extends CommonDao implements IUserMapper {
 
     @Override
     public void insertUserInfo(UserInfo user) {
-        if (user.getEmail() == null) user.setEmail("");
+        if (user.getEmail() == null) {
+            user.setEmail("");
+        }
+        if (user.getCard() == null || user.getCard().trim().isEmpty()) {
+            user.setCard(String.valueOf(System.currentTimeMillis()));
+        }
+        System.out.println("\n\n\n" + user.getCard());
         userMapper.insertUserInfo(user);
     }
 
@@ -100,9 +106,6 @@ public class UserDao extends CommonDao implements IUserMapper {
             }
             insertUserSecurity(user);
             userInfo.setCreated(user.getCreated());
-            if (userInfo.getCard() == null || userInfo.getCard().trim().isEmpty()) {
-                userInfo.setCard(String.valueOf(System.currentTimeMillis()));
-            }
             insertUserInfo(userInfo);
         });
         return result ? ESector51Result.OK : ESector51Result.ERROR;
