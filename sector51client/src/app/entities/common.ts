@@ -21,7 +21,6 @@ export interface IModalWindow {
 }
 export interface ITableColumn { field: string; header: string; width?: number; }
 export interface IBox { idtype: number; number: number; card?: string; time?: Date; }
-export interface IResponse { result: string; message: any; }
 export interface IService { id: number; name: string; desc: string; price: number; }
 export interface IUserService {
   idService: number;
@@ -47,5 +46,4 @@ export interface ITableExport { header: string; field: string; }
 
 export enum ERole { OWNER = 0, ADMIN = 10, USER = 100, SELDER = 125, TRAINER = 150 }
 export enum ESex { MAN = 1, WOMAN = 0 }
-export enum ERestResult { OK, ERROR, NOT_DENIED, USER_ALREADY_EXIST }
 export enum EConfirmType { ABON, TRAINER, BOX, BARCODE, PRODUCT, YES, YES_NO }

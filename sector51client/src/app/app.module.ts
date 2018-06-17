@@ -1,5 +1,5 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,8 +10,10 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
 import { ConfirmationService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
+import { MessageService } from 'primeng/components/common/messageservice';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DropdownModule } from 'primeng/dropdown';
+import { GrowlModule } from 'primeng/growl';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
@@ -92,6 +94,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MultiSelectModule,
     DropdownModule,
     ConfirmDialogModule,
+    GrowlModule,
     Sector51RoutingModule
   ],
   providers: [
@@ -102,6 +105,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CommonService,
     WebsocketService,
     ConfirmationService,
+    MessageService,
     GoogleSheetsService
   ],
   bootstrap: [AppComponent]

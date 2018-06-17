@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { EConfirmType, ERestResult, IBox, IResponse, IRole } from '../../entities/common';
+import { EConfirmType, IBox, IRole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
@@ -64,11 +64,6 @@ export class BoxesComponent implements OnInit {
     this.boxes.sort((a, b) => a.number - b.number);
   }
 
-  changeType(type: IRole) {
-    this.type = type;
-    this.refreshBoxes();
-  }
-
   insertOrRemoveBoxNumber(insert: boolean) {
     const nums = this.number.split('-').map(s => Number(s));
     const min = Math.min.apply(Math, nums);
@@ -77,19 +72,15 @@ export class BoxesComponent implements OnInit {
       const httpAction: Observable<Object> = insert ?
         this.http.post(REST_API.POST.boxnumber, { idtype: this.type.id, number: i }) :
         this.http.delete(REST_API.DELETE.boxnumber(this.type.id, i));
-      httpAction.subscribe((response: IResponse) => {
-        if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-          if (insert) {
-            this.boxNumbers.push({ idtype: this.type.id, number: +response.message });
-          } else {
-            const removed = response.message as IBox;
-            const bNumber = this.boxNumbers.find(b => b.idtype === removed.idtype && b.number === removed.number);
-            this.boxNumbers.splice(this.boxNumbers.indexOf(bNumber), 1);
-          }
-          this.refreshBoxes();
+      httpAction['value'] = i;
+      httpAction.subscribe((response: any) => {
+        if (insert) {
+          this.boxNumbers.push({ idtype: this.type.id, number: response.number });
         } else {
-          alert('Error');
+          const bNumber = this.boxNumbers.find(b => b.idtype === this.type.id && b.number === httpAction['value']);
+          this.boxNumbers.splice(this.boxNumbers.indexOf(bNumber), 1);
         }
+        this.refreshBoxes();
       });
     }
   }
@@ -107,11 +98,7 @@ export class BoxesComponent implements OnInit {
         const b = Object.assign({}, box);
         b.card = b.card ? undefined : this.user.card;
         this.http.put(REST_API.PUT.boxnumber, b)
-          .subscribe((response: any) => {
-            if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-              this.common.navigate('main', { user: this.user['created'] });
-            }
-          });
+          .subscribe(() => this.common.navigate('main', { user: this.user['created'] }));
       }
     });
   }

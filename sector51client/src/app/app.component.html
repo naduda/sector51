@@ -1,4 +1,5 @@
 <div class="container-fluid">
+  <p-growl life="3000"></p-growl>
   <p-confirmDialog #cd [width]="cd.confirmation && cd.confirmation.width || 320" [ngClass]="cd.confirmation && cd.confirmation.headerClass">
     <p-footer *ngIf="cd.confirmation">
       <div *ngIf="cd.confirmation && isMessageType(cd.confirmation)" class="row flex-row align-items-baseline">

@@ -1,6 +1,7 @@
 version: '3'
 services:
   db:
+    image: sector_img_db
     container_name: db_container
     build:
       context: .
@@ -15,12 +16,11 @@ services:
       - db_volume:/var/lib/postgresql/data
     restart: always
   web:
+    image: sector_img_web
     container_name: web_container
     build:
       context: .
       dockerfile: Dockerfile.web
-    environment:
-      - TZ=Europe/Kiev
     links:
       - db
     ports:

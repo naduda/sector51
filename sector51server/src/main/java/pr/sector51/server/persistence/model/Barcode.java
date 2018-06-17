@@ -12,10 +12,6 @@ public class Barcode {
     return productId;
   }
 
-  public void setProductId(int productId) {
-    this.productId = productId;
-  }
-
   public String getCode() {
     return code;
   }

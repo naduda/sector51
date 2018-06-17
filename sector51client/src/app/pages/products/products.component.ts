@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { EConfirmType, ERestResult, ERole, IProduct, IResponse, RESERVED_PRODUCTS_ID } from '../../entities/common';
+import { EConfirmType, ERole, IProduct, RESERVED_PRODUCTS_ID } from '../../entities/common';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
 
@@ -14,13 +14,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   public products: IProduct[];
   public permissions: boolean;
   private subscription: Subscription;
-  private readonly modalProperties = {
-    header: '',
-    headerClass: 'alert alert-danger',
-    body: 'prompt.RemoveItemQuestion',
-    btOK: 'apply',
-    btCancel: 'cancel'
-  };
 
   constructor(private http: HttpClient, private common: CommonService) { }
 
@@ -49,15 +42,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
       icon: 'fa fa-question-circle-o fa-2x text-danger',
       message: 'prompt.RemoveItemQuestion',
       accept: () => this.http.delete(REST_API.DELETE.productById(product.id))
-        .subscribe(r => r === ERestResult[ERestResult.OK] && this.products.splice(this.products.indexOf(product), 1))
+        .subscribe(() => this.products.splice(this.products.indexOf(product), 1))
     });
   }
 
   updateProduct(product: IProduct) {
     product['done'] = product['success'] = false;
-    this.http.put(REST_API.PUT.product, product).subscribe((response: IResponse) => {
-      product['done'] = true;
-      product['success'] = ERestResult[ERestResult.OK] === response.result;
-    });
+    this.http.put(REST_API.PUT.product, product)
+      .subscribe(() => product['success'] = true, null, () => product['done'] = true);
   }
 }

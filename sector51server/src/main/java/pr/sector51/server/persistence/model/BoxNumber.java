@@ -8,9 +8,10 @@ public class BoxNumber {
   private String card;
   private Timestamp time;
 
-  public BoxNumber() { }
+  private BoxNumber() { }
 
   public BoxNumber(int idtype, int number) {
+    this();
     this.idtype = idtype;
     this.number = number;
   }

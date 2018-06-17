@@ -11,10 +11,12 @@ public class Product {
   private Integer price;
   private String code;
 
-  public Product() {
+  private Product() {
+
   }
 
-  public Product(int id, String name, String desc, Integer count, Integer price, String code) {
+  private Product(int id, String name, String desc, Integer count, Integer price, String code) {
+    this();
     this.id = id;
     this.name = name;
     this.desc = desc;

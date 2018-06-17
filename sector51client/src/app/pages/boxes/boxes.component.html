@@ -3,15 +3,8 @@
     <label for="boxtype" class="text-right pr-2">
       <strong>Type:</strong>
     </label>
-    <div ngbDropdown class="d-inline-block mb-2 mr-2">
-      <button type="button" class="nav-item nav-link text-right rounded btn bg-light w-100 pr-2" ngbDropdownToggle *ngIf="type">
-        <span class="text-center w-100">{{ type.name }}</span>
-      </button>
-      <div ngbDropdownMenu *ngIf="type">
-        <div class="pointer" *ngFor="let p of types">
-          <label class="ml-2 pointer" (click)="changeType(p)">{{ p.name }}</label>
-        </div>
-      </div>
+    <div class="d-inline-block mb-2 mr-2">
+      <p-dropdown [options]="types" [(ngModel)]="type" optionLabel="name" (onChange)="refreshBoxes()" *ngIf="type"></p-dropdown>
     </div>
   </div>
   <div class="d-inline-block">
@@ -29,7 +22,7 @@
 <hr>
 <div class="d-flex flex-wrap p-5">
   <div id="boxes" class="d-inline-flex justify-content-center w-rem-5 m-2 p-3 rounded text-white pointer" [ngClass]="{ 'bg-primary': !p.card, 'bg-danger': p.card }"
-    placement="top" [ngbTooltip]="p.tooltip" *ngFor="let p of boxes;" (click)="updateBox(p)">
+    placement="top" [pTooltip]="p.tooltip" *ngFor="let p of boxes;" (click)="updateBox(p)">
     {{ p.number | number:'2.0-0' }}
   </div>
 </div>

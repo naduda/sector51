@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { EConfirmType, ERestResult, ERole, IBox, IResponse, IService, IUserService } from '../../entities/common';
+import { EConfirmType, ERole, IBox, IService, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
@@ -14,14 +14,12 @@ export class UserServicesComponent implements OnInit {
   @Input() set user(value: Profile) {
     if (!value) return;
     this._user = value;
-    this.http.get<IResponse>(REST_API.GET.userServices(value['created'])).subscribe((response: IResponse) => {
-      if (ERestResult[ERestResult.OK] === response.result) {
-        this.userServices = response.message;
-        this.modifyServices(this.userServices);
-        const now = new Date();
-        const isFinish = this.userServices.filter(us => us.dtEnd < now).length > 0;
-        this.common.users.find(u => u['created'] === value['created'])['isFinish'] = isFinish;
-      }
+    this.http.get<IUserService[]>(REST_API.GET.userServices(value['created'])).subscribe((response) => {
+      this.userServices = response;
+      this.modifyServices(this.userServices);
+      const now = new Date();
+      const isFinish = this.userServices.filter(us => us.dtEnd < now).length > 0;
+      this.common.users.find(u => u['created'] === value['created'])['isFinish'] = isFinish;
     });
   }
   _user: Profile;
@@ -159,17 +157,15 @@ export class UserServicesComponent implements OnInit {
             }), 100);
           return;
         }
-        this.http.post(REST_API.POST.userService, userService).subscribe((response: IResponse) => {
-          if (ERestResult[ERestResult.OK] === response.result) {
-            userService.desc = service.name;
-            this.userServices.push(userService);
-            this.service = { id: -1, name: '', desc: '', price: 0 };
-            this.modifyServices(this.userServices);
-            if (userService.idService === 2) {
-              this.boxes.splice(this.boxes.indexOf(data.boxNumber), 1);
-              this.boxes.sort((a, b) => a.number - b.number);
-              this.boxNumber = this.boxes[0];
-            }
+        this.http.post(REST_API.POST.userService, userService).subscribe((inserted: IUserService) => {
+          inserted.desc = service.name;
+          this.userServices.push(inserted);
+          this.service = { id: -1, name: '', desc: '', price: 0 };
+          this.modifyServices(this.userServices);
+          if (userService.idService === 2) {
+            this.boxes.splice(this.boxes.indexOf(data.boxNumber), 1);
+            this.boxes.sort((a, b) => a.number - b.number);
+            this.boxNumber = this.boxes[0];
           }
         });
       }
@@ -178,26 +174,21 @@ export class UserServicesComponent implements OnInit {
 
   remove(uService: IUserService) {
     this.http.delete(REST_API.DELETE.userService(uService))
-      .subscribe((response: IResponse) => {
-        if (ERestResult[ERestResult.OK] === response.result) {
-          if (uService.idService === 2) {
-            this.boxes.push({ idtype: 3, number: +uService.value });
-            this.boxes.sort((a, b) => a.number - b.number);
-            this.boxNumber = this.boxes[0];
-          }
-          this.userServices.splice(this.userServices.indexOf(uService), 1);
-          this.service = { id: -1, name: '', desc: '', price: 0 };
-          this.modifyServices(this.userServices);
+      .subscribe(() => {
+        if (uService.idService === 2) {
+          this.boxes.push({ idtype: 3, number: +uService.value });
+          this.boxes.sort((a, b) => a.number - b.number);
+          this.boxNumber = this.boxes[0];
         }
+        this.userServices.splice(this.userServices.indexOf(uService), 1);
+        this.service = { id: -1, name: '', desc: '', price: 0 };
+        this.modifyServices(this.userServices);
       });
   }
 
   update(uService: IUserService) {
     uService['done'] = uService['success'] = false;
     this.http.put(REST_API.PUT.userService, uService)
-      .subscribe((response: IResponse) => {
-        uService['done'] = true;
-        uService['success'] = ERestResult[ERestResult.OK] === response.result;
-      });
+      .subscribe(() => uService['success'] = true, null, () => uService['done'] = true);
   }
 }

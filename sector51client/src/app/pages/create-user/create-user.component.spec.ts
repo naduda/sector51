@@ -1,21 +1,16 @@
-import { async, ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
-import { Location, HashLocationStrategy, LocationStrategy } from '@angular/common';
-
-import { FormsModule } from '@angular/forms';
+import { HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CommonService } from '../../services/common.service';
-
-import { CreateUserComponent } from './create-user.component';
+import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs/observable/of';
+import { ERestResult, ERole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
-import { Observable } from 'rxjs/Observable';
-import { ERole, ERestResult } from '../../entities/common';
-import { By } from '@angular/platform-browser';
+import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 import { ElementTools } from '../../testing/commonTest';
 import { TranslatePipeStub } from '../../testing/TranslatePipeStub';
-import { of } from 'rxjs/observable/of';
-import { REST_API } from '../../entities/rest-api';
+import { CreateUserComponent } from './create-user.component';
 
 describe('CreateUserComponent', () => {
   let component: CreateUserComponent;
@@ -27,20 +22,22 @@ describe('CreateUserComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CreateUserComponent, TranslatePipeStub ],
+      declarations: [CreateUserComponent, TranslatePipeStub],
       imports: [
-        FormsModule,
-        NgbModule.forRoot(),
+        FormsModule
       ],
       providers: [
-        { provide: Location, useValue: { back: () => locationState = 'back'} },
+        { provide: Location, useValue: { back: () => locationState = 'back' } },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         { provide: CommonService, useValue: { profile: profileMock } },
-        { provide: ActivatedRoute, useValue: {
-          params: of({ idUser: -1 }),
-          queryParams: of({ })
-        }},
-        { provide: HttpClient, useValue: {
+        {
+          provide: ActivatedRoute, useValue: {
+            params: of({ idUser: -1 }),
+            queryParams: of({})
+          }
+        },
+        {
+          provide: HttpClient, useValue: {
             get: (url: string) => {
               if (url === REST_API.GET.users) return of([]);
               return of(undefined);
@@ -51,7 +48,7 @@ describe('CreateUserComponent', () => {
         }
       ],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

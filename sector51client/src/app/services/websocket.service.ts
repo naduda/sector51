@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EConfirmType, ERestResult, ERole, IProduct, IResponse, RESERVED_PRODUCTS_ID } from '../entities/common';
+import { EConfirmType, ERole, IProduct, RESERVED_PRODUCTS_ID } from '../entities/common';
 import { REST_API } from '../entities/rest-api';
 import { CommonService } from '../services/common.service';
 
@@ -71,11 +71,7 @@ export class WebsocketService {
           },
           reject: () => {
             data.product.count += data.count;
-            this.http.put(REST_API.PUT.product, data.product).subscribe((response: IResponse) => {
-              if (response.message === ERestResult[ERestResult.OK]) {
-
-              }
-            });
+            this.http.put(REST_API.PUT.product, data.product).subscribe(() => { });
           }
         });
       } else if (data.barcode) {
@@ -112,11 +108,9 @@ export class WebsocketService {
                 desc: data.selder['created']
               };
               this.http.post(REST_API.POST.product, product, { params: { code: data.barcode } })
-                .subscribe((response: IResponse) => {
-                  if (response && response.result === ERestResult[ERestResult.OK]) {
-                    this.common.newProduct.observers && this.common.newProduct.next(response.message);
-                    this.common.navigate('products');
-                  }
+                .subscribe((response: IProduct) => {
+                  this.common.newProduct.observers && this.common.newProduct.next(response);
+                  this.common.navigate('products');
                 });
             }
           }

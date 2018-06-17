@@ -4,11 +4,13 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Component;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
+@Component
 public interface IThingsMapper {
   @Select("SELECT * FROM boxtype;")
   List<BoxType> getBoxTypes();
@@ -23,7 +25,7 @@ public interface IThingsMapper {
   int removeBoxType(@Param("id") int id);
 
   @Update("UPDATE boxtype set name = #{name} WHERE id = #{id};")
-  void updateBoxType(BoxType boxType);
+  int updateBoxType(BoxType boxType);
 
   @Select("INSERT INTO boxtype VALUES((SELECT count(*) + 1 FROM boxtype), #{name}) RETURNING id;")
   int insertBoxType(@Param("name") String boxType);
@@ -31,7 +33,7 @@ public interface IThingsMapper {
   @Select("INSERT INTO box VALUES(#{idtype}, #{number}) RETURNING number;")
   int insertBoxNumber(BoxNumber boxNumber);
 
-  @Select("DELETE FROM box WHERE idtype = #{idtype} AND number = #{number} RETURNING number;")
+  @Delete("DELETE FROM box WHERE idtype = #{idtype} AND number = #{number};")
   int removeBoxNumber(BoxNumber boxNumber);
 
   @Select("UPDATE box set card = #{card}, time = now() WHERE idtype = #{idtype} AND number = #{number} " +
@@ -46,14 +48,14 @@ public interface IThingsMapper {
 
   @Select("SELECT us.*, s.name as \"desc\" FROM user_service AS us LEFT JOIN service AS s ON s.id = us.idservice " +
           "WHERE us.idUser = #{idUser};")
-  List<UserServise51> getUserServices(@Param("idUser") Timestamp idUser);
+  List<UserService51> getUserServices(@Param("idUser") Timestamp idUser);
 
   @Select("INSERT INTO user_service VALUES(#{idService}, #{idUser}, #{dtBeg}, #{dtEnd}, #{value}) RETURNING *;")
-  UserServise51 insertUserService(UserServise51 userServise);
+  UserService51 insertUserService(UserService51 userServise);
 
   @Update("UPDATE user_service set dtbeg = #{dtBeg}, dtend = #{dtEnd}, value = #{value} " +
           "WHERE iduser = #{idUser} and idservice = #{idService};")
-  int updateUserService(UserServise51 userServise51);
+  int updateUserService(UserService51 userServise51);
 
   @Delete("DELETE FROM user_service WHERE iduser = #{idUser} AND idservice = #{idService};")
   int removeUserService(@Param("idUser") Timestamp idUser, @Param("idService") int idService);

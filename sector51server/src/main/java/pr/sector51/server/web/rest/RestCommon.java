@@ -10,7 +10,7 @@ class RestCommon {
   @Autowired
   protected UserDao userDao;
 
-  protected UserInfo getUserInfoByLogin(String login) {
+  UserInfo getUserInfoByLogin(String login) {
     List<UserInfo> users = null;
     if (login.contains("@")) {
       users = userDao.getUserInfoByEmail(login.replaceAll(",", "."));

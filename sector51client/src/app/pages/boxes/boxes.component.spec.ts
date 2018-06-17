@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { of } from 'rxjs/observable/of';
 import { CommonService } from '../../services/common.service';
@@ -18,11 +17,9 @@ describe('BoxesComponent', () => {
       declarations: [BoxesComponent, TranslatePipeStub],
       imports: [
         FormsModule,
-        RouterTestingModule.withRoutes([]),
-        NgbModule.forRoot()
+        RouterTestingModule.withRoutes([])
       ],
       providers: [
-        NgbActiveModal,
         {
           provide: HttpClient, useValue: {
             get: (url: string, params) => of([])

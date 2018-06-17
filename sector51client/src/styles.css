@@ -18,6 +18,11 @@ div[ngbdropdown] > i:hover,
 div[ngbdropdown] .dropdown-item:hover { cursor: pointer; }
 div[ngbdropdown] .dropdown-item:hover{ background-color: LightBlue !important; }
 
+.ui-growl-message-error .ui-growl-item { background-color: #cc3f3c; }
+.ui-growl-message-info .ui-growl-item { background-color: LightBlue; }
+.ui-growl-message-warn .ui-growl-item { background-color: #f5de0e; }
+.ui-growl-message-success .ui-growl-item { background-color: #42A948; }
+
 .w-15 { width: 15% !important; }
 .w-20 { width: 20% !important; }
 .w-30 { width: 30% !important; }

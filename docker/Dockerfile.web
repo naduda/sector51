@@ -1,15 +1,2 @@
-FROM anapsix/alpine-java:8_jdk
-
-ENV LANG en_US.utf8
-
-ADD ./pr/wait-for.sh /pr/
-ADD ./pr/clone.sh /pr/
-ADD ./pr/build.sh /pr/
-ADD ./pr/init_web.sh /pr/
+FROM naduda/sector51:init
 ADD ./settings.properties /tmp/
-
-RUN apk update && apk add git && \
-    chmod 777 /tmp && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    rm -rf /var/cache/apk/*
