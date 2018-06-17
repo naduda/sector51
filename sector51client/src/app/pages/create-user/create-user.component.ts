@@ -131,16 +131,13 @@ export class CreateUserComponent implements OnInit {
     }
 
     if (this.idUser < 0 && this.usersNotExist) {
-      this.http.post(REST_API.POST.firstUser, this.user)
-        .subscribe(result => this.onResult(result));
+      this.http.post(REST_API.POST.firstUser, this.user).subscribe(result => this.onResult(result));
     } else if (this.idUser < 0 && !this.usersNotExist) {
       this.user.card = this.user.card || new Date().getTime().toString();
       if (!this.showPassword) this.user['password'] = this.user.card;
-      this.http.post(REST_API.POST.user, this.user)
-        .subscribe(result => this.onResult(result));
+      this.http.post(REST_API.POST.user, this.user).subscribe(result => this.onResult(result));
     } else {
-      this.http.put(REST_API.PUT.user, this.user)
-        .subscribe(result => this.onResult(result));
+      this.http.put(REST_API.PUT.user, this.user).subscribe(result => this.onResult(result));
     }
   }
 

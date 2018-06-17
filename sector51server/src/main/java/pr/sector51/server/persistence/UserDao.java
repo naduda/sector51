@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import pr.sector51.server.persistence.mappers.ICommonMapper;
 import pr.sector51.server.persistence.mappers.IThingsMapper;
 import pr.sector51.server.persistence.mappers.IUserMapper;
-import pr.sector51.server.persistence.model.ESector51Result;
 import pr.sector51.server.persistence.model.UserInfo;
 import pr.sector51.server.persistence.model.UserSecurity;
 import pr.sector51.server.persistence.model.UserSecurityBuilder;
@@ -62,14 +61,6 @@ public class UserDao extends CommonDao implements IUserMapper {
         return userMapper.deleteUser(created);
     }
 
-    public ESector51Result removeUser(long created) {
-        try {
-            return deleteUser(new Timestamp(created)) == 1 ? ESector51Result.OK : ESector51Result.ERROR;
-        } catch (Exception e) {
-            return ESector51Result.ERROR;
-        }
-    }
-
     @Override
     public void insertUserInfo(UserInfo user) {
         if (user.getEmail() == null) {
@@ -87,15 +78,15 @@ public class UserDao extends CommonDao implements IUserMapper {
         userMapper.updateUserInfo(user);
     }
 
-    public ESector51Result insertUser(UserInfo userInfo) {
+    public UserInfo insertUser(UserInfo userInfo) {
         UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
         if (userExist != null) {
-            return ESector51Result.USER_ALREADY_EXIST;
+            throw new IllegalArgumentException("User already exists.");
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserSecurity currentUserSecurity = auth != null ? (UserSecurity) auth.getDetails() : null;
 
-        boolean result = runTransaction(() -> {
+        boolean success = runTransaction(() -> {
             UserSecurity user = new UserSecurityBuilder()
                     .setPassword(userInfo.getPassword())
                     .setRoles(userInfo.getRoles())
@@ -108,21 +99,20 @@ public class UserDao extends CommonDao implements IUserMapper {
             userInfo.setCreated(user.getCreated());
             insertUserInfo(userInfo);
         });
-        return result ? ESector51Result.OK : ESector51Result.ERROR;
+        return success ? userInfo : null;
     }
 
-    public ESector51Result updateUser(UserInfo userInfo) {
+    public boolean updateUser(UserInfo userInfo) {
         UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
         if (userInfo.getPassword() == null) {
             userInfo.setPassword(userExist.getPassword());
         } else {
             userInfo.setPassword(encoder.encode(userInfo.getPassword()));
         }
-        boolean result = runTransaction(() -> {
+        return runTransaction(() -> {
             updateUserSecurity(userInfo);
             updateUserInfo(userInfo);
         });
-        return result ? ESector51Result.OK : ESector51Result.ERROR;
     }
 
     @Override

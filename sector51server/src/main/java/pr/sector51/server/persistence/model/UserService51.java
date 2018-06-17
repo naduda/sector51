@@ -17,15 +17,6 @@ public class UserService51 {
 
   }
 
-  public UserService51(int idService, Timestamp idUser, Timestamp dtBeg, Timestamp dtEnd, String value) {
-    this();
-    this.idService = idService;
-    this.idUser = idUser;
-    this.dtBeg = dtBeg;
-    this.dtEnd = dtEnd;
-    this.value = value;
-  }
-
   @Override
   public String toString() {
     try {

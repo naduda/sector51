@@ -1,10 +1,14 @@
 package pr.sector51.server.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pr.sector51.server.mail.SmtpMailSender;
 import pr.sector51.server.persistence.UserDao;
-import pr.sector51.server.persistence.model.*;
+import pr.sector51.server.persistence.model.KeyValuePair;
+import pr.sector51.server.persistence.model.MailLetter;
+import pr.sector51.server.persistence.model.UserInfo;
+import pr.sector51.server.persistence.model.UserSecurity;
 import pr.sector51.server.security.ERole;
 import pr.sector51.server.security.services.TokenHandler;
 
@@ -31,8 +35,9 @@ public class RestUserController extends RestCommon {
 
     // DELETE ===========================================================================
     @DeleteMapping("delete/userById/{created}")
-    public ESector51Result removeUser(@PathVariable("created") long created) {
-        return userDao.removeUser(created);
+    public ResponseEntity<String> removeUser(@PathVariable("created") long created) {
+        boolean success = userDao.deleteUser(new Timestamp(created)) == 1;
+        return ResponseEntity.ok("User was" + (success ? "" : "n't") + "deleted.");
     }
 
     // GET ==============================================================================
@@ -86,32 +91,27 @@ public class RestUserController extends RestCommon {
     }
 
     @PostMapping("add/user")
-    public Sector51Result createUser(@RequestBody UserInfo user) {
-        Sector51Result result = new Sector51Result(userDao.insertUser(user));
-        if (result.getResult() == ESector51Result.OK) {
-            result.setMessage(user);
-        }
-        return result;
+    public ResponseEntity<UserInfo> createUser(@RequestBody UserInfo user) {
+        return ResponseEntity.ok(userDao.insertUser(user));
     }
 
     @PostMapping("public/add/firstUser")
-    public Sector51Result createFirstUser(@RequestBody UserInfo user) {
-        return usersNotExist() ? new Sector51Result(userDao.insertUser(user)) : new Sector51Result(ESector51Result.ERROR);
+    public ResponseEntity<UserInfo> createFirstUser(@RequestBody UserInfo user) {
+        if (usersNotExist()) {
+            throw new IllegalStateException();
+        }
+        return ResponseEntity.ok(userDao.insertUser(user));
     }
 
     @PostMapping("sendemail")
-    public ESector51Result sendEmail(@RequestBody MailLetter letter) {
-        try {
-            mailSender.send(letter.getRecipient(), letter.getTitle(), letter.getBody());
-        } catch (MessagingException e) {
-            return ESector51Result.ERROR;
-        }
-        return ESector51Result.OK;
+    public ResponseEntity<MailLetter> sendEmail(@RequestBody MailLetter letter) throws MessagingException {
+        mailSender.send(letter.getRecipient(), letter.getTitle(), letter.getBody());
+        return ResponseEntity.ok(letter);
     }
 
     // PUT =============================================================================
     @PutMapping("update/user")
-    public Sector51Result updateUser(@RequestBody UserInfo user) {
-        return new Sector51Result(userDao.updateUser(user));
+    public ResponseEntity<String> updateUser(@RequestBody UserInfo user) {
+        return ResponseEntity.ok("User was" + (userDao.updateUser(user) ? "" : "n't") + " updated.");
     }
 }

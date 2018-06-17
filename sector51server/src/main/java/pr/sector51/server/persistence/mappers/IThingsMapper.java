@@ -25,7 +25,7 @@ public interface IThingsMapper {
   int removeBoxType(@Param("id") int id);
 
   @Update("UPDATE boxtype set name = #{name} WHERE id = #{id};")
-  void updateBoxType(BoxType boxType);
+  int updateBoxType(BoxType boxType);
 
   @Select("INSERT INTO boxtype VALUES((SELECT count(*) + 1 FROM boxtype), #{name}) RETURNING id;")
   int insertBoxType(@Param("name") String boxType);
@@ -33,7 +33,7 @@ public interface IThingsMapper {
   @Select("INSERT INTO box VALUES(#{idtype}, #{number}) RETURNING number;")
   int insertBoxNumber(BoxNumber boxNumber);
 
-  @Select("DELETE FROM box WHERE idtype = #{idtype} AND number = #{number} RETURNING number;")
+  @Delete("DELETE FROM box WHERE idtype = #{idtype} AND number = #{number};")
   int removeBoxNumber(BoxNumber boxNumber);
 
   @Select("UPDATE box set card = #{card}, time = now() WHERE idtype = #{idtype} AND number = #{number} " +

@@ -1,6 +1,7 @@
 package pr.sector51.server.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -31,28 +32,22 @@ public class RestThingsController extends RestCommon {
 
     // DELETE ==========================================================================
     @DeleteMapping("delete/boxType/{id}")
-    public Sector51Result removeBoxTypeById(@PathVariable("id") int id) {
-        return thingsDao.removeBoxType(id);
+    public ResponseEntity<String> removeBoxTypeById(@PathVariable("id") int id) {
+        return ResponseEntity.ok("BoxType was" + (thingsDao.removeBoxType(id) ? "" : "n't") + " deleted.");
     }
 
     @DeleteMapping("delete/boxNumber/{params}")
-    public Sector51Result removeBoxNumber(@PathVariable("params") String params) {
+    public ResponseEntity<String> removeBoxNumber(@PathVariable("params") String params) {
         String[] pars = params.split("_");
         BoxNumber boxNumber = new BoxNumber(Integer.parseInt(pars[0]), Integer.parseInt(pars[1]));
-        return thingsDao.removeBoxNumber(boxNumber);
+        return ResponseEntity.ok("Box was" + (thingsDao.removeBoxNumber(boxNumber) ? "" : "n't") + " deleted.");
     }
 
     @DeleteMapping("delete/userservice/{params}")
-    public Sector51Result removeUserService(@PathVariable("params") String params) {
-        Sector51Result result = new Sector51Result(ESector51Result.ERROR);
-        try {
-            String[] pars = params.split("_");
-            int count = thingsDao.removeUserService(Long.parseLong(pars[0]), Integer.parseInt(pars[1]));
-            result.setResult(count > 0 ? ESector51Result.OK : ESector51Result.ERROR);
-        } catch (Exception ex) {
-            result.setMessage(ex.getMessage());
-        }
-        return result;
+    public ResponseEntity<String> removeUserService(@PathVariable("params") String params) {
+        String[] pars = params.split("_");
+        int count = thingsDao.removeUserService(Long.parseLong(pars[0]), Integer.parseInt(pars[1]));
+        return ResponseEntity.ok("User's service was" + (count > 0 ? "" : "n't") + " deleted.");
     }
 
     // GET ==============================================================================
@@ -85,21 +80,14 @@ public class RestThingsController extends RestCommon {
     }
 
     @GetMapping("userservices/{idUser}")
-    public Sector51Result userServices(@PathVariable("idUser") String idUser) {
-        Sector51Result result = new Sector51Result(ESector51Result.OK);
-        try {
-            Timestamp userId = new Timestamp(Long.parseLong(idUser));
-            result.setMessage(thingsDao.getUserServices(userId));
-        } catch (Exception ex) {
-            result.setResult(ESector51Result.ERROR);
-            result.setMessage(ex.getMessage());
-        }
-        return result;
+    public ResponseEntity<List<UserService51>> userServices(@PathVariable("idUser") String idUser) {
+        Timestamp userId = new Timestamp(Long.parseLong(idUser));
+        return ResponseEntity.ok(thingsDao.getUserServices(userId));
     }
 
     // POST ============================================================================
     @PostMapping("add/userWithServices")
-    public Sector51Result insertUserWithServices(@RequestBody List<Map<String, String>> rows) {
+    public ResponseEntity<List<Integer>> insertUserWithServices(@RequestBody List<Map<String, String>> rows) {
         userDao.removeAllUsers();
         List<Integer> status = new ArrayList<>(rows.size());
         for (int i = 0; i < rows.size(); i++) {
@@ -156,15 +144,9 @@ public class RestThingsController extends RestCommon {
                 status.set(i, 0);
             }
         }
-        try {
-            userDao.update("DELETE FROM user_service WHERE dtbeg < '2000-01-01';" +
-                    "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        Sector51Result result = new Sector51Result(ESector51Result.OK);
-        result.setMessage(status);
-        return result;
+        userDao.update("DELETE FROM user_service WHERE dtbeg < '2000-01-01';" +
+                "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';");
+        return ResponseEntity.ok(status);
     }
 
     private Timestamp getTimestampFromString(String value) {
@@ -173,69 +155,60 @@ public class RestThingsController extends RestCommon {
     }
 
     @PostMapping("add/userservice")
-    public Sector51Result userService(@RequestBody UserService51 userService) {
-        Sector51Result result = new Sector51Result(ESector51Result.OK);
-        try {
-            boolean trResult = thingsDao.runTransaction(() -> {
-                UserService51 inserted = thingsDao.insertUserService(userService);
-                if (userService.getIdService() == 2) {
-                    BoxNumber box = new BoxNumber(3, Integer.parseInt(userService.getValue()));
-                    UserInfo userInfo = userDao.getUserInfoById(userService.getIdUser());
-                    box.setCard(userInfo.getCard());
-                    thingsDao.updateBox(box);
-                }
-                result.setMessage(inserted);
-            });
-            result.setResult(trResult ? ESector51Result.OK : ESector51Result.ERROR);
-        } catch (Exception ex) {
-            result.setMessage(ex.getMessage());
-            result.setResult(ESector51Result.ERROR);
-        }
-        return result;
+    public ResponseEntity<UserService51> userService(@RequestBody UserService51 userService) {
+        UserService51[] inserted = new UserService51[1];
+        thingsDao.runTransaction(() -> {
+            inserted[0] = thingsDao.insertUserService(userService);
+            if (userService.getIdService() == 2) {
+                BoxNumber box = new BoxNumber(3, Integer.parseInt(userService.getValue()));
+                UserInfo userInfo = userDao.getUserInfoById(userService.getIdUser());
+                box.setCard(userInfo.getCard());
+                thingsDao.updateBox(box);
+            }
+        });
+        return ResponseEntity.ok(inserted[0]);
     }
 
-    @PostMapping("/add/boxNumber")
-    public Sector51Result insertBoxNumber(@RequestBody BoxNumber boxNumber) {
-        Sector51Result result = new Sector51Result(ESector51Result.OK);
+    @PostMapping("add/boxNumber")
+    public ResponseEntity<BoxNumber> insertBoxNumber(@RequestBody BoxNumber boxNumber) {
         int id = thingsDao.insertBoxNumber(boxNumber);
-        result.setMessage(id);
-        return result;
+        boxNumber.setNumber(id);
+        return ResponseEntity.ok(boxNumber);
     }
 
     // PUT =============================================================================
     @PutMapping("update/boxType")
-    public Sector51Result updateBoxtype(@RequestBody BoxType boxType) {
-        return thingsDao.updateBoxType(boxType);
+    public ResponseEntity<String> updateBoxtype(@RequestBody BoxType boxType) {
+        return ResponseEntity.ok("BoxType was" + (thingsDao.updateBoxType(boxType) ? "" : "n't") + " updated.");
     }
 
     @PutMapping("update/boxNumber")
-    public Sector51Result updateBox(@RequestBody BoxNumber boxNumber) {
-        if (boxNumber.getIdtype() == 3) return new Sector51Result(ESector51Result.ERROR);
-        return thingsDao.updateBox(boxNumber);
+    public ResponseEntity<String> updateBox(@RequestBody BoxNumber boxNumber) {
+        if (boxNumber.getIdtype() == 3) throw new IllegalArgumentException();
+        return ResponseEntity.ok("Box was" + (thingsDao.updateBox(boxNumber) ? "" : "n't") + " updated.");
     }
 
     @PutMapping("update/userservice")
-    public Sector51Result updateBox(@RequestBody UserService51 userService) {
-        int result = thingsDao.updateUserService(userService);
-        return new Sector51Result(result > 0 ? ESector51Result.OK : ESector51Result.ERROR);
+    public ResponseEntity<String> updateBox(@RequestBody UserService51 userService) {
+        boolean success = thingsDao.updateUserService(userService) == 1;
+        return ResponseEntity.ok("User's service was" + (success ? "" : "n't") + " updated.");
     }
 
     @PutMapping("update/service")
-    public Sector51Result updateService(@RequestBody Service51 servise) {
-        return thingsDao.updateService(servise);
+    public ResponseEntity<String> updateService(@RequestBody Service51 servise) {
+        return ResponseEntity.ok("User's service was" + (thingsDao.updateService(servise) ? "" : "n't") + " updated.");
     }
 
     @PutMapping("update/events/{field}")
-    public Sector51Result updateEvents(@PathVariable("field") String field, @RequestBody Map<String, List<Integer>> eventIds) {
-        if (field == null) return new Sector51Result(ESector51Result.ERROR);
+    public ResponseEntity<String> updateEvents(@PathVariable("field") String field,
+                                               @RequestBody Map<String, List<Integer>> eventIds) {
+        if (field == null) throw new IllegalArgumentException();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserSecurity currentUserSecurity = (UserSecurity) auth.getDetails();
         long userId = currentUserSecurity.getCreated().getTime();
         List<Integer> ids = eventIds.get("ids");
 
-        Sector51Result httpResult = new Sector51Result(ESector51Result.OK);
-
-        boolean result = thingsDao.runTransaction(() -> {
+        boolean success = thingsDao.runTransaction(() -> {
             List<Event> events = events();
             events.forEach(e -> {
                 boolean isAdd = ids.contains(e.getId());
@@ -251,11 +224,10 @@ public class RestThingsController extends RestCommon {
                         e.setEmail(email);
                         break;
                 }
-                if (thingsDao.updateEvent(e) < 1) httpResult.setResult(ESector51Result.ERROR);
+                if (thingsDao.updateEvent(e) == 0) throw new RuntimeException();
             });
         });
 
-        httpResult.setResult(result ? ESector51Result.OK : ESector51Result.ERROR);
-        return httpResult;
+        return ResponseEntity.ok("Events were" + (success ? "" : "n't") + " updated.");
     }
 }
