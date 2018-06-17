@@ -5,87 +5,87 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class History {
-  private int id;
-  private int idEvent;
-  private Timestamp idUser;
-  private Timestamp time;
-  private String desc;
-  private int income;
-  private int outcome;
-  private int usercome;
+    private int id;
+    private int idEvent;
+    private Timestamp idUser;
+    private Timestamp time;
+    private String desc;
+    private int income;
+    private int outcome;
+    private int usercome;
 
-  public History() {
-    super();
-  }
+    public History() {
+        super();
+    }
 
-  @Override
-  public String toString() {
-    String timeStr = (time == null ? LocalDateTime.now() : time.toLocalDateTime())
-            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-    return timeStr + " - " + desc;
-  }
+    @Override
+    public String toString() {
+        String timeStr = (time == null ? LocalDateTime.now() : time.toLocalDateTime())
+                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+        return timeStr + " - " + desc;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public int getIdEvent() {
-    return idEvent;
-  }
+    public int getIdEvent() {
+        return idEvent;
+    }
 
-  public void setIdEvent(int idEvent) {
-    this.idEvent = idEvent;
-  }
+    public void setIdEvent(int idEvent) {
+        this.idEvent = idEvent;
+    }
 
-  public Timestamp getIdUser() {
-    return idUser;
-  }
+    public Timestamp getIdUser() {
+        return idUser;
+    }
 
-  public void setIdUser(Timestamp idUser) {
-    this.idUser = idUser;
-  }
+    public void setIdUser(Timestamp idUser) {
+        this.idUser = idUser;
+    }
 
-  public Timestamp getTime() {
-    return time;
-  }
+    public Timestamp getTime() {
+        return time;
+    }
 
-  public void setTime(Timestamp time) {
-    this.time = time;
-  }
+    public void setTime(Timestamp time) {
+        this.time = time;
+    }
 
-  public String getDesc() {
-    return desc;
-  }
+    public String getDesc() {
+        return desc;
+    }
 
-  public void setDesc(String desc) {
-    this.desc = desc;
-  }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
-  public int getIncome() {
-    return income;
-  }
+    public int getIncome() {
+        return income;
+    }
 
-  public void setIncome(int income) {
-    this.income = income;
-  }
+    public void setIncome(int income) {
+        this.income = income;
+    }
 
-  public int getOutcome() {
-    return outcome;
-  }
+    public int getOutcome() {
+        return outcome;
+    }
 
-  public void setOutcome(int outcome) {
-    this.outcome = outcome;
-  }
+    public void setOutcome(int outcome) {
+        this.outcome = outcome;
+    }
 
-  public int getUsercome() {
-    return usercome;
-  }
+    public int getUsercome() {
+        return usercome;
+    }
 
-  public void setUsercome(int usercome) {
-    this.usercome = usercome;
-  }
+    public void setUsercome(int usercome) {
+        this.usercome = usercome;
+    }
 }
