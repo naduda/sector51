@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { ERestResult, ERole, IResponse, ITableColumn, IUserService } from '../../entities/common';
+import { ERole, ITableColumn, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 
@@ -71,13 +71,12 @@ export class ExportComponent implements OnInit, AfterViewInit {
         const row: any = Object.assign({}, user);
         delete row.created;
         delete row.balance;
-        this.http.get<IResponse>(REST_API.GET.userServices(user['created'])).subscribe(response => {
-          if (response.result === ERestResult[ERestResult.OK]) {
-            const services: IUserService[] = response.message;
-            services.forEach(service => {
-              this.addService(row, service);
-            });
-          }
+        this.http.get<any>(REST_API.GET.userServices(user['created'])).subscribe(response => {
+          const services: IUserService[] = response.message;
+          services.forEach(service => {
+            this.addService(row, service);
+          });
+
           row.sex = user.sex ? 'M' : 'W';
           row.birthday = this.timestamp2Date(user.birthday);
           this.rowData.push(row);

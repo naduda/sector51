@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonService } from '../../services/common.service';
-import { IService, IResponse, ERestResult } from '../../entities/common';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { IService } from '../../entities/common';
 import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 
 @Component({
   selector: 'sector51-services',
@@ -22,13 +22,10 @@ export class ServicesComponent implements OnInit {
 
   saveService(service: IService) {
     service['done'] = service['success'] = false;
-    this.http.put(REST_API.PUT.service, service).subscribe((response: IResponse) => {
-      service['done'] = true;
-      service['success'] = ERestResult[ERestResult.OK] === response.result;
-      if (service['success']) {
-        const old = this.common.services.find(s => s.id === service.id);
-        old.price = service.price;
-      }
-    });
+    this.http.put(REST_API.PUT.service, service).subscribe(() => {
+      service['success'] = true;
+      const current = this.common.services.find(s => s.id === service.id);
+      current.price = service.price;
+    }, null, () => service['done'] = true);
   }
 }

@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { IProduct, RESERVED_PRODUCTS_ID, IResponse, ERestResult } from '../../entities/common';
-import { CommonService } from '../../services/common.service';
 import { HttpClient } from '@angular/common/http';
-import { Profile } from 'selenium-webdriver/firefox';
+import { Component, OnInit } from '@angular/core';
+import { IProduct, RESERVED_PRODUCTS_ID } from '../../entities/common';
 import { REST_API } from '../../entities/rest-api';
+import { CommonService } from '../../services/common.service';
 
 @Component({
   selector: 'sector51-cart',
@@ -28,15 +27,13 @@ export class CartComponent implements OnInit {
       return;
     }
     this.http.post(REST_API.POST.userPay, [
-      this.user.code, this.products.reduce((r, c) => r + c.id + ':' + c.count + '_', ''), this.cash * 100
-    ]).subscribe((response: IResponse) => {
-      if (response && response.result === ERestResult[ERestResult.OK]) {
-        const userId = this.user['created'];
-        this.clear();
-        this.common.navigate('main', { user: userId });
-      } else {
-        alert('Error');
-      }
+      this.user.code,
+      this.products.reduce((r, c) => r + c.id + ':' + c.count + '_', ''),
+      this.cash * 100
+    ]).subscribe(() => {
+      const userId = this.user['created'];
+      this.clear();
+      this.common.navigate('main', { user: userId });
     });
   }
 
@@ -61,14 +58,14 @@ export class CartComponent implements OnInit {
     const products = [];
     this.common.cartProducts.filter(p => p.id !== RESERVED_PRODUCTS_ID).forEach(p => products.push(Object.assign({}, p)));
     return products.reduce((newArray, curProduct) => {
-        const exist = newArray.find(e => e.id === curProduct.id);
-        if (exist && exist.count) {
-          exist.count += curProduct.count;
-        } else {
-          newArray.push(curProduct);
-        }
-        return newArray;
-      }, []);
+      const exist = newArray.find(e => e.id === curProduct.id);
+      if (exist && exist.count) {
+        exist.count += curProduct.count;
+      } else {
+        newArray.push(curProduct);
+      }
+      return newArray;
+    }, []);
   }
 
   get user(): IProduct {

@@ -4,7 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgModel } from '@angular/forms/src/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs/observable/of';
-import { ERestResult, ERole, ESex, IRole } from '../../entities/common';
+import { ERole, ESex, IRole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
@@ -60,13 +60,13 @@ export class CreateUserComponent implements OnInit {
     let code;
     this.route.params
       .do(params => this.idUser = params['idUser'] || -1)
-      .flatMap(params => this.route.queryParams)
+      .flatMap(() => this.route.queryParams)
       .do(params => this.isFirst = params['first'] || false)
       .do(queryParams => code = queryParams['code'] || '')
-      .flatMap(params => this.http.get<boolean>(REST_API.GET.usersNotExist))
+      .flatMap(() => this.http.get<boolean>(REST_API.GET.usersNotExist))
       .do(usersNotExist => this.usersNotExist = usersNotExist)
       .flatMap(usersNotExist => usersNotExist ?
-        of(null) : this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(e => of(null)))
+        of(null) : this.http.get<Profile>(REST_API.GET.userById(this.idUser)).catch(() => of(null)))
       .do((user: Profile) => {
         if (!user) {
           user = new Profile();
@@ -82,7 +82,7 @@ export class CreateUserComponent implements OnInit {
         this.user = user;
         if (this.user.birthday) this.user.birthday = new Date(this.user.birthday);
       })
-      .flatMap(user => this.allRoles === null ? this.http.get<any[]>(REST_API.GET.roles) : of(this.allRoles))
+      .flatMap(() => this.allRoles === null ? this.http.get<any[]>(REST_API.GET.roles) : of(this.allRoles))
       .do(pairs => {
         if (this.allRoles === null) {
           this.user.authorities = ERole[ERole.OWNER];
@@ -93,7 +93,7 @@ export class CreateUserComponent implements OnInit {
         }
         this.allRoles = this.allRoles.filter(r => r.id >= this.common.profile.role);
       })
-      .subscribe(users => {
+      .subscribe(() => {
         this.buttonText = this.user.name ? 'update' : 'create';
         this.user['password'] = this.user['password2'] = '';
       });
@@ -131,24 +131,19 @@ export class CreateUserComponent implements OnInit {
     }
 
     if (this.idUser < 0 && this.usersNotExist) {
-      this.http.post(REST_API.POST.firstUser, this.user).subscribe(result => this.onResult(result));
+      this.http.post(REST_API.POST.firstUser, this.user).subscribe(() => this.onResult());
     } else if (this.idUser < 0 && !this.usersNotExist) {
       this.user.card = this.user.card || new Date().getTime().toString();
       if (!this.showPassword) this.user['password'] = this.user.card;
-      this.http.post(REST_API.POST.user, this.user).subscribe(result => this.onResult(result));
+      this.http.post(REST_API.POST.user, this.user).subscribe(() => this.onResult());
     } else {
-      this.http.put(REST_API.PUT.user, this.user).subscribe(result => this.onResult(result));
+      this.http.put(REST_API.PUT.user, this.user).subscribe(() => this.onResult());
     }
   }
 
-  private onResult(response) {
-    if (ERestResult[ERestResult.OK] === response.result) {
-      if (!this.isBack) return;
-      this.common.profile = null;
-      this.location.back();
-    } else {
-      alert('Something wrong.');
-      console.error(response);
-    }
+  private onResult() {
+    if (!this.isBack) return;
+    this.common.profile = null;
+    this.location.back();
   }
 }

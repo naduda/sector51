@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { EConfirmType, ERestResult, IBox, IRole } from '../../entities/common';
+import { EConfirmType, IBox, IRole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
@@ -98,11 +98,7 @@ export class BoxesComponent implements OnInit {
         const b = Object.assign({}, box);
         b.card = b.card ? undefined : this.user.card;
         this.http.put(REST_API.PUT.boxnumber, b)
-          .subscribe((response: any) => {
-            if (response && response.result === ERestResult[ERestResult.OK].toString()) {
-              this.common.navigate('main', { user: this.user['created'] });
-            }
-          });
+          .subscribe(() => this.common.navigate('main', { user: this.user['created'] }));
       }
     });
   }

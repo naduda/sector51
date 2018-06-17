@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ERestResult, IEvent, IResponse } from '../../entities/common';
+import { IEvent } from '../../entities/common';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
 
@@ -21,10 +21,6 @@ export class NotificationsComponent implements OnInit {
 
   applyNotifications() {
     this.http.put(REST_API.PUT.events('email'), { ids: this.selectedEvents.map(e => e.id) })
-      .subscribe((response: IResponse) => {
-        if (ERestResult[ERestResult.OK] !== response.result) {
-          alert('Something wrong...');
-        }
-      });
+      .subscribe(() => { });
   }
 }
