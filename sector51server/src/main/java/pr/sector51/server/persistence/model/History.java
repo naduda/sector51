@@ -14,11 +14,8 @@ public class History {
   private int outcome;
   private int usercome;
 
-  public History(int idEvent, Timestamp idUser, String desc) {
+  public History() {
     super();
-    this.idEvent = idEvent;
-    this.idUser = idUser;
-    this.desc = desc;
   }
 
   @Override
