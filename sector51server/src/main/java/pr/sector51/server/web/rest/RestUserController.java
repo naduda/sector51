@@ -97,7 +97,7 @@ public class RestUserController extends RestCommon {
 
     @PostMapping("public/add/firstUser")
     public ResponseEntity<UserInfo> createFirstUser(@RequestBody UserInfo user) {
-        if (usersNotExist()) {
+        if (!usersNotExist()) {
             throw new IllegalStateException();
         }
         return ResponseEntity.ok(userDao.insertUser(user));
