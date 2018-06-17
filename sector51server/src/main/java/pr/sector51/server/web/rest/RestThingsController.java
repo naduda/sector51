@@ -10,9 +10,7 @@ import pr.sector51.server.persistence.UserDao;
 import pr.sector51.server.persistence.model.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +87,7 @@ public class RestThingsController extends RestCommon {
     @PostMapping("add/userWithServices")
     public ResponseEntity<List<Integer>> insertUserWithServices(@RequestBody List<Map<String, String>> rows) {
         userDao.removeAllUsers();
+        long start = System.currentTimeMillis();
         List<Integer> status = new ArrayList<>(rows.size());
         for (int i = 0; i < rows.size(); i++) {
             status.add(1);
@@ -144,8 +143,11 @@ public class RestThingsController extends RestCommon {
                 status.set(i, 0);
             }
         }
+        String started = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .format(LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneId.systemDefault()));
         userDao.update("DELETE FROM user_service WHERE dtbeg < '2000-01-01';" +
-                "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';");
+                "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';" +
+                "DELETE FROM history WHERE time > '" + started + "';");
         return ResponseEntity.ok(status);
     }
 

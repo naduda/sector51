@@ -136,8 +136,7 @@ $BODY$begin
   delete from barcode where productid = old.id;
   return old;
 end$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+  LANGUAGE plpgsql VOLATILE COST 100;
 ALTER FUNCTION public."afterProductDelete"() OWNER TO postgres;
 
 CREATE OR REPLACE FUNCTION public."afterProductUpdate"()
@@ -170,8 +169,7 @@ begin
   
   return new;
 end$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+  LANGUAGE plpgsql VOLATILE COST 100;
 ALTER FUNCTION public."afterProductUpdate"() OWNER TO postgres;
 
 
@@ -183,8 +181,7 @@ $BODY$BEGIN
   DELETE FROM usersecurity WHERE created = OLD.created;
   RETURN OLD;
 END$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+  LANGUAGE plpgsql VOLATILE COST 100;
 ALTER FUNCTION public."afterUserDelete"() OWNER TO postgres;
 COMMENT ON FUNCTION public."afterUserDelete"() IS 'Clean Box before user delete.';
 
@@ -195,8 +192,7 @@ $BODY$begin
     (select card from userinfo where created = old.iduser);
   return old;
 end$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+  LANGUAGE plpgsql VOLATILE COST 100;
 ALTER FUNCTION public."afterUserServiceDelete"() OWNER TO postgres;
 
 CREATE OR REPLACE FUNCTION public."logOnProductInsert"()
@@ -206,21 +202,23 @@ $BODY$begin
     values(4, null, now(), new.name || '; price - ' || round (new.price / 100::decimal, 2)::varchar, 0, 0, 0);
   return new;
 end$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+  LANGUAGE plpgsql VOLATILE COST 100;
 ALTER FUNCTION public."logOnProductInsert"() OWNER TO postgres;
 
-CREATE OR REPLACE FUNCTION public."logOnUserServiceInsert"()
+CREATE OR REPLACE FUNCTION public."afterUserServiceInsert"()
   RETURNS trigger AS
 $BODY$begin
-  insert into history(idevent, iduser, time, "desc", income, outcome, usercome)
-  values(2, new.iduser, now(), (select name from service where id = new.idservice),
-    (select price from service where id = new.idservice) * 100, 0, 0);
+  IF new.idservice = 2 THEN
+    UPDATE box SET card = (SELECT card FROM userinfo WHERE created = new.iduser) WHERE number = new.value::int AND idtype = 3;
+  END IF;
+  INSERT INTO history(idevent, iduser, time, "desc", income, outcome, usercome)
+  VALUES(2, new.iduser, now(), (SELECT name FROM service WHERE id = new.idservice),
+    (SELECT price FROM service WHERE id = new.idservice) * 100, 0, 0);
   return new;
 end$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION public."logOnUserServiceInsert"() OWNER TO postgres;
+  LANGUAGE plpgsql VOLATILE COST 100;
+ALTER FUNCTION public."afterUserServiceInsert"() OWNER TO postgres;
+
 
 CREATE OR REPLACE FUNCTION public."afterUserInsert"()
   RETURNS trigger AS
@@ -228,8 +226,7 @@ $BODY$begin
   INSERT INTO barcode(productId, code) VALUES(100, new.card);
   return new;
 end$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+  LANGUAGE plpgsql VOLATILE COST 100;
 ALTER FUNCTION public."afterUserInsert"() OWNER TO postgres;
 
 --Triggers
@@ -251,17 +248,17 @@ CREATE TRIGGER tr_after_product_update
   FOR EACH ROW
   EXECUTE PROCEDURE public."afterProductUpdate"();
 
+CREATE TRIGGER tr_after_user_service_insert
+  AFTER INSERT
+  ON public.user_service
+  FOR EACH ROW
+  EXECUTE PROCEDURE public."afterUserServiceInsert"();
+
 CREATE TRIGGER tr_after_user_service_delete
   AFTER DELETE
   ON public.user_service
   FOR EACH ROW
   EXECUTE PROCEDURE public."afterUserServiceDelete"();
-
-CREATE TRIGGER tr_log_afrer_insert
-  AFTER INSERT
-  ON public.user_service
-  FOR EACH ROW
-  EXECUTE PROCEDURE public."logOnUserServiceInsert"();
 
 CREATE TRIGGER tr_after_user_delete
   AFTER DELETE
