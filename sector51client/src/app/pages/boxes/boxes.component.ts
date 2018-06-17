@@ -64,11 +64,6 @@ export class BoxesComponent implements OnInit {
     this.boxes.sort((a, b) => a.number - b.number);
   }
 
-  changeType(type: IRole) {
-    this.type = type;
-    this.refreshBoxes();
-  }
-
   insertOrRemoveBoxNumber(insert: boolean) {
     const nums = this.number.split('-').map(s => Number(s));
     const min = Math.min.apply(Math, nums);

@@ -1,16 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { ComponentFixture, TestBed, async, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
 import { AngularSplitModule } from 'angular-split';
 import { of } from 'rxjs/observable/of';
 import { ERole } from '../entities/common';
 import { Profile } from '../entities/profile';
 import { CommonService } from '../services/common.service';
-import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { ElementTools, USERS_MOCK } from '../testing/commonTest';
+import { TranslatePipeStub } from '../testing/TranslatePipeStub';
 import { MainComponent } from './main.component';
 
 describe('MainComponent', () => {
@@ -36,7 +35,6 @@ describe('MainComponent', () => {
           { path: 'main', component: MainComponent },
           { path: 'registration/:idUser', component: MainComponent }
         ]),
-        NgbModule.forRoot(),
         AngularSplitModule
       ],
       providers: [
