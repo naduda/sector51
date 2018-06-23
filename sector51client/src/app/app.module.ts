@@ -12,6 +12,7 @@ import { ConfirmationService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
 import { MessageService } from 'primeng/components/common/messageservice';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ContextMenuModule } from 'primeng/contextmenu';
 import { DropdownModule } from 'primeng/dropdown';
 import { GrowlModule } from 'primeng/growl';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -95,6 +96,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DropdownModule,
     ConfirmDialogModule,
     GrowlModule,
+    ContextMenuModule,
     Sector51RoutingModule
   ],
   providers: [

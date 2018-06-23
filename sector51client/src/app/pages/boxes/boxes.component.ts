@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { EConfirmType, IBox, IRole } from '../../entities/common';
+import { EConfirmType, IBox, IRole, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
@@ -21,6 +21,7 @@ export class BoxesComponent implements OnInit {
   number: string;
   tooltip: string;
   private user: Profile;
+  private userServices: IUserService[];
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private common: CommonService) {
     this.types = [];
@@ -31,7 +32,7 @@ export class BoxesComponent implements OnInit {
     this.route.queryParams
       .flatMap(params => params.code ? this.http.get<Profile>(REST_API.GET.userByCard(params.code)) : of(new Profile()))
       .do(user => this.user = user)
-      .flatMap(user => this.http.get<IRole[]>(REST_API.GET.boxtypes))
+      .flatMap(() => this.http.get<IRole[]>(REST_API.GET.boxtypes))
       .do(boxtypes => {
         this.types = boxtypes;
         if (!this.user.card) {
@@ -41,7 +42,9 @@ export class BoxesComponent implements OnInit {
         }
         this.type = this.type || { id: -1, name: 'new' };
       })
-      .flatMap(boxtypes => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
+      .flatMap(() => this.http.get<IUserService[]>(REST_API.GET.userServices(this.user['created'])))
+      .do(services => this.userServices = services)
+      .flatMap(() => this.http.get<IBox[]>(REST_API.GET.boxnumbers))
       .subscribe(boxnumbers => {
         this.boxNumbers = boxnumbers;
         this.refreshBoxes();
@@ -88,6 +91,8 @@ export class BoxesComponent implements OnInit {
   updateBox(box: IBox) {
     if (box.idtype === 3) return;
 
+    const twelve = this.userServices.find(s => s.idService === 14);
+
     this.common.confirm({
       type: EConfirmType.YES,
       header: this.user.surname + ' ' + this.user.name,
@@ -97,7 +102,11 @@ export class BoxesComponent implements OnInit {
       accept: () => {
         const b = Object.assign({}, box);
         b.card = b.card ? undefined : this.user.card;
+        if (b.card && twelve) {
+          twelve.value = (+twelve.value - 1) + '';
+        }
         this.http.put(REST_API.PUT.boxnumber, b)
+          .flatMap(() => twelve ? this.http.put(REST_API.PUT.userService, twelve) : of(''))
           .subscribe(() => this.common.navigate('main', { user: this.user['created'] }));
       }
     });

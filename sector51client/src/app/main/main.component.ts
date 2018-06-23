@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { MenuItem } from 'primeng/api';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/mergeMap';
 import { ERole, IBox } from '../entities/common';
@@ -15,22 +15,25 @@ import { CommonService } from '../services/common.service';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
-  public selectedUserId: number;
-  public user: Profile;
-  public permissions: boolean;
-  public wWidth: number;
-  public sizeValue: number[];
-  public isOwner: boolean;
-  public searchText: string;
+  selectedUserId: number;
+  user: Profile;
+  permissions: boolean;
+  wWidth: number;
+  sizeValue: number[];
+  isOwner: boolean;
+  searchText: string;
+  contextItems: MenuItem[];
   private boxes: IBox[];
 
-  constructor(private http: HttpClient, private route: ActivatedRoute,
-    public common: CommonService, private translate: TranslateService) {
+  constructor(private http: HttpClient, private route: ActivatedRoute, public common: CommonService) {
     this.wWidth = window.innerWidth;
     this.isOwner = common.profile.role === ERole.OWNER;
   }
 
   ngOnInit() {
+    this.contextItems = [
+      { label: 'Keys', id: '1', command: () => this.goToKeys() }
+    ];
     this.permissions = this.common.profile.role < ERole.USER;
 
     this.route.queryParams
@@ -54,6 +57,10 @@ export class MainComponent implements OnInit {
       .subscribe(users => {
         this.user = this.common.users.find(u => u['created'] === this.selectedUserId);
       });
+  }
+
+  private goToKeys() {
+    this.http.post(REST_API.POST.scanner(this.user.card), {}).subscribe();
   }
 
   get activeUsers(): Profile[] {

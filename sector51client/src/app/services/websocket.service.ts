@@ -9,6 +9,7 @@ export class WebsocketService {
   private ws: WebSocket;
   private http: HttpClient;
   private token: string;
+  private isConnected: boolean;
 
   constructor(private common: CommonService) { }
 
@@ -19,6 +20,8 @@ export class WebsocketService {
   }
 
   public initWebSocket(token: string, httpClient: HttpClient): void {
+    if (this.isConnected) return;
+
     this.token = token;
     const wsUrl = location.origin.replace('http://', 'ws://') + '/wsapi?token=' + token;
     this.http = httpClient;
@@ -26,6 +29,7 @@ export class WebsocketService {
 
     this.ws.onopen = () => {
       console.log('Server Connected.');
+      this.isConnected = true;
     };
 
     this.ws.onmessage = (evt) => {
@@ -120,6 +124,7 @@ export class WebsocketService {
 
     this.ws.onclose = () => {
       console.log('Server Disconnected.');
+      this.isConnected = false;
       this.common.profile && this.common.profile.role < ERole.USER && this.token &&
         setTimeout(() => this.initWebSocket(this.token, this.http), 5000);
     };

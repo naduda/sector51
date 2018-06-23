@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
       if (this.isBarcode(this.barcode)) {
         this.barcode = this.barcode.substring(this.barcode.length - 13);
         this.http.post(REST_API.POST.scanner(this.barcode), {})
-          .subscribe(response => this.barcode = '');
+          .subscribe(() => this.barcode = '');
       }
     } else {
       this.barcode = '';
