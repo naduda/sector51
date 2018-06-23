@@ -24,7 +24,7 @@
       <p-dropdown [style]="{'width': '15rem', 'text-align': 'right', 'padding-right': '0.5rem'}" [options]="allServices" [(ngModel)]="service"
         name="services" optionLabel="name"></p-dropdown>
       <div class="d-inline position-relative">
-        <i class="fa fa-fw fa-plus-square fa-2x ml-2 text-success position-absolute pointer" style="top: -1.35rem;" (click)="addService();"></i>
+        <i class="fa fa-fw fa-plus-square fa-2x ml-2 text-success position-absolute pointer" style="top: -1.35rem;" (click)="addService()"></i>
       </div>
     </div>
   </form>
@@ -76,6 +76,9 @@
                   {{ r.surname + ' ' + r.name }}
                 </option>
               </select>
+            </ng-template>
+            <ng-template pTemplate="input" *ngIf="us.idService === 14">
+              <input type="number" [(ngModel)]="us.value" min="0" max="12">
             </ng-template>
             <ng-template pTemplate="output">{{ us['valueDesc'] }}</ng-template>
           </p-cellEditor>

@@ -118,6 +118,7 @@ INSERT INTO service VALUES(10, 'ABONEMENT (Evening) 6', '-', 2800);
 INSERT INTO service VALUES(11, 'ABONEMENT 12', '-', 4600);
 INSERT INTO service VALUES(12, 'ABONEMENT (Morning) 12', '-', 4000);
 INSERT INTO service VALUES(13, 'ABONEMENT (Evening) 12', '-', 4400);
+INSERT INTO service VALUES(14, 'TWELVE', '-', 500);
 
 CREATE TABLE user_service (
   idservice integer NOT NULL,
