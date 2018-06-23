@@ -55,7 +55,7 @@ export class UserServicesComponent implements OnInit {
   private getAllServices() {
     const all = [];
     if (!this.userServices) return all;
-    this.common.services.filter(s => s.id === 1 || s.id === 2).forEach(s => {
+    this.common.services.filter(s => s.id === 1 || s.id === 2 || s.id === 14).forEach(s => {
       if (!this.userServices.find(us => us.idService === s.id)) all.push(s);
     });
     if (this.service.id < 0 && this.userServices)
@@ -85,6 +85,9 @@ export class UserServicesComponent implements OnInit {
           break;
         case 2:
           s['valueDesc'] = '№' + s.value;
+          break;
+        case 14:
+          s['valueDesc'] = s.value;
           break;
         default: s['valueDesc'] = undefined;
       }
@@ -147,6 +150,7 @@ export class UserServicesComponent implements OnInit {
             }
             break;
           case 2: userService.value = data.boxNumber.number; break;
+          case 14: userService.value = 12; break;
         }
         if (data.error) {
           setTimeout(() =>

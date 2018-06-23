@@ -1,2 +1,2 @@
-FROM naduda/sector51:init
+FROM naduda/sector51
 ADD ./settings.properties /tmp/
