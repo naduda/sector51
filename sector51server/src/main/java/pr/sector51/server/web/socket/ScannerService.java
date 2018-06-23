@@ -60,7 +60,8 @@ public class ScannerService {
               service != null ? service.toString() : null)));
         } else if (barcode != null) {
           Product product = barcodeDao.getPrpoductById(barcode.getProductId());
-          s.sendMessage(new TextMessage(String.format("{\"product\": %s}", product != null ? product.toString() : null)));
+          s.sendMessage(
+              new TextMessage(String.format("{\"product\": %s}", product != null ? product.toString() : null)));
         } else {
           s.sendMessage(new TextMessage(String.format("{\"barcode\": %s}", message)));
         }
