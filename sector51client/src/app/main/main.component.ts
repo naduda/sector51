@@ -59,7 +59,8 @@ export class MainComponent implements OnInit {
       });
   }
 
-  private goToKeys() {
+  public goToKeys() {
+    if (!this.user || !this.user.card) return;
     this.http.post(REST_API.POST.scanner(this.user.card), {}).subscribe();
   }
 

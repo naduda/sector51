@@ -1,0 +1,88 @@
+{
+  "locale": [
+    {
+      "name": "uk",
+      "text": "Українська",
+      "ico": "./assets/images/ukFlag.png"
+    },
+    {
+      "name": "ru",
+      "text": "Русский",
+      "ico": "./assets/images/ruFlag.png"
+    },
+    {
+      "name": "en",
+      "text": "English",
+      "ico": "./assets/images/enFlag.png"
+    }
+  ],
+  "login": {
+    "title": "Authentication",
+    "button": "Login",
+    "login": "login",
+    "logout": "logout",
+    "error": {
+      "incorrectLogin": "Username or password is incorrect"
+    }
+  },
+  "frmProfile": {
+    "difPasswords": "Passwords aren't equal"
+  },
+  "user": {
+    "name": "name",
+    "surname": "surname",
+    "phone": "phone",
+    "card": "card",
+    "birthday": "birthday",
+    "role": "role",
+    "gender": "gender"
+  },
+  "password": "password",
+  "showAll": "show All",
+  "account": "client",
+  "addUser": "add user",
+  "deleteUser": "delete user",
+  "profile": "profile",
+  "permissions": "permissions",
+  "prompt": {
+    "RemoveUserQuestion": "are you sure you want delete selected user?",
+    "RemoveItemQuestion": "are you sure you want delete selected item?"
+  },
+  "apply": "apply",
+  "cancel": "cancel",
+  "save": "save",
+  "attention": "attention{{end}}",
+  "properties": "properties",
+  "delete": "delete",
+  "unknownBarcode": "unknown barcode",
+  "add": "add",
+  "products": "products",
+  "productsList": "list of products",
+  "name": "name",
+  "desc": "description",
+  "price": "price",
+  "count": "count",
+  "create": "create",
+  "update": "update",
+  "cart": "cart",
+  "clear": "clear",
+  "pay": "pay",
+  "key": "key №{{number}}",
+  "settings": "settings",
+  "services": "services",
+  "reports": "reports",
+  "activeUsers": "exist clients",
+  "type": "type",
+  "selder": "selder",
+  "notifications": "notifications",
+  "box": "box",
+  "time": "time",
+  "boxes": "boxes",
+  "history": "history",
+  "object": "object",
+  "main-report": "whole report",
+  "period": "period",
+  "from": "from",
+  "to": "to",
+  "filter": "filter"
+}
