@@ -28,7 +28,7 @@ CREATE TABLE userinfo (
 
 CREATE TABLE barcode (
 	productId integer NOT NULL,
-	code character varying(13) NOT NULL,
+	code character varying(15) NOT NULL,
 	CONSTRAINT pk_barcode PRIMARY KEY (code)
 );
 

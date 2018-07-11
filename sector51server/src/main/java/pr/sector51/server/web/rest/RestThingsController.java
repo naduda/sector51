@@ -94,41 +94,42 @@ public class RestThingsController extends RestCommon {
     List<Integer> status = new ArrayList<>(rows.size());
     for (int i = 0; i < rows.size(); i++) {
       status.add(1);
-      Map<String, String> row = rows.get(i);
-      String password = row.getOrDefault("password", row.get("card"));
-      String roles = row.getOrDefault("user_type", "USER");
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-      String created = formatter.format(LocalDateTime.now());
-      String name = row.get("name");
-      String surname = row.get("surname");
-      String phone = row.getOrDefault("phone", "");
-      String email = row.getOrDefault("email", "");
-      String card = row.get("card");
-      boolean sex = row.get("sex").toUpperCase().equals("M") || row.get("sex").toUpperCase().equals("М");
-      String birthday = row.getOrDefault("birthday", "01.01.1870");
-      LocalDate bd = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-      birthday = formatter.format(bd.atStartOfDay());
-
-      String dtbeg_a = formatter
-          .format(getTimestampFromString(row.getOrDefault("dtbeg_a", "01.01.1970")).toLocalDateTime());
-      String dtend_a = formatter
-          .format(getTimestampFromString(row.getOrDefault("dtend_a", "01.01.1970")).toLocalDateTime());
-      String abontype = row.getOrDefault("abontype", "M");
-      int abonServiceId = abontype.equals("M") || abontype.equals("М") ? 3
-          : abontype.equals("E") || abontype.equals("Е") ? 4 : 0;
-      String boxNumber = row.getOrDefault("box", "0");
-
-      String dtbeg_b = formatter
-          .format(getTimestampFromString(row.getOrDefault("dtbeg_b", "01.01.1970")).toLocalDateTime());
-      String dtend_b = formatter
-          .format(getTimestampFromString(row.getOrDefault("dtend_b", "01.01.1970")).toLocalDateTime());
-
       try {
+        Map<String, String> row = rows.get(i);
+        String password = row.getOrDefault("password", row.get("card"));
+        String roles = row.getOrDefault("user_type", "USER");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        String created = formatter.format(LocalDateTime.now());
+        String name = row.get("name");
+        String surname = row.get("surname");
+        String phone = row.getOrDefault("phone", "");
+        String email = row.getOrDefault("email", "");
+        String card = row.get("card");
+        boolean sex = row.get("sex").toUpperCase().equals("M") || row.get("sex").toUpperCase().equals("М");
+        String birthday = row.getOrDefault("birthday", "01.01.1870");
+        LocalDate bd = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        birthday = formatter.format(bd.atStartOfDay());
+
+        String dtbeg_a = formatter
+                .format(getTimestampFromString(row.getOrDefault("dtbeg_a", "01.01.1970")).toLocalDateTime());
+        String dtend_a = formatter
+                .format(getTimestampFromString(row.getOrDefault("dtend_a", "01.01.1970")).toLocalDateTime());
+        String abontype = row.getOrDefault("abontype", "M");
+        int abonServiceId = abontype.equals("M") || abontype.equals("М") ? 3
+                : abontype.equals("E") || abontype.equals("Е") ? 4 : 0;
+        String boxNumber = row.getOrDefault("box", "0");
+
+        String dtbeg_b = formatter
+                .format(getTimestampFromString(row.getOrDefault("dtbeg_b", "01.01.1970")).toLocalDateTime());
+        String dtend_b = formatter
+                .format(getTimestampFromString(row.getOrDefault("dtend_b", "01.01.1970")).toLocalDateTime());
+
+
         String query = "INSERT INTO usersecurity(password, roles, created) VALUES ('#{password}', '#{roles}', '#{created}');\n"
-            + "INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday)"
-            + "VALUES ('#{created}', '#{name}', '#{sname}', '#{phone}', '#{email}', '#{card}', #{sex}, '#{bd}');\n"
-            + "INSERT INTO user_service VALUES(#{abonServiceId}, '#{created}', '#{dtBeg_a}', '#{dtEnd_a}', '');\n"
-            + "INSERT INTO user_service VALUES(2, '#{created}', '#{dtBeg_b}', '#{dtEnd_b}', '#{boxNumber}');";
+                + "INSERT INTO userinfo(created, name, surname, phone, email, card, sex, birthday)"
+                + "VALUES ('#{created}', '#{name}', '#{sname}', '#{phone}', '#{email}', '#{card}', #{sex}, '#{bd}');\n"
+                + "INSERT INTO user_service VALUES(#{abonServiceId}, '#{created}', '#{dtBeg_a}', '#{dtEnd_a}', '');\n"
+                + "INSERT INTO user_service VALUES(2, '#{created}', '#{dtBeg_b}', '#{dtEnd_b}', '#{boxNumber}');";
         query = query.replace("#{password}", password);
         query = query.replace("#{roles}", roles);
         query = query.replace("#{created}", created);
@@ -151,16 +152,16 @@ public class RestThingsController extends RestCommon {
       }
     }
     String started = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        .format(LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneId.systemDefault()));
+            .format(LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneId.systemDefault()));
     userDao.update("DELETE FROM user_service WHERE dtbeg < '2000-01-01';"
-        + "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';" + "DELETE FROM history WHERE time > '"
-        + started + "';");
+            + "UPDATE userinfo set birthday = null WHERE birthday < '1900-01-01';" + "DELETE FROM history WHERE time > '"
+            + started + "';");
     return ResponseEntity.ok(status);
   }
 
   private Timestamp getTimestampFromString(String value) {
     return new Timestamp(LocalDate.parse(value, DateTimeFormatter.ofPattern("dd.MM.yyyy")).atStartOfDay()
-        .toInstant(ZoneOffset.UTC).toEpochMilli());
+            .toInstant(ZoneOffset.UTC).toEpochMilli());
   }
 
   @PostMapping("add/userservice")
@@ -212,7 +213,7 @@ public class RestThingsController extends RestCommon {
 
   @PutMapping("update/events/{field}")
   public ResponseEntity<String> updateEvents(@PathVariable("field") String field,
-      @RequestBody Map<String, List<Integer>> eventIds) {
+                                             @RequestBody Map<String, List<Integer>> eventIds) {
     if (field == null)
       throw new IllegalArgumentException();
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -225,18 +226,18 @@ public class RestThingsController extends RestCommon {
       events.forEach(e -> {
         boolean isAdd = ids.contains(e.getId());
         switch (field.toLowerCase()) {
-        case "email":
-          String email = e.getEmail() == null ? "" : e.getEmail();
-          email = email.replace(String.valueOf(userId), "").replace(",,", ",");
-          if (isAdd) {
-            email += "," + userId;
-          }
-          if (email.startsWith(","))
-            email = email.substring(1);
-          if (email.endsWith(","))
-            email = email.substring(0, email.length() - 1);
-          e.setEmail(email);
-          break;
+          case "email":
+            String email = e.getEmail() == null ? "" : e.getEmail();
+            email = email.replace(String.valueOf(userId), "").replace(",,", ",");
+            if (isAdd) {
+              email += "," + userId;
+            }
+            if (email.startsWith(","))
+              email = email.substring(1);
+            if (email.endsWith(","))
+              email = email.substring(0, email.length() - 1);
+            e.setEmail(email);
+            break;
         }
         if (thingsDao.updateEvent(e) == 0)
           throw new RuntimeException();
