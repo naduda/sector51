@@ -6,7 +6,7 @@
     </button>
   </div>
   <hr>
-  <p-table *ngIf="isLoaded" [columns]="columns" [value]="rowData" [scrollable]="true" [style]="{width:'100%'}">
+  <p-table *ngIf="isLoaded" [columns]="columns" [value]="rowData" [scrollHeight]="tableHeight+'px'" [scrollable]="true" [style]="{width:'100%'}">
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
         <col *ngFor="let col of columns" style="width:150px">

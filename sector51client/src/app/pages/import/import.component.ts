@@ -13,6 +13,8 @@ import { GoogleSheetsService } from '../../services/google-sheets.service';
 export class ImportComponent implements AfterViewInit {
   columns: ITableColumn[];
   rowData: any[];
+  tableHeight: number;
+  isSignIn: boolean;
 
   constructor(private http: HttpClient, private common: CommonService,
     private googleService: GoogleSheetsService, private zone: NgZone) {
@@ -26,10 +28,12 @@ export class ImportComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.googleService.init('1wl0E300r15yTHyw5uHM1sfrHLCWq1h2c5armNcel7l4', this);
+    const div: any = document.getElementsByClassName('outlet col p-0')[0];
+    const header: any = document.querySelector('sector51-import > div');
+    this.tableHeight = div.offsetHeight - header.offsetHeight - 50;
   }
 
-  private onGoogleAuth(values: string[][]) {
-    const that = this['target'];
+  private onGoogleAuth(values: string[][], that: ImportComponent) {
     that.columns = [];
     values[0].forEach(cell => that.columns.push({ field: cell.toLowerCase(), header: cell.toUpperCase() }));
     for (let i = 1; i < values.length; i++) {
@@ -46,6 +50,7 @@ export class ImportComponent implements AfterViewInit {
       }
       that.rowData.push(row);
     }
+    that.isSignIn = true;
     that.zone.run(() => console.log(that.rowData.length + ' rows was loaded.'));
   }
 

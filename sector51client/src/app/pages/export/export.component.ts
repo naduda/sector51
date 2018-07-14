@@ -14,7 +14,7 @@ export class ExportComponent implements OnInit, AfterViewInit {
   columns: ITableColumn[];
   rowData: any[];
   isLoaded: boolean;
-  private tableHeight: number;
+  tableHeight: number;
 
   constructor(private http: HttpClient) {
   }
@@ -43,7 +43,7 @@ export class ExportComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const div: any = document.getElementsByClassName('outlet col p-0')[0];
     const header: any = document.querySelector('sector51-export > div');
-    this.tableHeight = div.offsetHeight - header.offsetHeight - 40;
+    this.tableHeight = div.offsetHeight - header.offsetHeight - 50;
   }
 
   export() {
@@ -71,11 +71,8 @@ export class ExportComponent implements OnInit, AfterViewInit {
         const row: any = Object.assign({}, user);
         delete row.created;
         delete row.balance;
-        this.http.get<any>(REST_API.GET.userServices(user['created'])).subscribe(response => {
-          const services: IUserService[] = response.message;
-          services.forEach(service => {
-            this.addService(row, service);
-          });
+        this.http.get<any>(REST_API.GET.userServices(user['created'])).subscribe((services: IUserService[]) => {
+          services.forEach(service => this.addService(row, service));
 
           row.sex = user.sex ? 'M' : 'W';
           row.birthday = this.timestamp2Date(user.birthday);
