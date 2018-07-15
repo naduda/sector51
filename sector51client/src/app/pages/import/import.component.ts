@@ -8,7 +8,8 @@ import { GoogleSheetsService } from '../../services/google-sheets.service';
 @Component({
   selector: 'sector51-import',
   templateUrl: './import.component.html',
-  styleUrls: ['./import.component.css']
+  styleUrls: ['./import.component.css'],
+  providers: [GoogleSheetsService]
 })
 export class ImportComponent implements AfterViewInit {
   columns: ITableColumn[];
@@ -23,7 +24,7 @@ export class ImportComponent implements AfterViewInit {
   }
 
   getGoogleValues() {
-    this.googleService.getValues('Clients', 'A:O', this.onGoogleAuth);
+    this.googleService.readSheetValues('Clients', 'A:O', this.onGoogleAuth);
   }
 
   ngAfterViewInit(): void {
@@ -44,7 +45,7 @@ export class ImportComponent implements AfterViewInit {
         const cell = that.columns[j].field;
         if (cell === 'phone') {
           row[cell] = that.fixPhoneNumber(element[j]);
-        } else {
+        } else if (element[j]) {
           row[cell] = element[j];
         }
       }

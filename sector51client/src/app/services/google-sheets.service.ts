@@ -4,57 +4,76 @@ const gapiConfig = {
   apiKey: 'AIzaSyDSgxxXYkbmYHxuINDutoMknTYDab3Wpus',
   clientId: '416030521463-v5v16i1oohqpncf8kvr84aigf3oincrb.apps.googleusercontent.com',
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-  scope: 'https://www.googleapis.com/auth/spreadsheets.readonly'
+  scope: 'https://www.googleapis.com/auth/spreadsheets'
 };
 
 @Injectable()
 export class GoogleSheetsService {
-  private cb: any;
   private spreadsheetId: string;
-  private sheetName: string;
-  private range: string;
   private target: any;
 
   constructor() { }
 
-  private initClient() {
-    gapi.client.init(gapiConfig)
-      .then(() => {
-        gapi.auth2.getAuthInstance().isSignedIn.listen((isSignedIn) => this.updateSigninStatus(isSignedIn));
-        this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-      });
+  signIn = () => gapi.auth2.getAuthInstance().signIn();
+  signOut = () => gapi.auth2.getAuthInstance().signOut();
+  get isSignedIn() {
+    return gapi.auth2.getAuthInstance().isSignedIn.get();
   }
 
   init(spreadsheetId: string, target: any) {
     this.spreadsheetId = spreadsheetId;
     this.target = target;
-    gapi.load('client:auth2', () => this.initClient());
+    gapi.load('client:auth2', () => gapi.client.init(gapiConfig));
   }
 
-  getValues(sheetName: string, range: string, callback: any) {
-    this.sheetName = sheetName;
-    this.range = range;
-    this.cb = callback;
-    gapi.auth2.getAuthInstance().signIn();
-  }
-
-  private updateSigninStatus(isSignedIn) {
-    isSignedIn && this.setSheetValues();
-  }
-
-  private setSheetValues() {
-    gapi.client.sheets.spreadsheets.values.get({
+  private appendSheetValues(sheetName: string, range: string, values: any[], cb: Function) {
+    const body = { values: values };
+    gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: this.spreadsheetId,
-      range: this.sheetName + '!' + this.range,
-    }).then((response) => {
-      const range = response.result;
-      if (range.values.length > 0) {
-        this.cb && this.cb(range.values, this.target);
-        gapi.auth2.getAuthInstance().signOut();
-      }
-    }, (response) => {
-      console.log(response);
-      gapi.auth2.getAuthInstance().signOut();
+      range: sheetName + '!' + range,
+      valueInputOption: 'RAW', // 'USER_ENTERED',
+      resource: body
+    }).then(() => {
+      cb(true);
+      this.signOut();
+    }, () => {
+      cb(false);
+      this.signOut();
+    });
+  }
+
+  writeSheetValues(sheetName: string, range: string, values: any[], cb: Function) {
+    this.signIn().then((r) => {
+      if (!this.isSignedIn) return;
+
+      this.clearCells(sheetName, range)
+        .then(() => this.appendSheetValues(sheetName, range, values, cb), () => this.signOut());
+    });
+  }
+
+  private clearCells(sheetName: string, range: string) {
+    return gapi.client.sheets.spreadsheets.values.clear({
+      spreadsheetId: this.spreadsheetId,
+      range: sheetName + '!' + range
+    });
+  }
+
+  readSheetValues(sheetName: string, range: string, cb: Function) {
+    this.signIn().then((r) => {
+      if (!this.isSignedIn) return;
+
+      gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: sheetName + '!' + range,
+      }).then((response) => {
+        const range = response.result;
+        if (range.values.length > 0) {
+          cb(range.values, this.target);
+          this.signOut();
+        }
+      }, () => {
+        this.signOut();
+      });
     });
   }
 }
