@@ -3,20 +3,22 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ERole, ITableColumn, IUserService } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
+import { GoogleSheetsService } from '../../services/google-sheets.service';
 
 @Component({
   selector: 'sector51-export',
   templateUrl: './export.component.html',
-  styleUrls: ['./export.component.css']
+  styleUrls: ['./export.component.css'],
+  providers: [GoogleSheetsService]
 })
 export class ExportComponent implements OnInit, AfterViewInit {
   height: string;
   columns: ITableColumn[];
   rowData: any[];
   isLoaded: boolean;
-  private tableHeight: number;
+  tableHeight: number;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private googleService: GoogleSheetsService) {
   }
 
   ngOnInit() {
@@ -43,47 +45,58 @@ export class ExportComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const div: any = document.getElementsByClassName('outlet col p-0')[0];
     const header: any = document.querySelector('sector51-export > div');
-    this.tableHeight = div.offsetHeight - header.offsetHeight - 40;
+    this.tableHeight = div.offsetHeight - header.offsetHeight - 50;
+    this.googleService.init('1wl0E300r15yTHyw5uHM1sfrHLCWq1h2c5armNcel7l4', this);
   }
 
   export() {
-
+    const values = [];
+    this.rowData.forEach(r => values.push(this.rowToArray(r)));
+    this.googleService.writeSheetValues('Clients', 'A2:O', values, (isSuccess) => console.log(isSuccess));
   }
 
   loadData() {
     this.isLoaded = false;
-    this.http.get<Profile[]>(REST_API.GET.users).subscribe(users => {
-      users.sort((a: Profile, b: Profile) => {
-        if (a.surname < b.surname) {
-          return -1;
-        } else if (a.surname > b.surname) {
-          return 1;
-        } else if (a.name < b.name) {
-          return -1;
-        } else if (a.name > b.name) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-      users.forEach(user => {
-        if (user['roles'] === ERole[ERole.OWNER]) return;
-        const row: any = Object.assign({}, user);
-        delete row.created;
-        delete row.balance;
-        this.http.get<any>(REST_API.GET.userServices(user['created'])).subscribe(response => {
-          const services: IUserService[] = response.message;
-          services.forEach(service => {
-            this.addService(row, service);
-          });
+    let users: Profile[];
+    this.http.get<Profile[]>(REST_API.GET.users)
+      .do(data => users = data)
+      .flatMap(() => this.http.get<any[]>(REST_API.GET.allUserServices))
+      .subscribe(services => {
+        users.sort(this.sortUsers);
+        users.forEach(user => {
+          if (user['roles'] === ERole[ERole.OWNER]) return;
+          const row: any = Object.assign({}, user);
+          delete row.created;
+          delete row.balance;
+          const userServices = services.filter(s => s.idUser === user['created']);
+          userServices.forEach(service => this.addService(row, service));
 
           row.sex = user.sex ? 'M' : 'W';
           row.birthday = this.timestamp2Date(user.birthday);
           this.rowData.push(row);
         });
+        this.isLoaded = true;
       });
-      this.isLoaded = true;
-    });
+  }
+
+  private rowToArray(r): any[] {
+    return [r.surname, r.name, r.phone, r.sex, r.card,
+    r.abontype, r.dtbeg_a, r.dtend_a, r.box, r.dtbeg_b, r.dtend_b,
+    r.birthday, r.roles, '', r.email];
+  }
+
+  private sortUsers(a: Profile, b: Profile): number {
+    if (a.surname < b.surname) {
+      return -1;
+    } else if (a.surname > b.surname) {
+      return 1;
+    } else if (a.name < b.name) {
+      return -1;
+    } else if (a.name > b.name) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   private addService(row: any, service: IUserService) {
@@ -91,9 +104,26 @@ export class ExportComponent implements OnInit, AfterViewInit {
     const dtEnd = this.timestamp2Date(service.dtEnd);
     switch (service.idService) {
       case 0:
-      case 3:
-      case 4:
+      case 5:
+      case 8:
+      case 11:
         row.abontype = 'F';
+        row.dtbeg_a = dtBeg;
+        row.dtend_a = dtEnd;
+        break;
+      case 3:
+      case 6:
+      case 9:
+      case 12:
+        row.abontype = 'M';
+        row.dtbeg_a = dtBeg;
+        row.dtend_a = dtEnd;
+        break;
+      case 4:
+      case 7:
+      case 10:
+      case 13:
+        row.abontype = 'E';
         row.dtbeg_a = dtBeg;
         row.dtend_a = dtEnd;
         break;

@@ -85,6 +85,11 @@ public class RestThingsController extends RestCommon {
     return ResponseEntity.ok(thingsDao.getUserServices(userId));
   }
 
+  @GetMapping("userservices")
+  public ResponseEntity<List<UserService51>> userServices() {
+    return ResponseEntity.ok(thingsDao.getUserServices());
+  }
+
   // POST
   // ============================================================================
   @PostMapping("add/userWithServices")

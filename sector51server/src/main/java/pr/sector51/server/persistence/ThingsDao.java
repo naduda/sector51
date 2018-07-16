@@ -57,6 +57,10 @@ public class ThingsDao extends CommonDao {
         return thingsMapper.getUserServices(idUser);
     }
 
+    public List<UserService51> getUserServices() {
+        return thingsMapper.getAllUserServices();
+    }
+
     public UserService51 insertUserService(UserService51 userServise) {
         return thingsMapper.insertUserService(userServise);
     }

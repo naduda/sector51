@@ -12,7 +12,7 @@ split {
 div.rounded, .card { height: 100%; }
 div.rounded { border: 1px solid rgba(0,0,0,.125); }
 
-
-@media (max-width: 750px) {
-  .test { display: none !important; }
+ul.list-group {
+  height: calc(100% - 40px);
+  overflow-y: auto;
 }

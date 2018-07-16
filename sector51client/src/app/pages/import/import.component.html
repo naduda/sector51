@@ -6,7 +6,7 @@
     </button>
   </div>
   <hr>
-  <p-table [columns]="columns" [value]="rowData" *ngIf="columns" [scrollable]="true" [scrollable]="true">
+  <p-table [columns]="columns " [value]="rowData" *ngIf="isSignIn" [scrollHeight]="tableHeight+'px'" [scrollable]="true" [scrollable]="true">
     <ng-template pTemplate="header" let-columns>
       <tr>
         <th *ngFor="let column of columns">

@@ -50,6 +50,9 @@ public interface IThingsMapper {
           "WHERE us.idUser = #{idUser};")
   List<UserService51> getUserServices(@Param("idUser") Timestamp idUser);
 
+  @Select("SELECT us.*, s.name as \"desc\" FROM user_service AS us LEFT JOIN service AS s ON s.id = us.idservice ")
+  List<UserService51> getAllUserServices();
+
   @Select("INSERT INTO user_service VALUES(#{idService}, #{idUser}, #{dtBeg}, #{dtEnd}, #{value}) RETURNING *;")
   UserService51 insertUserService(UserService51 userServise);
 

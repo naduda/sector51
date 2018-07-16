@@ -7,7 +7,7 @@
   <hr>
   <split [direction]="wWidth > 540 ? 'horizontal' : 'vertical'" gutterSize="3" (dragEnd)="onDragEnd(0, $event)" *ngIf="sizeValue">
     <split-area [size]="sizeValue[0]" [ngClass]="{'pr-1 pb-0': wWidth > 540, 'pr-0 pb-1': wWidth<=540}">
-      <div class="rounded mt-0">
+      <div class="rounded mt-0 h-100">
         <div class="input-group mt-1 mb-1">
           <div class="input-group-prepend">
             <span class="input-group-text pointer" (click)="goToKeys()">

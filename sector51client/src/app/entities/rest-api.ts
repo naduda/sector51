@@ -39,6 +39,8 @@ export const REST_API = {
     services: ROOT + '/services',
     /** /api/userservices/{idUser: Timestamp} */
     userServices: (idUser: number) => ROOT + '/userservices/' + idUser,
+    /** /api/userservices */
+    allUserServices: ROOT + '/userservices',
     /** /api/history */
     history: (dtBeg: Date, dtEnd: Date) => ROOT + '/history/' + dtBeg.getTime() + '_' + dtEnd.getTime(),
     /** /api/events */
