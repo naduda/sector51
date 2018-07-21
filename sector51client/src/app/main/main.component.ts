@@ -89,4 +89,11 @@ export class MainComponent implements OnInit {
       this.common.navigate('main', newparams);
     }).unsubscribe();
   }
+
+  onUserRemove(created: string) {
+    const user = this.common.users.find(u => u['created'] === created);
+    const idx = this.common.users.indexOf(user);
+    this.common.users.splice(idx, 1);
+    this.common.navigate('/main');
+  }
 }

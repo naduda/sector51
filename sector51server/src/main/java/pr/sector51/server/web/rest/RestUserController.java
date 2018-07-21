@@ -38,7 +38,7 @@ public class RestUserController extends RestCommon {
   @DeleteMapping("delete/userById/{created}")
   public ResponseEntity<String> removeUser(@PathVariable("created") long created) {
     boolean success = userDao.deleteUser(new Timestamp(created)) == 1;
-    return ResponseEntity.ok("User was" + (success ? "" : "n't") + "deleted.");
+    return ResponseEntity.ok("User was" + (success ? "" : "n't") + " deleted.");
   }
 
   // GET

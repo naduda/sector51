@@ -1,5 +1,6 @@
 package pr.sector51.server.persistence;
 
+import com.google.common.base.Strings;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -104,7 +105,7 @@ public class UserDao extends CommonDao implements IUserMapper {
 
     public boolean updateUser(UserInfo userInfo) {
         UserSecurity userExist = userMapper.getUserSecurityById(userInfo.getCreated());
-        if (userInfo.getPassword() == null) {
+        if (Strings.isNullOrEmpty(userInfo.getPassword())) {
             userInfo.setPassword(userExist.getPassword());
         } else {
             userInfo.setPassword(encoder.encode(userInfo.getPassword()));

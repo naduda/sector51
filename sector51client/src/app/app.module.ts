@@ -106,8 +106,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CommonService,
     WebsocketService,
     ConfirmationService,
-    MessageService,
-    // GoogleSheetsService
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

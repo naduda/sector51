@@ -11,7 +11,7 @@ form {
   background-color: #eee;
 }
 
-button.btn { width: 6rem; }
+button.btn-primary { width: 6rem; }
 button.btn:hover { cursor: pointer; }
 
 .ng-valid[required], .ng-valid.required {

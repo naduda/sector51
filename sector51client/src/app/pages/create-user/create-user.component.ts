@@ -1,10 +1,10 @@
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgModel } from '@angular/forms/src/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs/observable/of';
-import { ERole, ESex, IRole } from '../../entities/common';
+import { EConfirmType, ERole, ESex, IRole } from '../../entities/common';
 import { Profile } from '../../entities/profile';
 import { REST_API } from '../../entities/rest-api';
 import { CommonService } from '../../services/common.service';
@@ -15,6 +15,9 @@ import { CommonService } from '../../services/common.service';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
+  @Output('removeUser')
+  removeUserEvent: EventEmitter<string>;
+
   @Input() set profile(value) {
     if (!value) {
       return;
@@ -45,6 +48,7 @@ export class CreateUserComponent implements OnInit {
 
   constructor(private http: HttpClient, private location: Location,
     private route: ActivatedRoute, public common: CommonService) {
+    this.removeUserEvent = new EventEmitter(null);
     this.buttonText = 'create';
     this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;
     this.genders = [
@@ -124,11 +128,20 @@ export class CreateUserComponent implements OnInit {
     return (this.user['password'] === this.user['password2'] || !this.created) && this.user.authorities.length > 0;
   }
 
+  removeUser() {
+    const created = this.user['created'];
+    this.common.confirm({
+      type: EConfirmType.YES_NO,
+      headerClass: 'bg-danger',
+      icon: 'fa fa-question-circle-o fa-2x text-danger',
+      message: 'prompt.RemoveUserQuestion',
+      accept: () => this.http.delete(REST_API.DELETE.userById(created))
+        .subscribe(() => this.removeUserEvent.emit(created))
+    });
+  }
+
   onSubmit() {
     this.user['roles'] = this.user.authorities;
-    if (this.user['password'] !== undefined && this.user['password'].length === 0) {
-      delete this.user['password'];
-    }
 
     if (this.idUser < 0 && this.usersNotExist) {
       this.http.post(REST_API.POST.firstUser, this.user).subscribe(() => this.onResult());
