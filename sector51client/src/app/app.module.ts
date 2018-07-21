@@ -43,6 +43,7 @@ import { CanActivateAuthGuard } from './services/auth-guard.service';
 import { AuthInterceptor } from './services/auth-interceptor';
 import { AuthenticationService } from './services/authentication.service';
 import { CommonService } from './services/common.service';
+import { ExportService } from './services/export.service';
 import { WebsocketService } from './services/websocket.service';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 
@@ -106,7 +107,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CommonService,
     WebsocketService,
     ConfirmationService,
-    MessageService
+    MessageService,
+    ExportService
   ],
   bootstrap: [AppComponent]
 })

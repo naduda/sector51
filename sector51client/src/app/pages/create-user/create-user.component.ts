@@ -46,8 +46,8 @@ export class CreateUserComponent implements OnInit {
   private idUser: number;
   private isBack = true;
 
-  constructor(private http: HttpClient, private location: Location,
-    private route: ActivatedRoute, public common: CommonService) {
+  constructor(private http: HttpClient, private location: Location, private route: ActivatedRoute,
+    public common: CommonService) {
     this.removeUserEvent = new EventEmitter(null);
     this.buttonText = 'create';
     this.allRoles = this.common.profile ? this.common.profile['iroles'] : null;

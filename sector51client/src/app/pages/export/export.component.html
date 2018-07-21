@@ -4,7 +4,6 @@
     <button class="btn btn-primary" *ngIf="rowData.length > 0" (click)="export()">
       {{ 'export' | translate | titlecase }}
     </button>
-    <button (click)="export()">Test</button>
   </div>
   <hr>
   <p-table *ngIf="isLoaded" [columns]="columns" [value]="rowData" [scrollHeight]="tableHeight+'px'" [scrollable]="true" [style]="{width:'100%'}">
