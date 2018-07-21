@@ -43,12 +43,10 @@ export class GoogleSheetsService {
   }
 
   writeSheetValues(sheetName: string, range: string, values: any[], cb: Function) {
-    this.signIn().then((r) => {
-      if (!this.isSignedIn) return;
+    if (!this.isSignedIn) return;
 
-      this.clearCells(sheetName, range)
-        .then(() => this.appendSheetValues(sheetName, range, values, cb), () => this.signOut());
-    });
+    this.clearCells(sheetName, range)
+      .then(() => this.appendSheetValues(sheetName, range, values, cb), () => this.signOut());
   }
 
   private clearCells(sheetName: string, range: string) {

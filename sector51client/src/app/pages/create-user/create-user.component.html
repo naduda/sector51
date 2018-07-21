@@ -56,8 +56,14 @@
       </div>
     </div>
     <hr>
-    <div class="form-group row justify-content-end mb-0" [hidden]="!usersNotExist && common.profile && !common.profile['permited']">
-      <button class="btn btn-outline-primary mr-3" type="submit">{{ buttonText | translate | titlecase }}</button>
+    <div class="form-group row justify-content-between mb-0" [hidden]="!usersNotExist && common.profile && !common.profile['permited']">
+      <button class="btn btn-outline-danger ml-3" type="button" (click)="removeUser()">
+        <i class="fa fa-fw fa-trash"></i>
+        <span>{{ 'deleteUser' | translate | titlecase }}</span>
+      </button>
+      <button class="btn btn-outline-primary mr-3" type="submit">
+        <span>{{ buttonText | translate | titlecase }}</span>
+      </button>
     </div>
   </form>
 </div>

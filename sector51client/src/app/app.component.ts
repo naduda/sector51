@@ -42,31 +42,43 @@ export class AppComponent implements OnInit {
   readBarcode(event: KeyboardEvent) {
     if (47 < event.keyCode && event.keyCode < 58) {
       this.barcode += event.key;
-      if (this.isBarcode(this.barcode)) {
-        this.barcode = this.barcode.substring(this.barcode.length - 13);
-        this.http.post(REST_API.POST.scanner(this.barcode), {})
-          .subscribe(() => this.barcode = '');
+      let code = '';
+      if (this.isBarcode(this.barcode, 13)) {
+        code = this.barcode.substring(this.barcode.length - 13);
+      } else if (this.isBarcode(this.barcode, 14)) {
+        code = this.barcode.substring(this.barcode.length - 14);
+      } else {
+        return;
       }
+      this.http.post(REST_API.POST.scanner(code), {})
+        .subscribe(() => this.barcode = '');
     } else {
       this.barcode = '';
     }
   }
 
-  private isBarcode(code: string): boolean {
-    if (this.barcode.length < 13) return false;
-    this.barcode = this.barcode.substring(this.barcode.length - 13);
+  private isBarcode(code: string, numCount: number): boolean {
+    if (code.length < numCount) return false;
+    code = code.substring(code.length - numCount);
     let sum1 = 0;
     let sum2 = 0;
-    const digit = +this.barcode[12];
+    const digit = +code[numCount - 1];
 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < numCount - 1; i++) {
       if (i % 2 === 0)
-        sum1 += +this.barcode[i];
+        sum1 += +code[i];
       else
-        sum2 += +this.barcode[i];
+        sum2 += +code[i];
     }
-    sum1 += sum2 * 3;
-    sum1 %= 10;
-    return sum1 + digit === 10;
+
+    if (numCount === 13) {
+      sum1 += sum2 * 3;
+      sum1 %= 10;
+      return sum1 + digit === 10;
+    } else {
+      sum2 += sum1 * 3;
+      sum2 %= 10;
+      return sum2 + digit === 10;
+    }
   }
 }
