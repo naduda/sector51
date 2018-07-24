@@ -16,3 +16,8 @@ ul.list-group {
   height: calc(100% - 40px);
   overflow-y: auto;
 }
+
+li.selected {
+  background-color: #17a2b8!important;
+  color: #fff!important;
+}

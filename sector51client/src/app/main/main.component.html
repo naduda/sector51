@@ -12,11 +12,12 @@
           <input type="text" class="form-control" [(ngModel)]="searchText" placeholder="search">
         </div>
         <ul class="list-group">
-          <li #liuser class="list-group-item p-2 pointer" *ngFor="let u of users | sortusers" [ngClass]="{'bg-info': u['created'] === selectedUserId}"
+          <li #liuser class="list-group-item p-2 pointer text-info" *ngFor="let u of users | sortusers; let idx = index;" [class.selected]="u['created'] === selectedUserId"
             (click)="changeQueryParam('user', u['created'])">
-            <a href="javascript:void(0);" [ngClass]="{'text-danger': u.active && u['created'] !== selectedUserId, 'text-white': u['created'] === selectedUserId}">
+            <span class="d-inline-block text-right pr-2" style="width: 2em;">{{ idx + 1 }}</span>
+            <span [class.text-danger]="u.active && u['created'] !== selectedUserId">
               {{ u.surname + ' ' + u.name }}
-            </a>
+            </span>
             <p-contextMenu *ngIf="u['created'] === selectedUserId" [target]="liuser" appendTo="body" [model]="contextItems"></p-contextMenu>
           </li>
         </ul>

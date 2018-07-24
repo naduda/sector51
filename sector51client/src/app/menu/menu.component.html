@@ -37,6 +37,11 @@
           <a routerLink="/main-report" class="dropdown-item fa fa-fw fa-file">{{ 'main-report' | translate | titlecase }}</a>
         </div>
       </div>
+
+      <div class="statistic text-secondary">
+        <span class="mr-2">Active / All:</span>
+        <span>{{ activeUsers + ' / ' + allUsers }}</span>
+      </div>
     </div>
   </div>
 </nav>
