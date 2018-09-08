@@ -53,14 +53,18 @@ export class BoxesComponent implements OnInit {
 
   private refreshBoxes() {
     this.boxes = this.boxNumbers.filter(b => b.idtype === this.type.id).map((b: IBox) => {
-      b.time = b.card && b.time ? new Date(b.time) : undefined;
+      b.time = b.card && b.card.length > 10 && b.time ? new Date(b.time) : undefined;
       if (b.time) {
         const user = this.common.users.find(u => u.card === b.card);
-        b['tooltip'] = user.surname + ' ' + user.name + '\n';
-        let month: string = (b.time.getMonth() + 1).toString();
-        month = +month < 10 ? '0' + month : month;
-        b['tooltip'] += b.time.getDate() + '.' + month + '.' + b.time.getFullYear() + ' ';
-        b['tooltip'] += b.time.getHours() + ':' + b.time.getMinutes();
+        if (user) {
+          b['tooltip'] = user.surname + ' ' + user.name + '\n';
+          let month: string = (b.time.getMonth() + 1).toString();
+          month = +month < 10 ? '0' + month : month;
+          b['tooltip'] += b.time.getDate() + '.' + month + '.' + b.time.getFullYear() + ' ';
+          b['tooltip'] += b.time.getHours() + ':' + b.time.getMinutes();
+        } else {
+          console.log(`User [${b.card}] does not exist`);
+        }
       }
       return b;
     });
