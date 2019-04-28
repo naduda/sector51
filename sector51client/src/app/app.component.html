@@ -1,30 +1,3 @@
-<div class="container-fluid">
-  <p-growl life="3000"></p-growl>
-  <p-confirmDialog #cd [width]="cd.confirmation && cd.confirmation.width || 320" [ngClass]="cd.confirmation && cd.confirmation.headerClass">
-    <p-footer *ngIf="cd.confirmation">
-      <div *ngIf="cd.confirmation && isMessageType(cd.confirmation)" class="row flex-row align-items-baseline">
-        <div class="col-2">
-          <i class="fa fa-fw" [ngClass]="cd.confirmation.icon"></i>
-        </div>
-        <div class="col-10 text-left">
-          <h6>{{ cd.confirmation.message | translate:cd.confirmation.messageParam | titlecase }}</h6>
-        </div>
-      </div>
-      <sector51-abonement-dialog [input]="cd.confirmation"></sector51-abonement-dialog>
-      <sector51-barcode-dialog [input]="cd.confirmation"></sector51-barcode-dialog>
-      <sector51-product-dialog [input]="cd.confirmation"></sector51-product-dialog>
-      <hr>
-      <button class="btn btn-sm btn-outline-primary text-uppercase" (click)="cd.accept()" [translate]="cd.confirmation.acceptBtn || 'apply'"></button>
-      <button *ngIf="cd.rejectVisible" class="btn btn-sm btn-outline-danger text-uppercase" (click)="cd.reject()" [translate]="cd.confirmation.rejectBtn || 'cancel'"></button>
-    </p-footer>
-  </p-confirmDialog>
-  <div class="row" *ngIf="locales && currentLang">
-    <div *ngIf="!common.isLogin">
-      <sector51-toolbar [locales]="locales" [currentLang]="currentLang" (langChange)="onLangChange($event)">
-      </sector51-toolbar>
-    </div>
-    <div class="outlet col p-0">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
+<h1>main</h1>
+
+<router-outlet></router-outlet>
