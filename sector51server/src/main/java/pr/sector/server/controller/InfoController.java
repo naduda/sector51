@@ -12,7 +12,7 @@ public class InfoController {
 
   @GetMapping("info")
   public ResponseEntity<InfoDTO> info() {
-    InfoDTO result = new InfoDTO();
+    var result = new InfoDTO();
     return ResponseEntity.ok(result);
   }
 }

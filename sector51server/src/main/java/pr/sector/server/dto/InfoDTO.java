@@ -8,7 +8,7 @@ public class InfoDTO {
   private final String version;
 
   public InfoDTO() {
-    this.name = "sector-server";
+    this.name = "sector51-server";
     this.version = "0.0.1";
   }
 }
