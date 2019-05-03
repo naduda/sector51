@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdscaleGuardGuard } from '../common/auth/adscale-guard.guard';
+import { AuthGuard } from '../common/auth/auth-guard.guard';
 import { UserListComponent } from './user-list/user-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'list' },
   {
-    path: '', component: UserListComponent, canActivate: [AdscaleGuardGuard]
+    path: '', component: UserListComponent, canActivate: [AuthGuard]
   }
 ];
 

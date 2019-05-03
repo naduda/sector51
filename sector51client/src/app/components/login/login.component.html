@@ -1,4 +1,17 @@
-<h3 class="text-danger">login works!</h3>
+<div class="login p-4">
+  <div class="form-inline">
+    <label class="my-0 mr-2" for="login-name">Name</label>
+    <input type="text" class="form-control" id="login-name" [(ngModel)]="name" autocomplete="off">
+  </div>
+  <br>
+
+  <div class="form-inline">
+    <label class="my-0 mr-2" for="login-password">Password</label>
+    <input type="text" class="form-control" id="login-password" [(ngModel)]="password">
+  </div>
+  <br>
+  <button class="btn btn-primary px-5" (click)="login()">Login</button>
+</div>
 <br>
 <hr>
 <a routerLink="/users">Users</a>

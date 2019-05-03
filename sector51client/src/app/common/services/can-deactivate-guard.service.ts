@@ -11,7 +11,8 @@ export interface ICanDeactivate {
 })
 export class CanDeactivateGuard implements CanDeactivate<ICanDeactivate> {
 
-  canDeactivate(component: ICanDeactivate, currentRoute: ActivatedRouteSnapshot, currentState: RouterStateSnapshot, nextState?: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
+  canDeactivate(component: ICanDeactivate, currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot, nextState?: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
     return component.canDeactivate ? component.canDeactivate() : true;
   }
 
