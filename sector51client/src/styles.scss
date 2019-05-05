@@ -1,0 +1,29 @@
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web);
+
+html {
+  height: 100%;
+
+  body {
+    height: 100%;
+    font-family: 'Titillium Web', sans-serif !important;
+  }
+}
+
+sector-login {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.between-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}

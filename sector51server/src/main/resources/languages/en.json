@@ -1,0 +1,12 @@
+{
+  "common": {
+    "apply": "apply",
+    "cancel": "cancel"
+  },
+  "login": {
+    "auth": "authentication",
+    "login": "login",
+    "password": "password",
+    "forgot": "forgot password?"
+  }
+}

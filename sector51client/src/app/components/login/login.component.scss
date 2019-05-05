@@ -1,0 +1,17 @@
+#login {
+  padding: 1rem;
+  width: 25rem;
+  height: 16.5rem;
+
+  .form-inline {
+    label {
+      min-width: 30%;
+      font-weight: bold;
+      justify-content: flex-start;
+    }
+
+    input {
+      flex: 1;
+    }
+  }
+}

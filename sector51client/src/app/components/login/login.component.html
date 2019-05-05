@@ -1,17 +1,25 @@
-<div class="login p-4">
+<div id="login" class="border rounded">
+  <header class="text-center">
+    <h5 [innerHTML]="translation.login.auth | uppercase" class="bold"></h5>
+    <hr>
+  </header>
+
   <div class="form-inline">
-    <label class="my-0 mr-2" for="login-name">Name</label>
+    <label class="my-0 mr-2" for="login-name" [innerHTML]="translation.login.login | titlecase"></label>
     <input type="text" class="form-control" id="login-name" [(ngModel)]="name" autocomplete="off">
   </div>
   <br>
 
   <div class="form-inline">
-    <label class="my-0 mr-2" for="login-password">Password</label>
+    <label class="my-0 mr-2" for="login-password" [innerHTML]="translation.login.password | titlecase"></label>
     <input type="text" class="form-control" id="login-password" [(ngModel)]="password">
   </div>
-  <br>
-  <button class="btn btn-primary px-5" (click)="login()">Login</button>
+  <hr>
+
+  <footer class="between-center">
+    <a href="javascript:void(0)" [innerHTML]="translation.login.forgot | titlecase" pTooltip="Not implement yet"
+      tooltipPosition="bottom"></a>
+    <button class="btn btn-primary px-5" (click)="login()"
+      [innerHTML]="translation.common.apply | uppercase">Login</button>
+  </footer>
 </div>
-<br>
-<hr>
-<a routerLink="/users">Users</a>

@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
+import { AuthFakeBackendInterceptor } from './auth/auth-fake-backend';
 import { ErrorInterceptor } from './auth/error.interceptor';
-import { FakeBackendInterceptor } from './auth/fake-backend';
 import { JwtInterceptor } from './auth/jwt-interceptor';
 import { CanDeactivateGuard } from './services/can-deactivate-guard.service';
+import { TranslateService } from './services/translate-service';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
     HttpClientModule
   ],
   exports: [
-  ],
-  providers: [
   ]
 })
 export class SectorCommonModule {
@@ -26,10 +26,11 @@ export class SectorCommonModule {
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         CanDeactivateGuard,
+        TranslateService,
 
         {
           provide: HTTP_INTERCEPTORS,
-          useClass: FakeBackendInterceptor,
+          useClass: AuthFakeBackendInterceptor,
           multi: true
         }
       ]
