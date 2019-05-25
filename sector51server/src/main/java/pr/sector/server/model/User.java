@@ -1,7 +1,10 @@
 package pr.sector.server.model;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -20,10 +23,12 @@ import java.util.Set;
 })
 @Data
 @NoArgsConstructor
-public class User extends DateAudit {
+public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="judgements_id_seq")
+//    @SequenceGenerator(name="judgements_id_seq", sequenceName="judgements_id_seq", allocationSize=1)
     private Long id;
 
     @NotBlank

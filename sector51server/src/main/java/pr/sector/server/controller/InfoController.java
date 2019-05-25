@@ -19,14 +19,18 @@ public class InfoController {
   }
 
   @GetMapping("info")
-//  @Secured("ROLE_ADMIN")
   public ResponseEntity<InfoDTO> info() {
     var result = new InfoDTO();
     return ResponseEntity.ok(result);
   }
 
+  @GetMapping("test")
+  @Secured("ROLE_ADMIN")
+  public ResponseEntity<String> test() {
+    return ResponseEntity.ok("admin test");
+  }
+
   @GetMapping("translation/{code}")
-//  @Secured({"ROLE_ADMIN", "ROLE_USER"})
   public ResponseEntity<String> getTranslationByCountryCode(@PathVariable("code") String countryCode) {
     var resource = "languages/" + countryCode + ".json";
     return ResponseEntity.ok(commonService.getResource(resource));

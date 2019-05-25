@@ -10,26 +10,24 @@ import pr.sector.server.payload.JwtAuthenticationResponse;
 import pr.sector.server.payload.LoginRequest;
 import pr.sector.server.payload.Response;
 import pr.sector.server.payload.SignUpRequest;
-//import pr.sector.server.service.AuthService;
+import pr.sector.server.service.AuthService;
 
 import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("auth")
 public class AuthController {
 
-//    AuthService authService;
+    AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping("login")
     public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-//        return authService.login(loginRequest);
-        return null;
+        return authService.login(loginRequest);
     }
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     public ResponseEntity<Response> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        return authService.registerUser(signUpRequest);
-        return null;
+        return authService.registerUser(signUpRequest);
     }
 }
