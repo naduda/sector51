@@ -24,7 +24,7 @@ import pr.sector.server.security.JwtAuthenticationFilter;
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  CustomUserDetailsService customUserDetailsService;
+  private CustomUserDetailsService customUserDetailsService;
   private JwtAuthenticationEntryPoint unauthorizedHandler;
 
   @Bean

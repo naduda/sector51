@@ -27,8 +27,6 @@ public class User {
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="judgements_id_seq")
-//    @SequenceGenerator(name="judgements_id_seq", sequenceName="judgements_id_seq", allocationSize=1)
     private Long id;
 
     @NotBlank

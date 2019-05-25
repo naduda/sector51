@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     @Transactional
