@@ -28,11 +28,11 @@ export class SectorCommonModule {
         CanDeactivateGuard,
         TranslateService,
 
-        {
-          provide: HTTP_INTERCEPTORS,
-          useClass: AuthFakeBackendInterceptor,
-          multi: true
-        }
+        // {
+        //   provide: HTTP_INTERCEPTORS,
+        //   useClass: AuthFakeBackendInterceptor,
+        //   multi: true
+        // }
       ]
     };
   }
