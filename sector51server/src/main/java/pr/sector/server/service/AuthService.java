@@ -43,11 +43,11 @@ public class AuthService {
     }
 
     public ResponseEntity<Response> registerUser(SignUpRequest signUpRequest) {
-        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return getNotSuccessResponseEntity("Username is already taken!");
         }
 
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return getNotSuccessResponseEntity("Email Address already in use!");
         }
 
