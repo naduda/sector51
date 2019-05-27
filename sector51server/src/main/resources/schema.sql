@@ -5,7 +5,7 @@ create table users
 		constraint users_pk
 			primary key,
 	name varchar(50),
-	username varchar(15),
+	username varchar(25),
 	email varchar(40),
 	password varchar(100) not null
 );

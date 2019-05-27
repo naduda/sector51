@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("signup")
-    public ResponseEntity<Response> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<? extends Response> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         return authService.registerUser(signUpRequest);
     }
 }

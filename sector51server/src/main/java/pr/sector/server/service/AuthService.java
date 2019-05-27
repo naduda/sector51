@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pr.sector.server.model.RoleName;
 import pr.sector.server.model.User;
 import pr.sector.server.payload.*;
@@ -31,7 +30,7 @@ public class AuthService {
     public ResponseEntity<JwtAuthenticationResponse> login(LoginRequest loginRequest) {
         var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsernameOrEmail(),
+                        loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
@@ -42,14 +41,14 @@ public class AuthService {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-    public ResponseEntity<Response> registerUser(SignUpRequest signUpRequest) {
+    public ResponseEntity<? extends Response> registerUser(SignUpRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return getNotSuccessResponseEntity("Username is already taken!");
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return getNotSuccessResponseEntity("Email Address already in use!");
-        }
+//        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+//            return getNotSuccessResponseEntity("Email Address already in use!");
+//        }
 
         var user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
                 signUpRequest.getEmail(), signUpRequest.getPassword());
@@ -63,22 +62,12 @@ public class AuthService {
 
         var result = userRepository.save(user);
 
-        var location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/api/users/{username}")
-                .buildAndExpand(result.getUsername()).toUri();
-
-        return ResponseEntity.created(location).body(getApiResponse("User registered successfully", true));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new CreatedUserResponse(true, "User registered successfully", result.getId()));
     }
 
-    private ResponseEntity<Response> getNotSuccessResponseEntity(String message) {
-        return getResponseEntity(message, HttpStatus.BAD_REQUEST, false);
-    }
-
-    private ResponseEntity<Response> getResponseEntity(String message, HttpStatus status, boolean isSuccess) {
-        return new ResponseEntity<>(getApiResponse(message, isSuccess), status);
-    }
-
-    private ApiResponse getApiResponse(String message, boolean isSuccess) {
-        return new ApiResponse(isSuccess, message);
+    private ResponseEntity<ApiResponse> getNotSuccessResponseEntity(String message) {
+        return new ResponseEntity<>(new ApiResponse(false, message), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

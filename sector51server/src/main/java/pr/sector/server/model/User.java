@@ -34,7 +34,7 @@ public class User {
     private String name;
 
     @NotBlank
-    @Size(max = 15)
+    @Size(max = 25)
     private String username;
 
     @NaturalId

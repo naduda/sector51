@@ -1,13 +1,15 @@
 package pr.sector.server.payload;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
+@AllArgsConstructor
 public class LoginRequest {
     @NotBlank
-    private String usernameOrEmail;
+    private String username;
     @NotBlank
     private String password;
 }
