@@ -24,5 +24,4 @@ public class ServerApplication {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
   }
 
-
 }

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { AuthFakeBackendInterceptor } from './auth/auth-fake-backend';
 import { ErrorInterceptor } from './auth/error.interceptor';
 import { JwtInterceptor } from './auth/jwt-interceptor';
 import { CanDeactivateGuard } from './services/can-deactivate-guard.service';

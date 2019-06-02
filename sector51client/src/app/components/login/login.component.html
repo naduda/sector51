@@ -16,10 +16,14 @@
   </div>
   <hr>
 
-  <footer class="between-center">
-    <a href="javascript:void(0)" [innerHTML]="translation.login.forgot | titlecase" pTooltip="Not implement yet"
-      tooltipPosition="bottom"></a>
-    <button class="btn btn-primary px-5" (click)="login()"
-      [innerHTML]="translation.common.apply | uppercase">Login</button>
+  <footer class="between-center align-items-baseline">
+    <div class="text-center">
+      <button pTooltip="Not implement yet" class="btn btn-success" (click)="login()"
+        [innerHTML]="translation.login.signup | uppercase"></button><br>
+      <a href="javascript:void(0)" [innerHTML]="translation.login.forgot | titlecase" pTooltip="Not implement yet"
+        tooltipPosition="bottom"></a>
+    </div>
+    <button pTooltip="Not implement yet" class="btn btn-primary" (click)="login()"
+      [innerHTML]="translation.login.login | uppercase"></button>
   </footer>
 </div>

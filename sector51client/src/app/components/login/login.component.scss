@@ -1,7 +1,6 @@
 #login {
-  padding: 1rem;
+  padding: 1rem 1rem .5rem;
   width: 25rem;
-  height: 16.5rem;
 
   .form-inline {
     label {
@@ -12,6 +11,17 @@
 
     input {
       flex: 1;
+    }
+  }
+
+  footer {
+    
+    button {
+      width: 10rem;
+    }
+
+    a {
+      font-size: .8rem;
     }
   }
 }

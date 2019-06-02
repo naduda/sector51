@@ -30,4 +30,8 @@ export class LoginComponent extends AutoSubscription implements OnInit {
   login() {
     this.authService.login(this.name, this.password).subscribe();
   }
+
+  signup() {
+    // this.authService.signup(this.name, this.password).subscribe();
+  }
 }

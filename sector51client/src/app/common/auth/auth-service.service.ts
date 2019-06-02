@@ -18,7 +18,11 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
-  login(name: string, password: string) {
+  signup(name: string, password: string): Observable<object> {
+    return this.http.post('auth/signup', { name, password });
+  }
+
+  login(name: string, password: string): Observable<object> {
     return this.http.post<IAuthUser>('/login', { name, password })
       .pipe(
         map(user => {
