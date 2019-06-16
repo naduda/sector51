@@ -127,5 +127,10 @@
       }
     }
   },
-  "defaultProject": "sector51client"
+  "defaultProject": "sector51client",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }

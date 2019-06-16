@@ -1,7 +1,7 @@
 <h1 *ngIf="!loaded; else sector">loading...</h1>
 
 <ng-template #sector>
-  <div class="h-100 d-flex">
+  <div class="router-outlet">
     <router-outlet></router-outlet>
   </div>
 </ng-template>

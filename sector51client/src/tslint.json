@@ -1,10 +1,16 @@
 {
   "extends": "../tslint.json",
   "rules": {
+    "no-console": [
+      true,
+      "debug",
+      "info",
+      "trace"
+    ],
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      "sector",
       "camelCase"
     ],
     "component-selector": [
@@ -12,6 +18,8 @@
       "element",
       "sector",
       "kebab-case"
-    ]
+    ],
+    "no-bitwise": false,
+    "no-unused-expression": false
   }
 }

@@ -10,8 +10,8 @@ import { TranslateService } from './common/services/translate-service';
 export class AppComponent extends AutoSubscription implements OnInit {
   loaded: boolean;
 
-  constructor(private translateService: TranslateService) {
-    super();
+  constructor(translateService: TranslateService) {
+    super(translateService);
   }
 
   ngOnInit(): void {

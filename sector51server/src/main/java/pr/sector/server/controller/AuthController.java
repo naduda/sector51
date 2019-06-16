@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pr.sector.server.dto.UserDTO;
 import pr.sector.server.payload.JwtAuthenticationResponse;
 import pr.sector.server.payload.LoginRequest;
 import pr.sector.server.payload.Response;
@@ -26,8 +27,14 @@ public class AuthController {
         return authService.login(loginRequest);
     }
 
+//    @PostMapping("signup")
+//    public ResponseEntity<? extends Response> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+//        return authService.registerUser(signUpRequest);
+//    }
+
     @PostMapping("signup")
-    public ResponseEntity<? extends Response> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        return authService.registerUser(signUpRequest);
+    public ResponseEntity<String> createUser(@RequestBody UserDTO user) {
+        System.out.println(user);
+        return ResponseEntity.ok(null);
     }
 }

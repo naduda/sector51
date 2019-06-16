@@ -1,0 +1,26 @@
+.ui-widget {
+  font-family: 'Titillium Web', sans-serif !important;
+}
+
+// Dropdown
+.ui-dropdown {
+  border-radius: 4px;
+
+  .ui-dropdown-label {
+    padding: 6px 12px;
+  }
+  
+  .ui-dropdown-trigger {
+    width: 32px !important;
+  }
+}
+
+// Calendar
+.ui-calendar {
+  height: 38px;
+}
+
+.ui-inputtext {
+  padding: 6px 12px !important;
+  width: 168px;
+}

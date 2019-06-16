@@ -6,8 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pr.sector.server.CommonService;
+import pr.sector.server.dto.SelectItemDTO;
+import pr.sector.server.service.CommonService;
 import pr.sector.server.dto.InfoDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("public")
@@ -34,5 +38,10 @@ public class InfoController {
     public ResponseEntity<String> getTranslationByCountryCode(@PathVariable("code") String countryCode) {
         var resource = "languages/" + countryCode + ".json";
         return ResponseEntity.ok(commonService.getResource(resource));
+    }
+
+    @RequestMapping("roles")
+    public ResponseEntity<List<SelectItemDTO<String>>> getRoles() {
+        return ResponseEntity.ok(commonService.getRoles());
     }
 }

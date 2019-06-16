@@ -1,20 +1,19 @@
 @import url(https://fonts.googleapis.com/css?family=Titillium+Web);
+@import 'primeng';
+
+$font: 'Titillium Web', sans-serif !important;
 
 html {
   height: 100%;
 
   body {
     height: 100%;
-    font-family: 'Titillium Web', sans-serif !important;
+    font-family: $font;
   }
 }
 
-sector-login {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.ui-widge {
+  font-family: $font !important;
 }
 
 .bold {
@@ -26,4 +25,20 @@ sector-login {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+// Validation
+input {
+  &.ng-valid[required], .ng-valid.required {
+    border-left: .25rem solid #42A948;
+  }
+
+  &.ng-touched.ng-invalid:not(form),
+  &.ng-dirty.ng-invalid:not(form) {
+    border-left: .25rem solid #a94442;
+  }
 }

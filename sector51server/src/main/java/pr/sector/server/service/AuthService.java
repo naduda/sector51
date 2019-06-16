@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pr.sector.server.model.RoleName;
+import pr.sector.server.model.ERoleName;
 import pr.sector.server.model.User;
 import pr.sector.server.payload.*;
 import pr.sector.server.repository.RoleRepository;
@@ -55,7 +55,7 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        var userRole = roleRepository.findByName(RoleName.ROLE_USER)
+        var userRole = roleRepository.findByName(ERoleName.ROLE_USER)
                 .orElseThrow(() -> new IllegalStateException("User Role not set."));
 
         user.setRoles(Collections.singleton(userRole));

@@ -14,17 +14,16 @@ export class LoginComponent extends AutoSubscription implements OnInit {
 
   constructor(
     private authService: AuthenticationService,
-    private translateService: TranslateService
+    translateService: TranslateService
   ) {
-    super();
+    super(translateService);
   }
 
   ngOnInit() {
+    super.ngOnInit();
+
     this.name = 'test';
     this.password = 'test';
-
-    this.subscription = this.translateService.translationSubject
-      .subscribe(response => this.translation = response);
   }
 
   login() {

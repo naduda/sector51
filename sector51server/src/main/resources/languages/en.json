@@ -1,6 +1,7 @@
 {
   "common": {
     "apply": "apply",
+    "delete": "delete",
     "cancel": "cancel"
   },
   "login": {

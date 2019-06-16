@@ -1,0 +1,29 @@
+.user-deteils {
+  main {
+    .form-inline {
+      min-height: 38px;
+
+      &:not(:last-child) {
+        margin-bottom: .5rem;
+      }
+
+      label {
+        width: 5rem;
+        font-weight: bold;
+        justify-content: flex-start;
+      }
+
+      input {
+        flex: 1;
+      }
+    }
+  }
+
+  footer {
+    margin-top: 2rem;
+
+    button {
+      width: 8rem;
+    }
+  }
+}

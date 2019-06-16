@@ -1,11 +1,15 @@
-package pr.sector.server;
+package pr.sector.server.service;
 
 import org.springframework.stereotype.Service;
+import pr.sector.server.dto.SelectItemDTO;
+import pr.sector.server.model.ERoleName;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CommonService {
@@ -28,5 +32,17 @@ public class CommonService {
     }
 
     return null;
+  }
+
+  public List<SelectItemDTO<String>> getRoles() {
+    var result = new ArrayList<SelectItemDTO<String>>();
+
+    for (var role : ERoleName.values()) {
+      var item = new SelectItemDTO<>(role.name(), role.label);
+      item.setDisabled(!role.showPasswordField);
+      result.add(item);
+    }
+
+    return result;
   }
 }
