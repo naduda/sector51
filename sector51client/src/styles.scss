@@ -1,5 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Titillium+Web);
-@import 'primeng';
+@import 'scss/primeng';
+@import 'scss/spinner';
 
 $font: 'Titillium Web', sans-serif !important;
 
@@ -31,6 +32,16 @@ html {
   visibility: hidden;
 }
 
+.i-span {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+
+  span {
+    flex: 1;
+  }
+}
+
 // Validation
 input {
   &.ng-valid[required], .ng-valid.required {
@@ -42,3 +53,4 @@ input {
     border-left: .25rem solid #a94442;
   }
 }
+// ===============

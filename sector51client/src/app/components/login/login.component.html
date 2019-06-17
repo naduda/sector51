@@ -24,7 +24,9 @@
         <a href="javascript:void(0)" [innerHTML]="translation.login.forgot | titlecase"></a>
       </small>
     </div>
-    <button pTooltip="Not implement yet" class="btn btn-primary" (click)="login()"
-      [innerHTML]="translation.login.login | uppercase"></button>
+    <button pTooltip="Not implement yet" class="btn btn-primary i-span" (click)="login()">
+      <i [class]="logIcon"></i>
+      <span [innerHTML]="translation.login.login | uppercase"></span>
+    </button>
   </footer>
 </div>

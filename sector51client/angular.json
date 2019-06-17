@@ -23,6 +23,7 @@
               "src/assets"
             ],
             "styles": [
+              "src/icons.css",
               "src/styles.scss",
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/themes/omega/theme.css",
