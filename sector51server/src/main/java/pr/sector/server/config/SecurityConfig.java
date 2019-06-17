@@ -35,7 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/public/**");
+        web.ignoring().antMatchers("/public/**", "/assets/**",
+            "/**/*.css", "/**/*.js", "/**/*.ico", "/**/*.eot", "/**/*.svg", "/**/*.woff*", "/**/*.ttf");
     }
 
     @Override
@@ -70,6 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/")
+                .permitAll()
                 .antMatchers("/auth/**")
                 .permitAll()
                 .anyRequest()

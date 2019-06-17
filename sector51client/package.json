@@ -7,6 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
+    "predeploy": "(del /F /S /Q ..\\sector51server\\src\\main\\resources\\static\\*) && (ng build --prod)",
+    "deploy": "(xcopy /s .\\dist\\sector51client ..\\sector51server\\src\\main\\resources\\static)",
+    "postdeploy": "git add ../sector51server/src/main/resources/static/**",
     "e2e": "ng e2e"
   },
   "private": true,
